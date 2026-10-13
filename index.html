@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nutrition Study Tools</title>
+<meta name="description" content="Animated walkthroughs, simulators and practice trainers for human nutrition, Modules 1 to 14. Dr. Akash Garg.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap" rel="stylesheet">
+<script src="nutr-kit.js"></script>
+<style>
+:root{--ground:#EFEBDD;--panel:#FCFAF3;--panel-2:#F4F0E2;--ink:#1E1A0C;--ink-soft:#5E5843;--rule:#D8CFAF;--accent:#6E5100;--accent-wash:#F4EACB;--shadow:0 1px 2px rgba(30,26,12,.08),0 6px 18px -8px rgba(30,26,12,.18)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ground:#0E1519;--panel:#1F1C12;--panel-2:#28241A;--ink:#F2EEE2;--ink-soft:#C4BCA2;--rule:#3C3624;--accent:#F2C95C;--accent-wash:#33290A;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px -10px rgba(0,0,0,.6)}}
+:root[data-theme="dark"]{--ground:#0E1519;--panel:#1F1C12;--panel-2:#28241A;--ink:#F2EEE2;--ink-soft:#C4BCA2;--rule:#3C3624;--accent:#F2C95C;--accent-wash:#33290A}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--ground);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55}
+header{background:var(--panel);border-bottom:1px solid var(--rule)}
+.in{max-width:1040px;margin:0 auto;padding:22px 16px}
+.k{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+h1{font-family:"IBM Plex Serif",Georgia,serif;font-size:32px;margin:4px 0 6px;line-height:1.15}
+.lead{margin:0;color:var(--ink-soft);font-size:16.5px;max-width:740px}
+h2{font-family:"IBM Plex Serif",Georgia,serif;font-size:22px;margin:30px 0 4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;scroll-margin-top:12px}
+h2 i{width:12px;height:12px;border-radius:50%;display:inline-block}
+.sub{margin:0 0 8px;color:var(--ink-soft)}
+.ch{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-soft);font-weight:500}
+.jump{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}.jump a{font-family:"IBM Plex Mono",monospace;font-size:12.5px;padding:5px 9px;border:1px solid var(--rule);border-radius:99px;background:var(--panel);color:var(--ink);text-decoration:none}.jump a:hover,.jump a:focus-visible{border-color:var(--accent)}
+.find{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.find label{font-weight:600}
+.find input{font:inherit;padding:8px 12px;border:1px solid var(--rule);border-radius:6px;background:var(--panel);color:var(--ink);min-width:0;flex:1 1 260px;max-width:440px}
+.find input:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+#count{color:var(--ink-soft);font-size:14px}
+.dz{list-style:none;padding:0;margin:0 0 12px;display:flex;flex-wrap:wrap;gap:5px}
+.dz li{font-size:13px;padding:2px 9px;border-radius:99px;background:var(--panel-2);border:1px solid var(--rule);color:var(--ink)}
+.dz li.hit{background:var(--accent-wash);border-color:var(--accent);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+a.card{display:flex;flex-direction:column;gap:6px;background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:16px 18px;box-shadow:var(--shadow);color:inherit;text-decoration:none;transition:border-color .15s,transform .15s}
+a.card:hover,a.card:focus-visible{border-color:var(--accent);transform:translateY(-2px)}
+.type{font-family:"IBM Plex Mono",monospace;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent)}
+.card b{font-size:18px}
+.card span.d{color:var(--ink-soft);font-size:14.5px}
+.tip{background:var(--accent-wash);border-left:4px solid var(--accent);border-radius:4px;padding:12px 14px;margin-top:22px;font-size:15px}
+footer{max-width:1040px;margin:0 auto;padding:24px 16px 36px;font-size:13px;color:var(--ink-soft)}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <div class="k">Nutrition &middot; Modules 1 to 14</div>
+  <h1>Nutrition Study Tools</h1>
+  <p class="lead">See nutrition happen inside the body. Each module has an animated walkthrough that follows food from the plate to the cell, with worked examples for every calculation, and a Lab with simulators, a practice trainer, a sorting game and real-life care scenarios. Everything runs in your browser on a computer, tablet or phone. No login, nothing graded.</p>
+</div></header>
+<main class="in" id="top" style="padding-top:4px">
+  <div class="find" role="search">
+    <label for="q">Find a topic</label>
+    <input id="q" type="search" placeholder="Try: fiber, iron, vitamin D, food label" autocomplete="off">
+    <span id="count" role="status" aria-live="polite"></span>
+  </div>
+  <nav class="jump" aria-label="Jump to module"><a href="#m1">M1</a><a href="#m2">M2</a><a href="#m3">M3</a><a href="#m4">M4</a><a href="#m5">M5</a><a href="#m6">M6</a><a href="#m7">M7</a><a href="#m8">M8</a><a href="#m9">M9</a><a href="#m10">M10</a><a href="#m11">M11</a><a href="#m12">M12</a><a href="#m13">M13</a><a href="#m14">M14</a></nav>
+  <p class="tip"><b>How to use this:</b> open the walkthrough first and go at your own pace with the arrow keys or Next. Then open the Lab: run the simulator, practice in the trainer with its hints and worked solutions, and try the real-life scenarios. Use the tools bar at the top of each page to pause the animations, slow them down, have the text read aloud, or get a written description of each picture. <b>For learning only</b>, not personal medical or diet advice.</p>
+  <section class="mod" id="m1" data-search="nutrition basics and healthy eating patterns six nutrient classes kcal per gram nutrient density dris: ear, rda, ai, ul amdr dietary guidelines plate model nutrition facts label %dv evaluating research">
+  <h2><i style="background:#2F7FC1" aria-hidden="true"></i><span class="ch">Module 1</span> Nutrition basics and healthy eating patterns</h2>
+  <p class="sub">The six nutrient classes, energy in food, nutrient density, the DRIs, healthy eating patterns, food labels, and how nutrition science works.</p>
+  <ul class="dz" aria-label="Topics in module 1"><li>Six nutrient classes</li><li>kcal per gram</li><li>Nutrient density</li><li>DRIs: EAR, RDA, AI, UL</li><li>AMDR</li><li>Dietary Guidelines</li><li>Plate model</li><li>Nutrition Facts label</li><li>%DV</li><li>Evaluating research</li></ul>
+  <div class="grid">
+    <a class="card" href="Basics-Walkthrough.html"><span class="type">Start here · Animated walkthrough</span><b>Nutrition basics and healthy eating patterns Walkthrough</b><span class="d">See food become nutrients and nutrients go to work in the body, with animated worked examples.</span></a>
+    <a class="card" href="Basics-Lab.html"><span class="type">Simulators + practice</span><b>Module 1 Lab</b><span class="d">Meal builder, label and kcal trainer, sorting rounds, and real-life scenarios.</span></a>
+  </div>
+  </section>
+  <section class="mod" id="m2" data-search="digestion, absorption and transport gi tract enzymes stomach and hcl villi and microvilli bile absorption mechanisms blood vs lymph gut microbiota lactose intolerance celiac disease allergy vs intolerance">
+  <h2><i style="background:#7B5CC9" aria-hidden="true"></i><span class="ch">Module 2</span> Digestion, absorption and transport</h2>
+  <p class="sub">Follow a meal through the GI tract, watch nutrients cross the gut wall, and see where they go next.</p>
+  <ul class="dz" aria-label="Topics in module 2"><li>GI tract</li><li>Enzymes</li><li>Stomach and HCl</li><li>Villi and microvilli</li><li>Bile</li><li>Absorption mechanisms</li><li>Blood vs lymph</li><li>Gut microbiota</li><li>Lactose intolerance</li><li>Celiac disease</li><li>Allergy vs intolerance</li></ul>
+  <div class="grid">
+    <a class="card" href="Digestion-Walkthrough.html"><span class="type">Start here · Animated walkthrough</span><b>Digestion, absorption and transport Walkthrough</b><span class="d">See food become nutrients and nutrients go to work in the body, with animated worked examples.</span></a>
+    <a class="card" href="Digestion-Lab.html"><span class="type">Simulators + practice</span><b>Module 2 Lab</b><span class="d">Digestion journey, absorption bench, practice trainer, sorting rounds, and real-life scenarios.</span></a>
+  </div>
+  </section>
+  <section class="mod" id="m3" data-search="carbohydrates and fiber monosaccharides disaccharides starch and glycogen soluble vs insoluble fiber insulin and glucagon glycemic index and load diabetes whole grains added sugars sweeteners">
+  <h2><i style="background:#B5651D" aria-hidden="true"></i><span class="ch">Module 3</span> Carbohydrates and fiber</h2>
+  <p class="sub">Sugars, starch, glycogen and fiber, blood glucose control, glycemic response, whole grains and added sugars.</p>
+  <ul class="dz" aria-label="Topics in module 3"><li>Monosaccharides</li><li>Disaccharides</li><li>Starch and glycogen</li><li>Soluble vs insoluble fiber</li><li>Insulin and glucagon</li><li>Glycemic index and load</li><li>Diabetes</li><li>Whole grains</li><li>Added sugars</li><li>Sweeteners</li></ul>
+  <div class="grid">
+    <a class="card" href="Carbs-Walkthrough.html"><span class="type">Start here · Animated walkthrough</span><b>Carbohydrates and fiber Walkthrough</b><span class="d">See food become nutrients and nutrients go to work in the body, with animated worked examples.</span></a>
+    <a class="card" href="Carbs-Lab.html"><span class="type">Simulators + practice</span><b>Module 3 Lab</b><span class="d">Blood glucose simulator, grains and labels bench, trainer, sorting rounds, and real-life scenarios.</span></a>
+  </div>
+  </section>
+  <section class="mod" id="m4" data-search="lipids saturated vs unsaturated omega-3 and omega-6 trans fats phospholipids cholesterol micelles and chylomicrons ldl and hdl atherosclerosis fat recommendations">
+  <h2><i style="background:#C9A227" aria-hidden="true"></i><span class="ch">Module 4</span> Lipids</h2>
+  <p class="sub">Triglycerides, fatty acids, phospholipids, cholesterol, fat digestion, lipoproteins and heart health.</p>
+  <ul class="dz" aria-label="Topics in module 4"><li>Saturated vs unsaturated</li><li>Omega-3 and omega-6</li><li>Trans fats</li><li>Phospholipids</li><li>Cholesterol</li><li>Micelles and chylomicrons</li><li>LDL and HDL</li><li>Atherosclerosis</li><li>Fat recommendations</li></ul>
+  <div class="grid">
+    <a class="card" href="Lipids-Walkthrough.html"><span class="type">Start here · Animated walkthrough</span><b>Lipids Walkthrough</b><span class="d">See food become nutrients and nutrients go to work in the body, with animated worked examples.</span></a>
+    <a class="card" href="Lipids-Lab.html"><span class="type">Simulators + practice</span><b>Module 4 Lab</b><span class="d">Lipoprotein traffic simulator, fatty-acid builder, trainer, sorting rounds, and real-life scenarios.</span></a>
+  </div>
+  </section>
+  <section class="mod" id="m5" data-search="proteins and amino acids essential amino acids peptide bonds protein structure denaturation protein synthesis nitrogen balance complete vs incomplete complementary proteins protein needs (g/kg) marasmus / kwashiorkor vegetarian and vegan diets">
+  <h2><i style="background:#C0392B" aria-hidden="true"></i><span class="ch">Module 5</span> Proteins and amino acids</h2>
+  <p class="sub">Amino acids, protein structure, digestion, synthesis and turnover, protein quality, needs and plant-based eating.</p>
+  <ul class="dz" aria-label="Topics in module 5"><li>Essential amino acids</li><li>Peptide bonds</li><li>Protein structure</li><li>Denaturation</li><li>Protein synthesis</li><li>Nitrogen balance</li><li>Complete vs incomplete</li><li>Complementary proteins</li><li>Protein needs (g/kg)</li><li>Marasmus / kwashiorkor</li><li>Vegetarian and vegan diets</li></ul>
+  <div class="grid">
+    <a class="card" href="Protein-Walkthrough.html"><span class="type">Start here · Animated walkthrough</span><b>Proteins and amino acids Walkthrough</b><span class="d">See food become nutrients and nutrients go to work in the body, with animated worked examples.</span></a>
+    <a class="card" href="Protein-Lab.html"><span class="type">Simulators + practice</span><b>Module 5 Lab</b><span class="d">Protein turnover simulator, complementary protein puzzle, trainer, sorting rounds, and real-life scenarios.</span></a>
+  </div>
+  </section>
+  <section class="mod" id="m6" data-search="energy metabolism atp b-vitamin coenzymes glycolysis citric acid cycle electron transport chain beta-oxidation urea cycle alcohol metabolism fed vs fasting ketone bodies">
+  <h2><i style="background:#2E8B7A" aria-hidden="true"></i><span class="ch">Module 6</span> Energy metabolism</h2>
+  <p class="sub">How cells turn food into ATP, and how the body shifts fuels between fed, fasting and exercise.</p>
+  <ul class="dz" aria-label="Topics in module 6"><li>ATP</li><li>B-vitamin coenzymes</li><li>Glycolysis</li><li>Citric acid cycle</li><li>Electron transport chain</li><li>Beta-oxidation</li><li>Urea cycle</li><li>Alcohol metabolism</li><li>Fed vs fasting</li><li>Ketone bodies</li></ul>
+  <div class="grid">
+    <a class="card" href="Metabolism-Walkthrough.html"><span class="type">Start here · Animated walkthrough</span><b>Energy metabolism Walkthrough</b><span class="d">See food become nutrients and nutrients go to work in the body, with animated worked examples.</span></a>
+    <a class="card" href="Metabolism-Lab.html"><span class="type">Simulators + practice</span><b>Module 6 Lab</b><span class="d">Metabolic city simulator, ATP accounting bench, predict-then-watch trainer, sorting rounds, and real-life scenarios.</span></a>
+  </div>
+  </section>
+  <section class="mod" id="m7" data-search="energy balance and body composition bmr and tef physical activity energy adaptive thermogenesis hunger and satiety hormones body composition bmi and its limits assessment methods factors shaping body weight eating disorders: recognition and support">
+  <h2><i style="background:#5A6FB0" aria-hidden="true"></i><span class="ch">Module 7</span> Energy balance and body composition</h2>
+  <p class="sub">Where the body&#x27;s energy goes, how hunger and fullness are signaled, and how body composition is measured, with its limits.</p>
+  <ul class="dz" aria-label="Topics in module 7"><li>BMR and TEF</li><li>Physical activity energy</li><li>Adaptive thermogenesis</li><li>Hunger and satiety hormones</li><li>Body composition</li><li>BMI and its limits</li><li>Assessment methods</li><li>Factors shaping body weight</li><li>Eating disorders: recognition and support</li></ul>
+  <div class="grid">
+    <a class="card" href="Energy-Balance-Walkthrough.html"><span class="type">Start here · Animated walkthrough</span><b>Energy balance and body composition Walkthrough</b><span class="d">See food become nutrients and nutrients go to work in the body, with animated worked examples.</span></a>
+    <a class="card" href="Energy-Balance-Lab.html"><span class="type">Simulators + practice</span><b>Module 7 Lab</b><span class="d">Energy use simulator, hunger and fullness bench, trainer, sorting rounds, and real-life scenarios.</span></a>
+  </div>
+  </section>
+  <section class="mod" id="m8" data-search="water-soluble vitamins thiamin riboflavin niacin vitamin b6 folate and neural tubes vitamin b12 megaloblastic anemia choline vitamin c and collagen cooking losses">
+  <h2><i style="background:#7B3FA0" aria-hidden="true"></i><span class="ch">Module 8</span> Water-soluble vitamins</h2>
+  <p class="sub">The B vitamins as energy coenzymes, folate and B12 for healthy cells, and vitamin C.</p>
+  <ul class="dz" aria-label="Topics in module 8"><li>Thiamin</li><li>Riboflavin</li><li>Niacin</li><li>Vitamin B6</li><li>Folate and neural tubes</li><li>Vitamin B12</li><li>Megaloblastic anemia</li><li>Choline</li><li>Vitamin C and collagen</li><li>Cooking losses</li></ul>
+  <div class="grid">
+    <a class="card" href="Vitamins-Water-Walkthrough.html"><span class="type">Start here · Animated walkthrough</span><b>Water-soluble vitamins Walkthrough</b><span class="d">See food become nutrients and nutrients go to work in the body, with animated worked examples.</span></a>
+    <a class="card" href="Vitamins-Water-Lab.html"><span class="type">Simulators + practice</span><b>Module 8 Lab</b><span class="d">Vitamin journey simulator, red blood cell bench, trainer, sorting rounds, and real-life scenarios.</span></a>
+  </div>
+  </section>
+  <section class="mod" id="m9" data-search="fat-soluble vitamins vitamin a and vision beta-carotene vitamin d from sunlight calcium regulation rickets / osteomalacia vitamin e antioxidant vitamin k and clotting warfarin and vitamin k toxicity and uls">
+  <h2><i style="background:#8A2E62" aria-hidden="true"></i><span class="ch">Module 9</span> Fat-soluble vitamins</h2>
+  <p class="sub">Vitamins A, D, E and K: absorption with fat, storage, functions, deficiencies and toxicity.</p>
+  <ul class="dz" aria-label="Topics in module 9"><li>Vitamin A and vision</li><li>Beta-carotene</li><li>Vitamin D from sunlight</li><li>Calcium regulation</li><li>Rickets / osteomalacia</li><li>Vitamin E antioxidant</li><li>Vitamin K and clotting</li><li>Warfarin and vitamin K</li><li>Toxicity and ULs</li></ul>
+  <div class="grid">
+    <a class="card" href="Vitamins-Fat-Walkthrough.html"><span class="type">Start here · Animated walkthrough</span><b>Fat-soluble vitamins Walkthrough</b><span class="d">See food become nutrients and nutrients go to work in the body, with animated worked examples.</span></a>
+    <a class="card" href="Vitamins-Fat-Lab.html"><span class="type">Simulators + practice</span><b>Module 9 Lab</b><span class="d">Vitamin D and calcium simulator, visual cycle bench, trainer, sorting rounds, and real-life scenarios.</span></a>
+  </div>
+  </section>
+  <section class="mod" id="m10" data-search="water and major minerals body water thirst and adh dehydration hyponatremia sodium and blood pressure potassium calcium and bone remodeling osteoporosis phosphorus magnesium">
+  <h2><i style="background:#1B6E88" aria-hidden="true"></i><span class="ch">Module 10</span> Water and major minerals</h2>
+  <p class="sub">Water balance and hydration, electrolytes and the sodium-potassium pump, calcium and bone, and other major minerals.</p>
+  <ul class="dz" aria-label="Topics in module 10"><li>Body water</li><li>Thirst and ADH</li><li>Dehydration</li><li>Hyponatremia</li><li>Sodium and blood pressure</li><li>Potassium</li><li>Calcium and bone remodeling</li><li>Osteoporosis</li><li>Phosphorus</li><li>Magnesium</li></ul>
+  <div class="grid">
+    <a class="card" href="Minerals-Major-Walkthrough.html"><span class="type">Start here · Animated walkthrough</span><b>Water and major minerals Walkthrough</b><span class="d">See food become nutrients and nutrients go to work in the body, with animated worked examples.</span></a>
+    <a class="card" href="Minerals-Major-Lab.html"><span class="type">Simulators + practice</span><b>Module 10 Lab</b><span class="d">Fluid balance simulator, bone bank simulator, trainer, sorting rounds, and real-life scenarios.</span></a>
+  </div>
+  </section>
+  <section class="mod" id="m11" data-search="trace minerals heme vs nonheme iron iron absorption and hepcidin iron-deficiency anemia iron overload zinc iodine and goiter selenium copper fluoride lead and mercury">
+  <h2><i style="background:#4F5E66" aria-hidden="true"></i><span class="ch">Module 11</span> Trace minerals</h2>
+  <p class="sub">Iron from gut to hemoglobin, zinc, iodine and the thyroid, selenium, copper, fluoride and more.</p>
+  <ul class="dz" aria-label="Topics in module 11"><li>Heme vs nonheme iron</li><li>Iron absorption and hepcidin</li><li>Iron-deficiency anemia</li><li>Iron overload</li><li>Zinc</li><li>Iodine and goiter</li><li>Selenium</li><li>Copper</li><li>Fluoride</li><li>Lead and mercury</li></ul>
+  <div class="grid">
+    <a class="card" href="Minerals-Trace-Walkthrough.html"><span class="type">Start here · Animated walkthrough</span><b>Trace minerals Walkthrough</b><span class="d">See food become nutrients and nutrients go to work in the body, with animated worked examples.</span></a>
+    <a class="card" href="Minerals-Trace-Lab.html"><span class="type">Simulators + practice</span><b>Module 11 Lab</b><span class="d">Iron status simulator, thyroid and iodine bench, trainer, sorting rounds, and real-life scenarios.</span></a>
+  </div>
+  </section>
+  <section class="mod" id="m12" data-search="nutrition for physical activity energy systems fuel crossover glycogen and hitting the wall carbohydrate loading fueling during exercise recovery nutrition protein for athletes sweat rate and hydration red-s ergogenic aids">
+  <h2><i style="background:#2F6F4F" aria-hidden="true"></i><span class="ch">Module 12</span> Nutrition for physical activity</h2>
+  <p class="sub">Energy systems, fuel use, carbohydrate and protein for training, hydration, and supplements in sport.</p>
+  <ul class="dz" aria-label="Topics in module 12"><li>Energy systems</li><li>Fuel crossover</li><li>Glycogen and hitting the wall</li><li>Carbohydrate loading</li><li>Fueling during exercise</li><li>Recovery nutrition</li><li>Protein for athletes</li><li>Sweat rate and hydration</li><li>RED-S</li><li>Ergogenic aids</li></ul>
+  <div class="grid">
+    <a class="card" href="Sports-Walkthrough.html"><span class="type">Start here · Animated walkthrough</span><b>Nutrition for physical activity Walkthrough</b><span class="d">See food become nutrients and nutrients go to work in the body, with animated worked examples.</span></a>
+    <a class="card" href="Sports-Lab.html"><span class="type">Simulators + practice</span><b>Module 12 Lab</b><span class="d">Exercise fuel simulator, sweat and hydration bench, trainer, sorting rounds, and real-life scenarios.</span></a>
+  </div>
+  </section>
+  <section class="mod" id="m13" data-search="nutrition across the life cycle pregnancy nutrition folate and neural tubes food safety in pregnancy breastfeeding infant formula introducing solids toddlers and picky eating adolescent growth sarcopenia older adult nutrition">
+  <h2><i style="background:#9C7A3C" aria-hidden="true"></i><span class="ch">Module 13</span> Nutrition across the life cycle</h2>
+  <p class="sub">Pregnancy, lactation, infancy, childhood, adolescence and older adulthood, and how needs change at each stage.</p>
+  <ul class="dz" aria-label="Topics in module 13"><li>Pregnancy nutrition</li><li>Folate and neural tubes</li><li>Food safety in pregnancy</li><li>Breastfeeding</li><li>Infant formula</li><li>Introducing solids</li><li>Toddlers and picky eating</li><li>Adolescent growth</li><li>Sarcopenia</li><li>Older adult nutrition</li></ul>
+  <div class="grid">
+    <a class="card" href="Lifecycle-Walkthrough.html"><span class="type">Start here · Animated walkthrough</span><b>Nutrition across the life cycle Walkthrough</b><span class="d">See food become nutrients and nutrients go to work in the body, with animated worked examples.</span></a>
+    <a class="card" href="Lifecycle-Lab.html"><span class="type">Simulators + practice</span><b>Module 13 Lab</b><span class="d">Life stage explorer, pregnancy timeline, trainer, sorting rounds, and real-life scenarios.</span></a>
+  </div>
+  </section>
+  <section class="mod" id="m14" data-search="clinical nutrition and food safety nutrition care process heart-healthy patterns diabetes plate method kidney disease diets dysphagia / iddsi tube feeding parenteral nutrition refeeding syndrome drug-nutrient interactions food safety and danger zone">
+  <h2><i style="background:#A52A3A" aria-hidden="true"></i><span class="ch">Module 14</span> Clinical nutrition and food safety</h2>
+  <p class="sub">The nutrition care process, diet and chronic disease, modified diets, tube feeding, drug-nutrient interactions and food safety.</p>
+  <ul class="dz" aria-label="Topics in module 14"><li>Nutrition care process</li><li>Heart-healthy patterns</li><li>Diabetes plate method</li><li>Kidney disease diets</li><li>Dysphagia / IDDSI</li><li>Tube feeding</li><li>Parenteral nutrition</li><li>Refeeding syndrome</li><li>Drug-nutrient interactions</li><li>Food safety and danger zone</li></ul>
+  <div class="grid">
+    <a class="card" href="Clinical-Walkthrough.html"><span class="type">Start here · Animated walkthrough</span><b>Clinical nutrition and food safety Walkthrough</b><span class="d">See food become nutrients and nutrients go to work in the body, with animated worked examples.</span></a>
+    <a class="card" href="Clinical-Lab.html"><span class="type">Simulators + practice</span><b>Module 14 Lab</b><span class="d">Bacteria growth simulator, tube feeding and diet bench, trainer, sorting rounds, and real-life scenarios.</span></a>
+  </div>
+  </section>
+</main>
+<footer>Dr. Akash Garg &middot; Nutrition Study Tools &middot; Drawings are simplified and not to scale. For learning only, not personal medical or diet advice. Licensed <a href="LICENSE">CC BY-NC-SA 4.0</a>.</footer>
+<script>
+(function(){
+  var q=document.getElementById('q'),count=document.getElementById('count'),mods=[].slice.call(document.querySelectorAll('.mod'));
+  function run(){
+    var v=q.value.trim().toLowerCase(),shown=0;
+    mods.forEach(function(m){
+      var ok=!v||m.getAttribute('data-search').indexOf(v)>=0;
+      m.hidden=!ok; if(ok)shown++;
+      [].forEach.call(m.querySelectorAll('.dz li'),function(li){li.classList.toggle('hit',!!v&&li.textContent.toLowerCase().indexOf(v)>=0);});
+    });
+    count.textContent=v?(shown?shown+(shown===1?' module matches':' modules match'):'No match. Try a shorter word.'):'';
+  }
+  q.addEventListener('input',run);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lipids Lab</title>
+<meta name="description" content="Lipids lab for introductory nutrition: a lipoprotein traffic simulator with a live blood lipid panel, a fatty-acid builder that shows saturation, cis and trans shape, omega family and melting behaviour, a randomized practice trainer for fat calories, percent of energy, AMDR, %DV and omega naming with animated worked solutions, a sorting game, and real-life scenarios from lab panels to cooking oils and fish oil.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="nutr-kit.js"></script>
+<style>
+:root{
+  --ground:#E3E7EA;--panel:#F7F9FA;--panel-2:#EDF1F3;--sunk:#D5DBDF;
+  --ink:#10161A;--ink-soft:#57666F;--ink-faint:#566570;--rule:#C4CDD3;--rule-soft:#D9E0E4;
+  --accent:#7A5A00;--accent-ink:#634900;--accent-wash:#F5ECD2;
+  --warn:#A36A10;--warn-wash:#F6ECD6;--bad:#A9372F;--bad-wash:#F7DFDC;--good:#2F6F4F;--good-wash:#DEEDE4;--on-accent:#fff;--warn-ink:#7A4E08;
+  --act1:#B8861A;--act2:#C0662A;--act3:#2F7FC1;--act4:#2E8A7A;--act5:#B83A3A;--act6:#7B5CC9;--act7:#5E7183;
+  --gold:#C9A227;--gold-wash:#F6EFD3;--gold-ink:#7A5E08;
+  --ecf:#F1F0EA;--grid:#D8DCE2;--paper:#FFFDF7;
+  --carb:#C27A1A;--prot:#B4505A;--fat:#D4A82A;--alc:#7D8790;--fiber:#3E8E41;--water:#2F7FC1;--vit:#7B5CC9;--min:#5E7183;
+  --sfa:#B5482A;--mufa:#5E8A1E;--pufa:#2F6FBF;--trans:#9B3D8F;--n3:#138A8A;--n6:#4F5FC8;--n9:#7A8A2A;
+  --mufa-wash:#E6EFD8;--trans-wash:#F2E0EF;--chol:#D9772B;--plhead:#3C8DAE;--chain:#6B5A3A;--el-c:#4A5258;--el-h:#FFFFFF;--el-o:#D0301F;--glyc:#7B5CC9;--h2o:#3F8FD0;
+  --chylo:#E6CC6A;--vldl:#E38B2C;--ldl:#B83A3A;--hdl:#2E8A5A;--apo:#B4505A;--rec:#5E3A9E;
+  --liver:#8E3B2E;--liver2:#B5574A;--gut:#EDB9B4;--gut-edge:#A8504A;--muscle:#C0575A;--muscle2:#E39A9A;--adipose:#F6E4A6;--adipose-edge:#B8963A;
+  --artery:#EBB5AD;--wall:#D98C82;--blood:#B03030;--plasma:#F8E6E0;--bile:#7C9A22;--lymph:#D8EAC2;--lymph-edge:#7C9A5A;--macro:#8C6BB8;--plaque:#E2BE45;--stomach:#E7A9B8;--pancreas:#E9C08F;--gall:#9FBF4A;
+  --skin:#EAC9A8;--skin-edge:#9A7860;--body:#CBD5DC;--body-edge:#6E808C;--hot:#C8452B;--cold:#2F7FC1;--steel:#9AA6AF;--glass:#E3EDF2;--glass-edge:#7F99A6;
+  --butter:#F2D86A;--oil:#E7C64A;--olive:#9DB33A;--fish:#E58F6A;--green:#5E9E3A;--wood:#B98A5A;--plate:#FFFFFF;--plate-edge:#B8C2C8;
+  --shadow:0 1px 2px rgba(16,22,26,.08),0 6px 18px -8px rgba(16,22,26,.18);
+  --r:6px;--sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;--serif:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0E1519;--panel:#172026;--panel-2:#1D282F;--sunk:#0A1014;
+  --ink:#E8EEF1;--ink-soft:#A3B2BA;--ink-faint:#8D9EA7;--rule:#2C3A42;--rule-soft:#24313A;
+  --accent:#F2C95C;--accent-ink:#F6D88C;--accent-wash:#332A10;
+  --warn:#E0B04E;--warn-wash:#352A12;--bad:#E07067;--bad-wash:#3B1E1B;--good:#6BC293;--good-wash:#17301F;--on-accent:#0B1A20;--warn-ink:#E8BE62;
+  --act1:#E8C24E;--act2:#F0985A;--act3:#5AA9E6;--act4:#5CC4B0;--act5:#EE6E62;--act6:#A98BEF;--act7:#A9B7C2;
+  --gold:#E0BE48;--gold-wash:#352E14;--gold-ink:#E0BE48;
+  --ecf:#131A1F;--grid:#26303D;--paper:#1E262B;
+  --carb:#E8A54A;--prot:#E07A84;--fat:#E8C24E;--alc:#A9B3BB;--fiber:#6CC070;--water:#5AA9E6;--vit:#A98BEF;--min:#A9B7C2;
+  --sfa:#F07A5E;--mufa:#A5CF5A;--pufa:#6FA8EC;--trans:#D57FC8;--n3:#4FD0C8;--n6:#9AA5F7;--n9:#C9D46A;
+  --mufa-wash:#26331A;--trans-wash:#3A2238;--chol:#F0A060;--plhead:#6FC0DE;--chain:#CDB98A;--el-c:#9AA3AA;--el-h:#F2F4F5;--el-o:#FF6B5B;--glyc:#A98BEF;--h2o:#6FB3EC;
+  --chylo:#E8D27A;--vldl:#F2A65A;--ldl:#EE6E62;--hdl:#5CC48C;--apo:#E07A84;--rec:#B79BE8;
+  --liver:#C26A5A;--liver2:#8E4A3E;--gut:#6E4442;--gut-edge:#E0A39C;--muscle:#D9787A;--muscle2:#7A3E40;--adipose:#5E5024;--adipose-edge:#E8C24E;
+  --artery:#5A3430;--wall:#8A4A44;--blood:#E05A50;--plasma:#2A1C1C;--bile:#B8D85A;--lymph:#2F3E24;--lymph-edge:#A9CF8A;--macro:#B79BE8;--plaque:#D9B84A;--stomach:#7A4652;--pancreas:#7A5E3E;--gall:#7E9A3A;
+  --skin:#5A4434;--skin-edge:#C9A78A;--body:#3A4852;--body-edge:#9AABB6;--hot:#F07A5E;--cold:#5AA9E6;--steel:#7F8C96;--glass:#1E2C34;--glass-edge:#7F99A6;
+  --butter:#D9C25A;--oil:#D9B84A;--olive:#A9C24A;--fish:#E8A080;--green:#7EC05A;--wood:#8A6A4A;--plate:#2A343A;--plate-edge:#6E808C;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px -10px rgba(0,0,0,.6);
+}}
+:root[data-theme="dark"]{
+  --ground:#0E1519;--panel:#172026;--panel-2:#1D282F;--sunk:#0A1014;
+  --ink:#E8EEF1;--ink-soft:#A3B2BA;--ink-faint:#8D9EA7;--rule:#2C3A42;--rule-soft:#24313A;
+  --accent:#F2C95C;--accent-ink:#F6D88C;--accent-wash:#332A10;
+  --warn:#E0B04E;--warn-wash:#352A12;--bad:#E07067;--bad-wash:#3B1E1B;--good:#6BC293;--good-wash:#17301F;--on-accent:#0B1A20;--warn-ink:#E8BE62;
+  --act1:#E8C24E;--act2:#F0985A;--act3:#5AA9E6;--act4:#5CC4B0;--act5:#EE6E62;--act6:#A98BEF;--act7:#A9B7C2;
+  --gold:#E0BE48;--gold-wash:#352E14;--gold-ink:#E0BE48;
+  --ecf:#131A1F;--grid:#26303D;--paper:#1E262B;
+  --carb:#E8A54A;--prot:#E07A84;--fat:#E8C24E;--alc:#A9B3BB;--fiber:#6CC070;--water:#5AA9E6;--vit:#A98BEF;--min:#A9B7C2;
+  --sfa:#F07A5E;--mufa:#A5CF5A;--pufa:#6FA8EC;--trans:#D57FC8;--n3:#4FD0C8;--n6:#9AA5F7;--n9:#C9D46A;
+  --mufa-wash:#26331A;--trans-wash:#3A2238;--chol:#F0A060;--plhead:#6FC0DE;--chain:#CDB98A;--el-c:#9AA3AA;--el-h:#F2F4F5;--el-o:#FF6B5B;--glyc:#A98BEF;--h2o:#6FB3EC;
+  --chylo:#E8D27A;--vldl:#F2A65A;--ldl:#EE6E62;--hdl:#5CC48C;--apo:#E07A84;--rec:#B79BE8;
+  --liver:#C26A5A;--liver2:#8E4A3E;--gut:#6E4442;--gut-edge:#E0A39C;--muscle:#D9787A;--muscle2:#7A3E40;--adipose:#5E5024;--adipose-edge:#E8C24E;
+  --artery:#5A3430;--wall:#8A4A44;--blood:#E05A50;--plasma:#2A1C1C;--bile:#B8D85A;--lymph:#2F3E24;--lymph-edge:#A9CF8A;--macro:#B79BE8;--plaque:#D9B84A;--stomach:#7A4652;--pancreas:#7A5E3E;--gall:#7E9A3A;
+  --skin:#5A4434;--skin-edge:#C9A78A;--body:#3A4852;--body-edge:#9AABB6;--hot:#F07A5E;--cold:#5AA9E6;--steel:#7F8C96;--glass:#1E2C34;--glass-edge:#7F99A6;
+  --butter:#D9C25A;--oil:#D9B84A;--olive:#A9C24A;--fish:#E8A080;--green:#7EC05A;--wood:#8A6A4A;--plate:#2A343A;--plate-edge:#6E808C;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button{font:inherit;color:inherit}
+a{color:var(--accent)}
+.topbar{background:var(--panel);border-bottom:1px solid var(--rule)}
+.topbar-in{max-width:1180px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;gap:16px;justify-content:space-between;flex-wrap:wrap}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+h1{font-family:var(--serif);font-weight:600;font-size:26px;margin:2px 0 0;line-height:1.2}
+.sub{margin:2px 0 0;color:var(--ink-soft);font-size:15px}
+.wrap{max-width:1180px;margin:0 auto;padding:16px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tab{background:var(--panel);border:1px solid var(--rule);border-radius:var(--r);padding:9px 14px;cursor:pointer;font-weight:500;font-size:15px}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.tbtn{background:var(--panel-2);border:1px solid var(--rule);border-radius:var(--r);padding:8px 13px;cursor:pointer;font-size:14.5px}
+.tbtn:hover{border-color:var(--accent)}
+.tbtn:disabled{opacity:.45;cursor:default}
+.tbtn[aria-pressed="true"]{background:var(--accent-wash);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn{background:var(--accent);color:var(--on-accent);border:0;border-radius:var(--r);padding:10px 18px;font-weight:600;cursor:pointer;font-size:15px}
+.btn:disabled{opacity:.45;cursor:default}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:var(--r);box-shadow:var(--shadow);padding:16px 18px;min-width:0}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.grid,.grid2{grid-template-columns:1fr}}
+.stage{padding:10px}
+.canvas-holder{width:100%;border-radius:4px;overflow:hidden;border:1px solid var(--rule-soft);background:var(--ecf)}
+canvas{display:block;width:100%;touch-action:manipulation}
+.stagebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 4px 2px;font-size:14px;color:var(--ink-soft)}
+.caption{flex:1 1 220px;font-size:14px;color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;padding:8px 4px 2px;font-size:13px;color:var(--ink-soft)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.2)}
+.legend i.s{border-radius:2px}
+.legend i.ln{width:20px;height:0;border-radius:0;border:0;border-top:3px solid}
+.legend i.t{width:0;height:0;border-radius:0;border:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:11px solid;background:none!important}
+.rounds{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.round{border:1.5px solid var(--rule);background:var(--panel-2);border-radius:99px;padding:6px 13px;cursor:pointer;font-size:14px}
+.round[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-wash);color:var(--accent-ink);font-weight:600}
+.round .ok{color:var(--gold-ink);margin-left:4px}
+.mode{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--ink-soft)}
+.mode input{accent-color:var(--accent);width:18px;height:18px}
+.lvl-n{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.lvl-t{font-family:var(--serif);font-size:22px;font-weight:600;margin:4px 0 8px;line-height:1.25}
+.goal{background:var(--accent-wash);border-left:4px solid var(--accent);border-radius:4px;padding:10px 12px;margin:0 0 10px;font-size:15px}
+.goal b.h{display:block;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent-ink);margin-bottom:2px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.msg{margin:10px 0 0;padding:10px 12px;border-radius:var(--r);font-size:15px;display:none}
+.msg.show{display:block}
+.msg.good{background:var(--good-wash);color:var(--ink);border:1px solid var(--good)}
+.msg.warn{background:var(--warn-wash);color:var(--ink);border:1px solid var(--warn)}
+.msg.info{background:var(--panel-2);color:var(--ink);border:1px solid var(--rule)}
+.stars{font-size:22px;letter-spacing:2px;color:var(--gold-ink)}
+.side h3{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin:14px 0 6px}
+.side p,.side li{font-size:14.5px}
+.side ul{padding-left:18px;margin:6px 0}
+.small{font-size:13px;color:var(--ink-soft)}
+.typebtns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.typebtn{background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--r);padding:9px 0;cursor:pointer;font-family:var(--mono);font-weight:600;font-size:15px}
+.typebtn:hover{border-color:var(--accent)}
+.typebtn.right{border-color:var(--good);background:var(--good-wash)}
+.typebtn.wrong{border-color:var(--warn);background:var(--warn-wash)}
+.typebtn:disabled{cursor:default}
+.prog{height:8px;background:var(--sunk);border-radius:99px;overflow:hidden;margin:6px 0 10px}
+.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.timer{font-family:var(--mono);font-size:18px;font-weight:600}
+/* bags */
+.bags{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0 4px}
+.bag{position:relative;background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--r);padding:6px 4px 4px;cursor:grab;touch-action:none;user-select:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--mono);font-weight:700;font-size:14px}
+.bag svg{width:34px;height:44px;display:block}
+.bag.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-wash)}
+.bag.ok{border-color:var(--good);background:var(--good-wash)}
+.bag.no{border-color:var(--warn);background:var(--warn-wash)}
+.bag .mk{position:absolute;top:3px;right:5px;font-size:13px}
+.bag.ghost{position:fixed;z-index:50;pointer-events:none;opacity:.9;box-shadow:0 10px 24px -8px rgba(0,0,0,.4)}
+.droptarget{outline:3px dashed var(--accent);outline-offset:-3px}
+.abbox{background:var(--panel-2);border:1px solid var(--rule);border-radius:var(--r);padding:10px 12px;font-size:14.5px;margin-top:10px}
+/* sim */
+.ctl{display:flex;flex-direction:column;gap:4px;margin:8px 0}
+.ctl label{font-size:14.5px;font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.ctl output{font-family:var(--mono);font-weight:600;color:var(--accent-ink)}
+.ctl input[type=range]{accent-color:var(--accent);width:100%}
+.ticks{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-faint);font-family:var(--mono)}
+.readouts{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:6px}
+.readouts th{text-align:left;font-weight:500;color:var(--ink-soft);padding:5px 6px 5px 0;border-top:1px solid var(--rule-soft)}
+.srhead th,.srhead td,.readouts caption.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;padding:0;border:0}
+.readouts td{padding:5px 0;border-top:1px solid var(--rule-soft);font-family:var(--mono);font-size:13.5px;text-align:right;white-space:nowrap}
+.chal{list-style:none;padding:0;margin:6px 0}
+.chal li{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-top:1px solid var(--rule-soft);font-size:14px}
+.chal .ck{flex:0 0 22px;height:22px;border-radius:50%;border:1.5px solid var(--rule);display:grid;place-items:center;font-size:13px;font-family:var(--mono)}
+.chal li.done .ck{background:var(--good);border-color:var(--good);color:var(--on-accent)}
+.status{font-size:14.5px;padding:8px 10px;border-radius:var(--r);margin-top:8px;border:1px solid var(--rule);background:var(--panel-2)}
+.status.warn{background:var(--warn-wash);border-color:var(--warn)}
+.status.bad{background:var(--bad-wash);border-color:var(--bad)}
+.status.good{background:var(--good-wash);border-color:var(--good)}
+/* sequencer */
+ol.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.item{display:flex;align-items:center;gap:10px;background:var(--panel);border:1.5px solid var(--rule);border-left:6px solid var(--act4);border-radius:var(--r);padding:7px 8px 7px 10px;touch-action:none;user-select:none;cursor:grab;transition:background .15s,border-color .15s}
+.item.drag{box-shadow:0 10px 24px -8px rgba(0,0,0,.4);cursor:grabbing;border-color:var(--accent);z-index:2;position:relative}
+.item .pos{font-family:var(--mono);font-size:13px;color:var(--ink-faint);width:20px;text-align:right;flex:0 0 auto}
+.item .grip{color:var(--ink-faint);font-size:18px;line-height:1;flex:0 0 auto}
+.item .txt{flex:1;font-size:15px;line-height:1.35}
+.item .mv{display:flex;flex-direction:column;gap:2px}
+.mv button{width:30px;height:24px;border:1px solid var(--rule);background:var(--panel-2);border-radius:4px;cursor:pointer;font-size:12px;padding:0;line-height:1}
+.mv button:hover{border-color:var(--accent)}
+.item.right{background:var(--good-wash);border-color:var(--good)}
+.item.off{background:var(--warn-wash);border-color:var(--warn)}
+.item.hinted{box-shadow:0 0 0 3px var(--gold)}
+.sc-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sc-n{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em}
+.sc-title{font-family:var(--serif);font-size:22px;font-weight:600;margin:2px 0 6px}
+.qlab{font-weight:600;margin:12px 0 8px}
+.opts{display:grid;grid-template-columns:1fr;gap:7px}
+.opt{text-align:left;background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--r);padding:9px 12px;cursor:pointer;font-size:14.5px;line-height:1.35}
+.opt:hover{border-color:var(--accent)}
+.opt.right{border-color:var(--good);background:var(--good-wash)}
+.opt.wrong{border-color:var(--warn);background:var(--warn-wash)}
+.fb{margin:8px 0 0;font-size:14.5px;padding:8px 10px;border-radius:4px;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--good-wash);border-left:4px solid var(--good)}
+.fb.no{background:var(--warn-wash);border-left:4px solid var(--warn)}
+.explain{margin-top:14px;padding:12px 14px;background:var(--accent-wash);border-left:4px solid var(--accent);border-radius:4px;display:none}
+.explain.show{display:block}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--rule);display:grid;place-items:center;font-family:var(--mono);font-size:12.5px;background:var(--panel-2);cursor:pointer;padding:0}
+.chip.cur{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+.chip.done{border-color:var(--good);background:var(--good-wash);color:var(--good)}
+.chip.done.cur{background:var(--accent);color:var(--on-accent)}
+.calm{font-size:13px;color:var(--ink-faint);margin:8px 0 0}
+.subtabs{display:flex;gap:6px;margin:0 0 12px;flex-wrap:wrap}
+footer{max-width:1180px;margin:0 auto;padding:6px 16px 28px;font-size:13px;color:var(--ink-faint)}
+footer a{color:var(--ink-soft)}
+kbd{font-family:var(--mono);font-size:12.5px;border:1px solid var(--rule);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--panel-2)}
+sub,sup{line-height:0}
+[hidden]{display:none!important}
+/* heart lab */
+.sbank{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin-top:10px}
+.sbtn{background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--r);padding:7px 9px;cursor:pointer;font-size:14px;text-align:left;line-height:1.25}
+.sbtn:hover{border-color:var(--accent)}
+.sbtn.done{border-color:var(--good);background:var(--good-wash)}
+.sbtn.no{border-color:var(--warn);background:var(--warn-wash)}
+.sbtn.hint{box-shadow:0 0 0 3px var(--gold)}
+.paint{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.paint button{display:inline-flex;align-items:center;gap:8px}
+.paint i{width:16px;height:16px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.25)}
+.rhythms{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}
+.rhythms .tbtn{text-align:left;font-size:14px;line-height:1.25}
+.mopts{display:grid;grid-template-columns:1fr;gap:6px;margin:8px 0}
+.slwrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 4px 0}
+.slwrap input[type=range]{flex:1 1 260px;accent-color:var(--accent)}
+.slwrap output{font-family:var(--mono);font-weight:600;min-width:72px}
+.qcard{margin-top:12px;border:1px solid var(--rule);border-radius:var(--r);padding:12px 14px;background:var(--panel-2)}
+.qcard h3{margin-top:0}
+.scen{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 4px}
+.big{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1.1}
+select{font:inherit;background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:var(--r);padding:4px 6px}
+/* genetics case lab */
+.gtgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.gtgrid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.gbtn{font-family:var(--mono);font-weight:600;font-size:15px;padding:8px 4px;text-align:center}
+.gbtn sup{font-size:10.5px;line-height:0}
+.modes{display:grid;grid-template-columns:1fr;gap:6px}
+.modes .tbtn{text-align:left;line-height:1.3}
+.modes .tbtn small{display:block;font-size:12.5px;color:var(--ink-soft);font-weight:500}
+.modes .tbtn[aria-pressed="true"] small{color:var(--accent-ink)}
+.kidbtns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:8px 0}
+.kidbtns .btn{padding:10px 6px;font-size:14.5px}
+.readouts td.l{font-family:var(--sans);text-align:left;white-space:normal}
+.readouts thead th{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.04em;border-top:0}
+.case{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.case{grid-template-columns:1fr}}
+.casechips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.casechip{border:1.5px solid var(--rule);background:var(--panel-2);border-radius:99px;padding:6px 12px;cursor:pointer;font-size:14px}
+.casechip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-wash);color:var(--accent-ink);font-weight:600}
+.casechip .ok{color:var(--good);margin-left:4px;font-weight:700}
+.story{font-size:15.5px;margin:0 0 8px}
+.qblock{border-top:1px solid var(--rule-soft);padding-top:8px;margin-top:10px}
+.hintbox{margin:8px 0 0;padding:8px 10px;border-radius:4px;background:var(--gold-wash);border-left:4px solid var(--gold);font-size:14.5px}
+.meter{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--ink-soft);margin-bottom:6px}
+.meter b{color:var(--ink);font-family:var(--mono)}
+/* sort game */
+.pool{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;padding:10px;border:1.5px dashed var(--rule);border-radius:var(--r);background:var(--panel-2);margin:8px 0 12px}
+.scard{background:var(--panel);border:1.5px solid var(--rule);border-left:5px solid var(--accent);border-radius:var(--r);padding:8px 10px;cursor:grab;font-size:14.5px;line-height:1.3;text-align:left;touch-action:none;user-select:none;max-width:100%}
+.scard:hover{border-color:var(--accent)}
+.scard[aria-pressed="true"]{box-shadow:0 0 0 3px var(--accent);border-color:var(--accent)}
+.scard.ghost{position:fixed;z-index:60;pointer-events:none;opacity:.92;box-shadow:0 10px 24px -8px rgba(0,0,0,.45)}
+.scard.placed{cursor:default;border-left-color:var(--good);background:var(--good-wash);font-size:13.5px;padding:6px 8px}
+.scard.hinted{box-shadow:0 0 0 3px var(--gold)}
+.bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.bin{border:1.5px solid var(--rule);border-radius:var(--r);background:var(--panel);padding:8px;display:flex;flex-direction:column;gap:6px;min-height:150px}
+.bin.over{outline:3px dashed var(--accent);outline-offset:-3px}
+.bin.hintbin{box-shadow:0 0 0 3px var(--gold)}
+.binhead{display:flex;align-items:center;gap:8px;width:100%;background:var(--panel-2);border:1px solid var(--rule);border-radius:var(--r);padding:6px;cursor:pointer;font-weight:600;font-size:14.5px;text-align:left;line-height:1.25}
+.binhead:hover{border-color:var(--accent)}
+.binhead svg{width:56px;height:46px;flex:0 0 auto}
+.binitems{display:flex;flex-direction:column;gap:5px}
+.sortbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 8px}
+.sorthead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+h2.sec{font-family:var(--serif);font-size:21px;margin:2px 0 6px;font-weight:600}
+.sim-note{font-size:13.5px;color:var(--ink-soft);margin:6px 0 0}
+.readouts td{padding-left:10px}
+.diskgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.diskgrid .tbtn{text-align:left;font-size:13.5px;line-height:1.25;padding:7px 8px}
+.diskgrid .tbtn b{font-family:var(--mono);display:inline-block;min-width:34px}
+.readouts.chart td{text-align:center;padding-left:4px}
+.readouts.chart th,.readouts.chart td{font-size:13px}
+.readouts thead th{color:var(--ink-soft)}
+.scen .tbtn{font-family:var(--mono);font-size:13.5px}
+.seg3 .tbtn.right,.scen .tbtn.right{border-color:var(--good);background:var(--good-wash)}
+.seg3 .tbtn.wrong,.scen .tbtn.wrong{border-color:var(--warn);background:var(--warn-wash)}
+.ok-ic{color:var(--good);font-weight:700}
+.no-ic{color:var(--warn-ink);font-weight:700}
+.methods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.methods .tbtn{text-align:left;line-height:1.25;font-size:14px}
+.seg3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.seg3 .tbtn,.seg4 .tbtn{font-size:13.5px;line-height:1.2;padding:8px 6px}
+.seg4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.verdict{font-weight:700}
+.drugbtns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.drugbtns .tbtn{font-size:13.5px;line-height:1.25;padding:7px 8px;text-align:left}
+.drugbtns .tbtn small{display:block;font-family:var(--mono);font-size:12px;color:var(--ink-soft);font-weight:500}
+.drugbtns .tbtn[aria-pressed="true"] small{color:var(--accent-ink)}
+.alerts{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.alert{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:var(--r);border:1px solid var(--rule);border-left-width:5px;background:var(--panel-2);font-size:14.5px}
+.alert b{white-space:nowrap}
+.alert .ic{flex:0 0 auto;font-family:var(--mono);font-weight:700;font-size:12px;padding:1px 6px;border-radius:4px;border:1.5px solid currentColor}
+.alert.bad{border-color:var(--bad);background:var(--bad-wash)}.alert.bad .ic{color:var(--bad)}
+.alert.warn{border-color:var(--warn);background:var(--warn-wash)}.alert.warn .ic{color:var(--warn-ink)}
+.alert.good{border-color:var(--good);background:var(--good-wash)}.alert.good .ic{color:var(--good)}
+.alert.info{border-color:var(--accent);background:var(--accent-wash)}.alert.info .ic{color:var(--accent-ink)}
+.readouts td.hi{color:var(--bad);font-weight:700}.readouts td.lo{color:var(--accent-ink);font-weight:700}.readouts td.ok{color:var(--good);font-weight:600}
+.bins{grid-template-columns:repeat(auto-fit,minmax(185px,1fr))}.binhead span{min-width:0;overflow-wrap:break-word}
+.practice-banner{background:var(--gold-wash);border-left:4px solid var(--gold);border-radius:4px;padding:8px 12px;margin:0 0 12px;font-size:14.5px;color:var(--ink)}
+.practice-tag{display:inline-block;background:var(--gold-wash);border:1.5px solid var(--gold);color:var(--ink);border-radius:6px;padding:4px 8px;font-size:13px;font-weight:600;line-height:1.3}
+.lab-sel{display:block;font-weight:600;font-size:14.5px;margin:12px 0 4px}
+#calcType{width:100%;padding:7px 8px;font-size:15px}
+.probcard{margin:12px 0 8px;padding:12px 14px;border:1px solid var(--rule);border-left:5px solid var(--accent);border-radius:var(--r);background:var(--panel-2);font-size:15.5px;line-height:1.5}
+.probcard .pt{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);display:block;margin-bottom:4px}
+.probcard .rd{display:block;font-size:13.5px;color:var(--ink-soft);margin-top:6px}
+.ansrow{display:flex;flex-direction:column;gap:4px;margin:8px 0}
+.ans-l{font-weight:600;font-size:14.5px}
+.ansbox{display:flex;align-items:center;gap:8px}
+.ansbox input{font:600 18px var(--mono);width:150px;padding:7px 9px;border:1.5px solid var(--rule);border-radius:var(--r);background:var(--panel);color:var(--ink)}
+.ansbox input:focus{outline:3px solid var(--accent);outline-offset:1px}
+.unit{font-family:var(--mono);font-weight:600;font-size:15px;color:var(--ink-soft)}
+.streak{margin-top:10px}
+.seg2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.seg4b{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.seg2 .tbtn,.seg4b .tbtn{font-size:13.5px;line-height:1.25;padding:8px 6px}
+.marfields{display:grid;grid-template-columns:1fr;gap:6px}
+.mf{display:grid;grid-template-columns:118px 1fr;gap:10px;align-items:baseline;text-align:left;background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--r);padding:8px 10px;cursor:pointer;font-size:14.5px;line-height:1.35}
+.mf:hover{border-color:var(--accent)}
+.mf .k{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft)}
+.mf.right{border-color:var(--good);background:var(--good-wash)}
+.mf.wrong{border-color:var(--warn);background:var(--warn-wash)}
+.mf.hinted{box-shadow:0 0 0 3px var(--gold)}
+.antis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.antis .tbtn{text-align:left;font-size:14px;line-height:1.25;padding:8px 9px}
+.antis .tbtn.right{border-color:var(--good);background:var(--good-wash)}
+.antis .tbtn.wrong{border-color:var(--warn);background:var(--warn-wash)}
+.antis .tbtn.hinted{box-shadow:0 0 0 3px var(--gold)}
+@media (max-width:420px){.mf{grid-template-columns:1fr;gap:2px}.antis{grid-template-columns:1fr}}
+.case.wide{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+@media (max-width:900px){.case.wide{grid-template-columns:1fr}}
+.ctl input[type=range]:disabled{opacity:.45}
+.modes3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.modes3 .tbtn{text-align:left;font-size:13.5px;line-height:1.25;padding:7px 8px}
+.modes3 .tbtn small{display:block;font-size:12px;color:var(--ink-soft);font-weight:500}
+.modes3 .tbtn[aria-pressed="true"] small{color:var(--accent-ink)}
+.gsel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.gsel .tbtn{font-size:13.5px;padding:7px 4px;line-height:1.25}
+.gsel .tbtn small{display:block;font-family:var(--mono);font-size:11.5px;color:var(--ink-soft)}
+.gsel .tbtn[aria-pressed="true"] small{color:var(--accent-ink)}
+.lifeq .opts{margin-top:6px}
+.hgrid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.hgrid{grid-template-columns:1fr}}
+.target{border:2px solid var(--act6);border-radius:var(--r);padding:10px 12px;background:var(--panel-2);margin-bottom:10px}
+.target .k{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);display:block}
+.eqn{font-family:var(--mono);font-size:15.5px;font-weight:600;overflow-wrap:anywhere}
+.hzone{border:2px dashed var(--rule);border-radius:var(--r);padding:8px;min-height:90px;display:flex;flex-direction:column;gap:8px}
+.hzone.over{border-color:var(--accent);background:var(--accent-wash)}
+.hzone h3{margin:0;font-size:13px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft)}
+.hzone .empty{font-size:13.5px;color:var(--ink-soft);margin:0}
+.hcard{background:var(--panel);border:1.5px solid var(--rule);border-left:6px solid var(--exo);border-radius:var(--r);padding:8px 10px;touch-action:none}
+.hcard.pos{border-left-color:var(--endo)}
+.hcard.hinted{box-shadow:0 0 0 3px var(--gold)}
+.hcard.drag{opacity:.9;box-shadow:var(--shadow);position:relative;z-index:20}
+.hcard .top{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
+.hcard .grip{cursor:grab;font-family:var(--mono);font-size:13px;color:var(--ink-soft);border:1px dashed var(--rule);border-radius:4px;padding:2px 6px;background:var(--panel-2)}
+.hcard .dh{font-family:var(--mono);font-weight:700;font-size:14.5px}
+.hcard .dh.neg{color:var(--bad)}.hcard .dh.posv{color:var(--endo-ink)}
+.hcard .ctrls{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center}
+.hcard .ctrls .tbtn{padding:5px 9px;font-size:13.5px}
+.hcard .mult{font-family:var(--mono);font-weight:700;min-width:44px;text-align:center}
+.sumbox{border:1.5px solid var(--rule);border-radius:var(--r);padding:10px 12px;background:var(--panel-2);margin-top:10px}
+.sumbox .eqn s{color:var(--bad)}
+.sumbox .tot{font-family:var(--mono);font-weight:700;font-size:16px;margin-top:4px}
+.dhpos{color:var(--endo-ink)}.dhneg{color:var(--bad)}
+.hintline{font-size:14.5px;margin:4px 0}
+.choices{display:grid;grid-template-columns:1fr;gap:6px;margin:8px 0}
+.choices .opt{font-size:14.5px}
+.scard svg{display:block;width:64px;height:40px;margin:0 auto 4px}
+.scard.placed svg{width:48px;height:30px}
+.preset{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.preset .tbtn{font-size:13px;line-height:1.25;padding:7px 6px}
+.toggle2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.toggle2 .tbtn{font-size:13.5px;line-height:1.25;padding:7px 6px}
+.readouts td.flag{font-family:var(--sans);font-size:13px;text-align:left;white-space:normal;padding-left:8px}
+.readouts td.flag.hi{color:var(--bad);font-weight:700}.readouts td.flag.mid{color:var(--warn-ink);font-weight:700}.readouts td.flag.ok{color:var(--good);font-weight:700}
+.readouts td.rng{font-family:var(--sans);font-size:12.5px;color:var(--ink-soft);text-align:left;white-space:normal;padding-left:8px}
+.bondstrip{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 2px}
+.bondbtn{font:600 12px/1 var(--mono);min-width:44px;padding:7px 4px;border-radius:5px;border:1.5px solid var(--rule);background:var(--panel);cursor:pointer;color:var(--ink)}
+.bondbtn:hover{border-color:var(--accent)}
+.bondbtn[data-s="c"]{border-color:var(--mufa);background:var(--mufa-wash)}
+.bondbtn[data-s="t"]{border-color:var(--trans);background:var(--trans-wash)}
+.bondbtn .st{display:block;font-size:10.5px;font-weight:500;margin-top:3px;color:var(--ink-soft)}
+.chips2{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.dchip{display:inline-flex;align-items:center;gap:6px;border:1.5px dashed var(--accent);border-radius:99px;padding:6px 12px;background:var(--accent-wash);color:var(--ink);cursor:grab;touch-action:none;user-select:none;font-size:13.5px;font-weight:600}
+.dchip.ghost{position:fixed;z-index:60;pointer-events:none;opacity:.92;box-shadow:0 10px 24px -8px rgba(0,0,0,.45)}
+.dchip i{width:14px;height:14px;border-radius:50%;display:inline-block}
+.btnrow{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.btnrow .tbtn{font-size:13.5px;padding:7px 10px}
+.facts{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+.facts th{text-align:left;font-weight:500;color:var(--ink-soft);padding:5px 8px 5px 0;border-top:1px solid var(--rule-soft);vertical-align:top;width:42%}
+.facts td{padding:5px 0;border-top:1px solid var(--rule-soft);font-weight:600}
+.buildmsg{font-size:14px;margin:6px 0 0;padding:8px 10px;border-radius:var(--r);background:var(--panel-2);border:1px solid var(--rule)}
+.buildmsg.warn{background:var(--warn-wash);border-color:var(--warn)}
+.toggle2 .tbtn small,.preset .tbtn small{display:block;font-size:11.5px;color:var(--ink-soft);font-weight:500;margin-top:2px}
+.toggle2 .tbtn[aria-pressed="true"] small,.preset .tbtn[aria-pressed="true"] small{color:var(--accent-ink)}
+.toggle2 .tbtn,.preset .tbtn{text-align:left}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+  <div>
+    <div class="kicker">Nutrition &middot; Module 4 &middot; Lipids</div>
+    <h1>Lipids Lab</h1>
+    <p class="sub">Run the lipoprotein traffic in the blood, build fatty acids and watch them pack or flow, practise the fat math on real-looking labels, sort the big ideas and work through real-life scenarios. Nothing here is graded.</p>
+  </div>
+  <button class="tbtn" id="themeBtn" type="button">Light / dark</button>
+</div></header>
+<div class="wrap">
+  <div class="tabs" role="tablist" aria-label="Lab parts">
+    <button class="tab" role="tab" aria-selected="true" aria-controls="tab-sim" data-tab="sim" id="tabbtn-sim" type="button">Part 1 &middot; Lipoprotein Traffic</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="tab-build" data-tab="build" id="tabbtn-build" type="button" tabindex="-1">Part 2 &middot; Fatty-Acid Builder</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="tab-calc" data-tab="calc" id="tabbtn-calc" type="button" tabindex="-1">Part 3 &middot; Practice Trainer</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="tab-sort" data-tab="sort" id="tabbtn-sort" type="button" tabindex="-1">Part 4 &middot; Sort It Out</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="tab-life" data-tab="life" id="tabbtn-life" type="button" tabindex="-1">Part 5 &middot; Lipids in Real Life</button>
+  </div>
+
+  <!-- PART 1 -->
+  <section id="tab-sim" role="tabpanel" aria-labelledby="tabbtn-sim">
+    <h2 class="gk-sr">Part 1: Lipoprotein Traffic</h2>
+    <div class="grid">
+      <div class="card stage">
+        <div class="canvas-holder"><canvas id="cvSim" role="img" aria-label="Lipoprotein traffic simulator."></canvas></div>
+        <div class="stagebar"><span class="caption" id="simCap">Lipoproteins circulate clockwise. Chylomicrons (pale yellow) and VLDL (orange) drop off triglyceride at muscle and fat cells; VLDL becomes LDL (red); LDL is cleared by liver receptors; HDL (green) carries extra cholesterol back to the liver.</span></div>
+        <div class="legend" id="simLegend"></div>
+        <table class="readouts" id="simRead"><caption class="gk-sr">Blood lipid panel, mg/dL</caption><thead><tr><th scope="col">Test</th><th scope="col">mg/dL</th><th scope="col">Adult reference</th><th scope="col">Result</th></tr></thead><tbody></tbody></table>
+        <p class="sim-note">A teaching model, not a clinical tool. LDL is set by how fast the liver makes lipoproteins and how fast LDL receptors clear them; values settle over a few seconds here instead of weeks. Diet effects are rounded from average study results and differ between people. Reference ranges are standard adult cut-offs in mg/dL. HDL depends mainly on genes, activity and smoking, so the sliders move it only a little.</p>
+      </div>
+      <aside class="card side" aria-label="Simulator controls">
+        <h3>Diet and body</h3>
+        <div class="ctl"><label for="slSat">Saturated fat <output id="oSat" for="slSat"></output></label><input type="range" id="slSat" min="4" max="20" step="1"><div class="ticks"><span>4%</span><span>under 10% advised</span><span>20%</span></div></div>
+        <div class="ctl"><label for="slFib">Soluble fiber <output id="oFib" for="slFib"></output></label><input type="range" id="slFib" min="0" max="15" step="1"><div class="ticks"><span>0 g</span><span>15 g/day</span></div></div>
+        <div class="ctl"><label for="slRec">LDL receptor activity <output id="oRec" for="slRec"></output></label><input type="range" id="slRec" min="40" max="150" step="5"><div class="ticks"><span>40%</span><span>typical 100%</span><span>150%</span></div></div>
+        <h3 id="meal-h">Blood drawn</h3>
+        <div class="toggle2" id="simMeal" role="group" aria-labelledby="meal-h"></div>
+        <h3 id="pre-h">Quick settings</h3>
+        <div class="preset" id="simPreset" role="group" aria-labelledby="pre-h"></div>
+        <div class="status" id="simStatus" role="status"></div>
+        <h3>Challenges</h3>
+        <ul class="chal" id="simChal"></ul>
+      </aside>
+    </div>
+  </section>
+
+  <!-- PART 2 -->
+  <section id="tab-build" role="tabpanel" aria-labelledby="tabbtn-build" hidden>
+    <h2 class="gk-sr">Part 2: Fatty-Acid Builder</h2>
+    <div class="grid">
+      <div class="card stage">
+        <div class="canvas-holder"><canvas id="cvBuild" role="img" aria-label="Fatty-acid builder."></canvas></div>
+        <div class="stagebar"><span class="caption" id="buildCap"></span></div>
+        <p class="small">Drag a chip onto the molecule, click a bond in the picture to change it, or use the bond buttons. Each bond button cycles single &rarr; cis double &rarr; trans double.</p>
+        <div class="chips2" aria-label="Drag chips">
+          <button type="button" class="dchip" id="chipC" data-k="C"><i style="background:var(--el-c)"></i>Carbon (drag to add)</button>
+          <button type="button" class="dchip" id="chipDc" data-k="c"><i style="background:var(--mufa)"></i>Cis double bond</button>
+          <button type="button" class="dchip" id="chipDt" data-k="t"><i style="background:var(--trans)"></i>Trans double bond</button>
+        </div>
+        <h3 class="small" id="bs-h" style="margin:8px 0 0;font-weight:600">Bonds, numbered from the acid end (&Delta;)</h3>
+        <div class="bondstrip" id="bondStrip" role="group" aria-labelledby="bs-h"></div>
+        <p class="sim-note">Melting points are rough estimates from typical values for pure fatty acids, to show the trend. Room temperature is taken as 22 °C.</p>
+      </div>
+      <aside class="card side" aria-label="Builder controls">
+        <h3>Chain length</h3>
+        <div class="btnrow"><button class="tbtn" type="button" id="bMinus">&minus; carbon</button><button class="tbtn" type="button" id="bPlus">+ carbon</button><button class="tbtn" type="button" id="bClear">Remove double bonds</button></div>
+        <h3 id="bp-h">Start from a real fatty acid</h3>
+        <div class="preset" id="buildPreset" role="group" aria-labelledby="bp-h"></div>
+        <h3>What you built</h3>
+        <table class="facts" id="buildFacts"><caption class="gk-sr">Properties of the fatty acid you built</caption><thead class="srhead"><tr><th scope="col">Property</th><th scope="col">Value</th></tr></thead><tbody></tbody></table>
+        <div class="buildmsg" id="buildMsg" role="status"></div>
+        <h3>Challenges</h3>
+        <ul class="chal" id="buildChal"></ul>
+      </aside>
+    </div>
+  </section>
+
+  <!-- PART 3 -->
+  <section id="tab-calc" role="tabpanel" aria-labelledby="tabbtn-calc" hidden>
+    <h2 class="gk-sr">Part 3: Practice Trainer</h2>
+    <div class="grid">
+      <div class="card stage">
+        <div class="canvas-holder"><canvas id="cvCalc" role="img" aria-label="Practice problem picture."></canvas></div>
+        <div class="stagebar"><span class="caption" id="calcCap"></span></div>
+        <p class="sim-note">The top of the picture shows the problem. The worked solution builds underneath after a correct answer, or when you ask for it, with units cancelling (struck through in red).</p>
+      </div>
+      <aside class="card side" aria-label="Practice trainer controls">
+        <label class="lab-sel" for="calcType">Problem type</label>
+        <select id="calcType"></select>
+        <div class="probcard" id="calcProb" aria-live="polite"></div>
+        <div class="ansrow" id="calcAnsRow">
+          <label for="calcAns" class="ans-l">Your answer</label>
+          <div class="ansbox"><input type="text" id="calcAns" inputmode="decimal" autocomplete="off" spellcheck="false"><span id="calcUnit" class="unit"></span></div>
+        </div>
+        <div class="bar">
+          <button class="btn" id="calcCheck" type="button">Check</button>
+          <button class="tbtn" id="calcHint" type="button">Hint</button>
+          <button class="tbtn" id="calcSol" type="button">Show worked solution</button>
+          <button class="tbtn" id="calcNew" type="button">New problem</button>
+        </div>
+        <div class="msg" id="calcMsg" role="status"></div>
+        <div class="hintbox" id="calcHintBox" role="status" hidden></div>
+        <div class="meter streak"><span>Streak <b id="calcStreak">0</b></span><span>Best <b id="calcBest">0</b></span><span>Solved <b id="calcSolved">0</b></span></div>
+        <p class="small">Type a number. Answers within normal rounding are accepted. Hints come in three steps. The streak counts answers right on the first check without opening the solution.</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- PART 4 -->
+  <section id="tab-sort" role="tabpanel" aria-labelledby="tabbtn-sort" hidden>
+    <h2 class="gk-sr">Part 4: Sort It Out</h2>
+    <div class="rounds" id="sRounds" role="group" aria-label="Rounds"></div>
+    <div class="card">
+      <div class="sorthead">
+        <div><div class="lvl-n" id="sN"></div><h2 class="sec" id="sTitle"></h2></div>
+        <div class="sortbar">
+          <label class="mode"><input type="checkbox" id="sRelaxed" checked> Relaxed mode (no timer)</label>
+          <span class="timer" id="sTimer" hidden>0:00</span>
+          <span class="stars" id="sStars" role="img" aria-label="Stars appear when the round is done"></span>
+        </div>
+      </div>
+      <p class="goal"><b class="h">Your job</b><span id="sGoal"></span></p>
+      <p class="small">Drag a card onto a box, or tap a card and then tap the box's name. Cards are buttons, so Tab and Enter work too.</p>
+      <div class="pool" id="sPool" aria-label="Cards to sort"></div>
+      <div class="bins" id="sBins"></div>
+      <div class="bar">
+        <button class="tbtn" id="sHint" type="button">Hint</button>
+        <button class="tbtn" id="sShow" type="button">Show answer</button>
+        <button class="tbtn" id="sShuffle" type="button">Start round over</button>
+        <button class="btn" id="sNext" type="button">Next round &rarr;</button>
+      </div>
+      <div class="msg" id="sMsg" role="status"></div>
+      <p class="small" id="sBest"></p>
+    </div>
+  </section>
+
+  <!-- PART 5 -->
+  <section id="tab-life" role="tabpanel" aria-labelledby="tabbtn-life" hidden>
+    <h2 class="gk-sr">Part 5: Lipids in Real Life</h2>
+    <div class="casechips" id="lifeChips" role="group" aria-label="Choose a scenario"></div>
+    <div class="case wide">
+      <div class="card stage">
+        <div class="canvas-holder"><canvas id="cvLife" role="img" aria-label="Scenario picture."></canvas></div>
+        <div class="stagebar"><span class="caption" id="lifeCap"></span></div>
+        <p class="sim-note">Fictional people. Teaching scenarios with rounded values, not personal medical or diet advice.</p>
+      </div>
+      <div class="card">
+        <div class="sc-n" id="lifeN"></div>
+        <h2 class="sc-title" id="lifeTitle"></h2>
+        <p class="story" id="lifeStory"></p>
+        <div id="lifeQs"></div>
+        <div class="bar" style="margin-top:12px">
+          <button class="tbtn" id="lifePrev" type="button">&larr; Previous</button>
+          <button class="btn" id="lifeNext" type="button">Next scenario &rarr;</button>
+        </div>
+        <p class="calm">Wrong picks are fine here. Each one tells you why.</p>
+      </div>
+    </div>
+  </section>
+</div>
+<footer>Dr. Akash Garg &middot; Nutrition Study Tools &middot; Drawings are simplified and not to scale. For learning only, not personal medical or diet advice. CC BY-NC-SA 4.0<br>Learn the ideas first in the <a href="Lipids-Walkthrough.html">Lipids Walkthrough</a>. Values are rounded teaching values based on standard reference data; individual results vary.</footer>
+<script>
+(function(){
+"use strict";
+const KEYS=["ground", "panel", "panel-2", "sunk", "ink", "ink-soft", "ink-faint", "rule", "rule-soft", "accent", "accent-ink", "accent-wash", "warn", "warn-wash", "bad", "bad-wash", "good", "good-wash", "on-accent", "warn-ink", "act1", "act2", "act3", "act4", "act5", "act6", "act7", "gold", "gold-wash", "gold-ink", "ecf", "grid", "paper", "carb", "prot", "fat", "alc", "fiber", "water", "vit", "min", "sfa", "mufa", "pufa", "trans", "n3", "n6", "n9", "mufa-wash", "trans-wash", "chol", "plhead", "chain", "el-c", "el-h", "el-o", "glyc", "h2o", "chylo", "vldl", "ldl", "hdl", "apo", "rec", "liver", "liver2", "gut", "gut-edge", "muscle", "muscle2", "adipose", "adipose-edge", "artery", "wall", "blood", "plasma", "bile", "lymph", "lymph-edge", "macro", "plaque", "stomach", "pancreas", "gall", "skin", "skin-edge", "body", "body-edge", "hot", "cold", "steel", "glass", "glass-edge", "butter", "oil", "olive", "fish", "green", "wood", "plate", "plate-edge"];
+/* ================= drawing kit (shared by both pages) ================= */
+let ctx=null;
+const C={};
+function readColors(){const s=getComputedStyle(document.documentElement);KEYS.forEach(k=>C[k]=s.getPropertyValue("--"+k).trim())}
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const seg=(p,a,b)=>clamp((p-a)/(b-a),0,1);
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const smooth=x=>{x=clamp(x,0,1);return x*x*(3-2*x)};
+const lerp=(a,b,t)=>a+(b-a)*t;
+const TAU=Math.PI*2;
+const gauss=(t,m,s)=>Math.exp(-((t-m)*(t-m))/(2*s*s));
+const FONT='"IBM Plex Sans",system-ui,sans-serif',MONO='"IBM Plex Mono",ui-monospace,monospace';
+function hx(c){let h=(c||"#888").trim();if(h[0]!=="#"){const m=h.match(/\d+/g);return m&&m.length>=3?[+m[0],+m[1],+m[2]]:[136,136,136]}h=h.slice(1);if(h.length===3)h=h.split("").map(x=>x+x).join("");const n=parseInt(h,16);return [n>>16&255,n>>8&255,n&255]}
+function isDark(){return hx(C.ground)[0]<60}
+function onFill(){return isDark()?"#0E1519":"#fff"}
+function P(T,L){return ((T%L)+L)%L/L}
+function mix(a,b,t){const A=hx(a),B=hx(b);t=clamp(t,0,1);return "rgb("+A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(",")+")"}
+function hexA(c,a){const A=hx(c);return `rgba(${A[0]},${A[1]},${A[2]},${clamp(a,0,1)})`}
+function rr(x,y,w,h,r){r=Math.max(0,Math.min(r,w/2,h/2));ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function circ(x,y,r,fill,stroke,lw){ctx.beginPath();ctx.arc(x,y,Math.max(0,r),0,TAU);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1.5;ctx.stroke()}}
+function ell(x,y,rx,ry,rot,fill,stroke,lw){ctx.beginPath();ctx.ellipse(x,y,Math.max(0,rx),Math.max(0,ry),rot||0,0,TAU);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1.5;ctx.stroke()}}
+function glow(x,y,r,col,a){if(r<=0)return;const A=hx(col);const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,`rgba(${A},${clamp(a==null?1:a,0,1)})`);g.addColorStop(1,`rgba(${A},0)`);ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill()}
+function label(x,y,t,o){o=o||{};if(o.a!=null){if(o.a<=0)return 0;ctx.save();ctx.globalAlpha*=clamp(o.a,0,1);const w=label(x,y,t,Object.assign({},o,{a:null}));ctx.restore();return w}const size=o.size||13;ctx.font=`${o.weight||500} ${size}px ${o.mono?MONO:FONT}`;
+  ctx.textAlign=o.align||"center";ctx.textBaseline="middle";
+  const w=ctx.measureText(t).width;let x0=x;if(ctx.textAlign==="center")x0=x-w/2;if(ctx.textAlign==="right")x0=x-w;
+  const a0=ctx.globalAlpha;
+  if(o.pill!==false){ctx.globalAlpha=a0*(o.bga==null?.9:o.bga);ctx.fillStyle=o.bg||C.panel;rr(x0-5,y-size*.75,w+10,size*1.5,4);ctx.fill();ctx.globalAlpha=a0;
+    if(o.border){ctx.strokeStyle=o.border;ctx.lineWidth=1.5;ctx.stroke()}}
+  ctx.fillStyle=o.color||C.ink;ctx.fillText(t,x,y+.5);return w}
+function txt(x,y,t,o){o=o||{};ctx.font=`${o.weight||500} ${o.size||12}px ${o.mono?MONO:FONT}`;ctx.textAlign=o.align||"left";ctx.textBaseline="middle";ctx.fillStyle=o.color||C.ink;ctx.fillText(t,x,y)}
+function line(x1,y1,x2,y2,col,lw,dash){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=col;ctx.lineWidth=lw||1.2;ctx.setLineDash(dash||[]);ctx.stroke();ctx.setLineDash([])}
+function arrow(x1,y1,x2,y2,col,lw,dash){line(x1,y1,x2,y2,col,lw||2,dash);const a=Math.atan2(y2-y1,x2-x1),h=7+(lw||2);ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-h*Math.cos(a-.45),y2-h*Math.sin(a-.45));ctx.lineTo(x2-h*Math.cos(a+.45),y2-h*Math.sin(a+.45));ctx.closePath();ctx.fillStyle=col;ctx.fill()}
+function chipText(x,y,t,col,fg){ctx.font=`600 11.5px ${MONO}`;ctx.textAlign="center";ctx.textBaseline="middle";const w=ctx.measureText(t).width;
+  ctx.fillStyle=col;rr(x-w/2-6,y-9.5,w+12,19,9.5);ctx.fill();ctx.fillStyle=fg||onFill();ctx.fillText(t,x,y+.5);return w+12}
+function chipL(x,y,t,col,fg){ctx.font=`600 11.5px ${MONO}`;const w=ctx.measureText(t).width;return chipText(x+w/2+6,y,t,col,fg)}
+function badge(x,y,n,col,r){r=r||10;circ(x,y,r,col||C.ink,C.panel,1.5);ctx.font=`700 ${r>10?13:11.5}px ${MONO}`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle=onFill();ctx.fillText(String(n),x,y+.5)}
+function rnd(i){const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)}
+function along(P_,p){let L=0;const ls=[];for(let i=0;i<P_.length-1;i++){const l=Math.hypot(P_[i+1][0]-P_[i][0],P_[i+1][1]-P_[i][1]);ls.push(l);L+=l}
+  let d=clamp(p,0,1)*L;for(let i=0;i<ls.length;i++){if(d<=ls[i]||i===ls.length-1){const f=ls[i]?Math.min(1,d/ls[i]):0;return [lerp(P_[i][0],P_[i+1][0],f),lerp(P_[i][1],P_[i+1][1],f)]}d-=ls[i]}return P_[P_.length-1]}
+function poly(pts,col,lw,dash){ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.strokeStyle=col;ctx.lineWidth=lw||1.5;ctx.setLineDash(dash||[]);ctx.lineJoin="round";ctx.lineCap="round";ctx.stroke();ctx.setLineDash([]);ctx.lineCap="butt"}
+function panelBox(x,y,w,h,o){o=o||{};rr(x,y,w,h,o.r||8);ctx.fillStyle=o.fill||hexA(C.panel,.85);ctx.fill();ctx.strokeStyle=o.stroke||C.rule;ctx.lineWidth=o.lw||1.2;ctx.stroke()}
+function wrapText(t,x,y,w,lh,o){o=o||{};ctx.font=`${o.weight||500} ${o.size||12}px ${o.mono?MONO:FONT}`;ctx.textAlign=o.align||"left";ctx.textBaseline="middle";ctx.fillStyle=o.color||C.ink;
+  const words=t.split(" ");let ln="";let yy=y;words.forEach(wd=>{const test=ln?ln+" "+wd:wd;if(ctx.measureText(test).width>w&&ln){ctx.fillText(ln,x,yy);ln=wd;yy+=lh}else ln=test});if(ln)ctx.fillText(ln,x,yy);return yy}
+function blobPath(x,y,r,seed,t,amp){amp=amp==null?.06:amp;ctx.beginPath();const N=44;for(let i=0;i<=N;i++){const a=i/N*TAU;const rad=r*(1+amp*Math.sin(a*3+seed+(t||0)*1.7)+amp*.7*Math.sin(a*5+seed*2.3-(t||0)*1.1));const X=x+Math.cos(a)*rad,Y=y+Math.sin(a)*rad;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)}ctx.closePath()}
+function withA(a,fn){ctx.save();ctx.globalAlpha*=clamp(a==null?1:a,0,1);fn();ctx.restore()}
+function title(x,y,t,col,align){txt(x,y,t.toUpperCase().replace(/Μ/g,"µ").replace(/µM/g,"µm"),{size:12,mono:true,weight:700,color:col||C["ink-soft"],align:align||"left"})}
+function lead(px,py,lx,ly,t,o){o=o||{};const a=o.a==null?1:o.a;if(a<=0)return;ctx.save();ctx.globalAlpha*=a;line(px,py,lx,ly,o.lc||C["ink-soft"],1.2);circ(px,py,2.6,o.lc||C["ink-soft"]);
+  label(lx,ly,t,{size:o.size||12.5,weight:o.weight||600,align:o.align||(lx<px?"right":"left"),border:o.border,color:o.color});ctx.restore()}
+function pulseRing(x,y,r,col,p){ctx.save();ctx.globalAlpha*=(1-p);ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(x,y,r*(.4+p),0,TAU);ctx.stroke();ctx.restore()}
+function plotFn(fn,t0,t1,x,y,w,h,v0,v1,col,lw,dash,upto){ctx.beginPath();const N=Math.max(40,Math.round(w));let started=false;for(let i=0;i<=N;i++){const t=lerp(t0,t1,i/N);if(upto!=null&&t>upto)break;const v=fn(t);const X=x+w*i/N,Y=y+h-(clamp(v,v0,v1)-v0)/(v1-v0)*h;started?ctx.lineTo(X,Y):(ctx.moveTo(X,Y),started=true)}
+  ctx.strokeStyle=col;ctx.lineWidth=lw||2;ctx.setLineDash(dash||[]);ctx.lineJoin="round";ctx.stroke();ctx.setLineDash([])}
+function bg(col){ctx.fillStyle=col||C.ecf;ctx.fillRect(0,0,4000,4000)}
+/* ================= shared drawing helpers (copied from the chemistry kit) ================= */
+function lumOf(c){const A=hx(c).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*A[0]+.7152*A[1]+.0722*A[2]}
+function inkOn(c){return lumOf(c)>.3?"#10161A":"#fff"}
+function fillStroke(f,s,lw){if(f){ctx.fillStyle=f;ctx.fill()}if(s){ctx.strokeStyle=s;ctx.lineWidth=lw||1.4;ctx.stroke()}}
+function checkMark(x,y,s,col){poly([[x-s,y],[x-s*.3,y+s*.7],[x+s,y-s*.7]],col||C.good,3)}
+function crossMark(x,y,s,col){line(x-s,y-s,x+s,y+s,col||C.bad,3);line(x+s,y-s,x-s,y+s,col||C.bad,3)}
+function fmtNum(v,dp){if(dp==null)dp=2;const r=Math.round(v*Math.pow(10,dp))/Math.pow(10,dp);let s=String(r);if(Math.abs(r)>=1000){const p=s.split(".");p[0]=p[0].replace(/\B(?=(\d{3})+(?!\d))/g,",");s=p.join(".")}return s}
+function sig(v,n){if(!isFinite(v))return "?";if(v===0)return (0).toFixed(Math.max(0,n-1));let e=Math.floor(Math.log10(Math.abs(v)));if(Math.abs(Math.round(v*Math.pow(10,n-1-e)))>=Math.pow(10,n))e++;const dp=n-1-e;
+  if(dp>=0){const s=(Math.round(v*Math.pow(10,dp))/Math.pow(10,dp)).toFixed(dp);return dp===0&&/0$/.test(s)?s+".":s}
+  const f=Math.pow(10,-dp);const r=Math.round(v/f)*f;return String(r)}
+function sigCount(str){let s=String(str).trim().replace(/^[+-]/,"").replace(/,/g,"");let ex="";const m=s.match(/^([0-9.]+)[eE]([+-]?\d+)$/);if(m)s=m[1];
+  if(!/^\d*\.?\d*$/.test(s)||s===""||s===".")return {n:0,amb:false};
+  const hasDot=s.indexOf(".")>=0;let d=s.replace(".","");d=d.replace(/^0+/,"");if(d==="")return {n:1,amb:false};
+  if(hasDot)return {n:d.length,amb:false};
+  const t=d.replace(/0+$/,"");return {n:t.length,amb:t.length!==d.length,max:d.length}}
+function graph(g){const X=v=>g.x+(v-g.x0)/(g.x1-g.x0)*g.w,Y=v=>g.y+g.h-(v-g.y0)/(g.y1-g.y0)*g.h;g.X=X;g.Y=Y;
+  rr(g.x,g.y,g.w,g.h,2);ctx.fillStyle=hexA(C.panel,.7);ctx.fill();
+  if(g.xt)g.xt.forEach(t=>{if(g.grid!==false)line(X(t),g.y,X(t),g.y+g.h,C.grid,1);txt(X(t),g.y+g.h+11,g.xf?g.xf(t):String(t),{size:10.5,align:"center",mono:true,color:C["ink-soft"]})});
+  if(g.yt)g.yt.forEach(t=>{if(g.grid!==false)line(g.x,Y(t),g.x+g.w,Y(t),C.grid,1);txt(g.x-5,Y(t),g.yf?g.yf(t):String(t),{size:10.5,align:"right",mono:true,color:C["ink-soft"]})});
+  line(g.x,g.y,g.x,g.y+g.h,C["ink-soft"],1.6);line(g.x,g.y+g.h,g.x+g.w,g.y+g.h,C["ink-soft"],1.6);
+  if(g.xl)txt(g.x+g.w,g.y+g.h+(g.xt?26:12),g.xl,{size:11.5,weight:600,align:"right",color:C["ink-soft"]});
+  if(g.yl)txt(g.x-(g.ylx||0),g.y-10,g.yl,{size:11.5,weight:600,align:"left",color:C["ink-soft"]});
+  if(g.title)title(g.x,g.y-24,g.title,g.tcol);return g}
+function curve(g,fn,a,b,col,lw,dash,o){o=o||{};ctx.save();ctx.beginPath();ctx.rect(g.x,g.y-2,g.w+2,g.h+4);ctx.clip();ctx.beginPath();const N=120;let st=false;
+  for(let i=0;i<=N;i++){const v=lerp(a,b,i/N);const w=fn(v);if(!isFinite(w)){st=false;continue}const X=g.X(v),Y=g.Y(w);st?ctx.lineTo(X,Y):(ctx.moveTo(X,Y),st=true)}
+  ctx.strokeStyle=col;ctx.lineWidth=lw||2.4;ctx.setLineDash(dash||[]);ctx.lineJoin="round";ctx.stroke();ctx.setLineDash([]);ctx.restore()}
+function gdot(g,a,b,col,lab,o){o=o||{};const X=g.X(a),Y=g.Y(b);if(X<g.x-1||X>g.x+g.w+1||Y<g.y-1||Y>g.y+g.h+1)return;if(o.guides){line(X,Y,X,g.y+g.h,hexA(col,.6),1.2,[3,3]);line(g.x,Y,X,Y,hexA(col,.6),1.2,[3,3])}
+  circ(X,Y,o.r||6,col,C.panel,2);if(lab)label(X+(o.dx||0),Y+(o.dy==null?-16:o.dy),lab,{size:o.size||11.5,weight:700,mono:true,border:col,align:o.align})}
+function F(n,nu,d,du){return {n:[String(n),nu==null?[]:Array.isArray(nu)?nu:[nu]],d:d==null?null:[String(d),du==null?[]:Array.isArray(du)?du:[du]]}}
+function chainLayout(items,fs){ctx.font=`600 ${fs}px ${MONO}`;return items.map(it=>{const nt=(it.n[0]+" "+it.n[1].join("·")).trim();const dt=it.d?(it.d[0]+" "+it.d[1].join("·")).trim():"";return Math.max(ctx.measureText(nt).width,ctx.measureText(dt).width)+8})}
+function chainWidth(items,res,o){o=o||{};const fs=o.size||15;const gap=o.gap||20;const ws=chainLayout(items,fs);let X=ws.reduce((a,b)=>a+b,0)+gap*(items.length-1);if(res){ctx.font=`700 ${fs+2}px ${MONO}`;X+=gap+12+ctx.measureText(res[0]+" "+res[1].join("·")).width}return X}
+function chain(x,y,items,res,p,o){o=o||{};const fs=o.size||15;const gap=o.gap||20;const ws=chainLayout(items,fs);
+  const ns=[],ds=[];items.forEach((it,i)=>{it.n[1].forEach((u,k)=>ns.push({i,k,u,used:false}));if(it.d)it.d[1].forEach((u,k)=>ds.push({i,k,u,used:false}))});
+  const pairs=[];ds.forEach(d=>{const m=ns.find(n=>!n.used&&n.u===d.u);if(m){m.used=true;d.used=true;pairs.push([m,d])}});
+  const pos={};let X=x;const nI=items.length;const pIn=o.pIn||.42,pSt=o.pSt||.78;
+  items.forEach((it,i)=>{const a=clamp((p*nI/pIn)-i,0,1);if(a<=0){X+=ws[i]+gap;return}ctx.save();ctx.globalAlpha*=a;const w=ws[i];const cx=X+w/2;const dy=(1-a)*-10;
+    const part=(val,units,yy,isN)=>{ctx.font=`600 ${fs}px ${MONO}`;const full=(val+" "+units.join("·")).trim();let px=cx-ctx.measureText(full).width/2;ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillStyle=o.ncol||C.ink;ctx.fillText(val,px,yy+dy);px+=ctx.measureText(val+" ").width;
+      units.forEach((u,k)=>{const uw=ctx.measureText(u).width;pos[(isN?"n":"d")+i+"_"+k]=[px,yy,uw];ctx.fillStyle=o.ucol||C["accent-ink"];ctx.fillText(u,px,yy+dy);px+=uw;if(k<units.length-1){ctx.fillStyle=C.ink;ctx.fillText("·",px,yy+dy);px+=ctx.measureText("·").width}})};
+    if(it.d){part(it.n[0],it.n[1],y-fs*.95,true);line(X,y,X+w,y,C.ink,1.6);part(it.d[0],it.d[1],y+fs*1.0,false)}else part(it.n[0],it.n[1],y,true);
+    if(i<nI-1)txt(X+w+gap/2,y,"×",{size:fs+2,weight:700,align:"center",color:C["ink-soft"]});ctx.restore();X+=w+gap});
+  X-=gap;const sp=clamp((p-pIn)/(pSt-pIn),0,1);
+  pairs.forEach((pr,j)=>{const f=clamp(sp*pairs.length-j,0,1);if(f<=0)return;[pr[0],pr[1]].forEach((q,qi)=>{const ps=pos[(qi===0?"n":"d")+q.i+"_"+q.k];if(!ps)return;line(ps[0]-2,ps[1]+6,ps[0]-2+(ps[2]+4)*f,ps[1]-6,C.bad,2.4)})});
+  const rf=clamp((p-pSt-.04)/.1,0,1);
+  if(res){txt(X+gap/2,y,"=",{size:fs+3,weight:700,align:"center",color:C["ink-soft"]});X+=gap+4;
+    if(rf>0)withA(rf,()=>{const t=res[0]+" "+res[1].join("·");ctx.font=`700 ${fs+2}px ${MONO}`;const w=ctx.measureText(t).width;rr(X-4,y-15,w+12,30,6);ctx.fillStyle=C["good-wash"];ctx.fill();ctx.strokeStyle=C.good;ctx.lineWidth=1.8;ctx.stroke();txt(X+2,y,t,{size:fs+2,weight:700,mono:true})});}
+  return pairs.length}
+function worked(x,y,w,h,W_,T,o){o=o||{};const per=o.per||16;const t=P(T,per)*per;panelBox(x,y,w,h,{fill:hexA(C.paper,.96)});
+  title(x+12,y+16,o.title||"Worked example",C["accent-ink"]);let yy=y+38;
+  const sz=o.size||12.5;
+  if(o.split){const sw=o.split;let ly=wrapText(W_.q,x+12,yy,sw-20,sz+4,{size:sz,weight:600})+sz+6;
+    (W_.given||[]).forEach((g,i)=>{const a=seg(t,.8+i*.5,1.2+i*.5);if(a>0)withA(a,()=>txt(x+14,ly,g,{size:sz-.5,mono:true,color:C.ink}));ly+=sz+6});
+    const t0=1.2+(W_.given||[]).length*.5;
+    (W_.conv||[]).forEach((g,i)=>{const a=seg(t,t0+i*.8,t0+.5+i*.8);if(a>0)withA(a,()=>label(x+14,ly+2,g,{size:sz-.5,weight:700,mono:true,align:"left",border:C.gold,bg:C["gold-wash"]}));ly+=sz+13});
+    line(x+sw,y+28,x+sw,y+h-10,C["rule-soft"],1.2);
+    const t1=t0+(W_.conv||[]).length*.8+.4;const cp=clamp((t-t1)/(per*.45),0,1);const fs=o.cfs||14;const rx=x+sw+14,rw=w-sw-24;
+    let cy=y+(o.cy||52)+fs;(W_.rows||[[W_.items,W_.res]]).forEach((rw_,ri,arr)=>{const p_=clamp(cp*arr.length-ri,0,1);if(p_>0)chain(rx,cy,rw_[0],rw_[1],p_,{size:fs});cy+=fs*2+(o.rowGap||22)});
+    let yy2=cy-fs+4;const t2=t1+per*.45+.3;
+    if(W_.sf){const a=seg(t,t2,t2+.6);if(a>0)withA(a,()=>wrapText(W_.sf,rx,yy2,rw,sz+3,{size:sz-.5,color:C.good,weight:600}));yy2+=(o.sfH||sz+10)}
+    if(W_.miss){const a=seg(t,t2+1.2,t2+1.8);if(a>0)withA(a,()=>{rr(rx-4,yy2-10,rw+8,o.missH||38,5);ctx.fillStyle=C["warn-wash"];ctx.fill();ctx.strokeStyle=C.warn;ctx.lineWidth=1.2;ctx.stroke();wrapText("Common mistake: "+W_.miss,rx+4,yy2+3,rw-8,sz+3,{size:sz-1,color:C.ink})})}
+    return t}
+  yy=wrapText(W_.q,x+12,yy,w-24,sz+4,{size:sz,weight:600})+sz+6;
+  (W_.given||[]).forEach((g,i)=>{const a=seg(t,.8+i*.5,1.2+i*.5);if(a>0)withA(a,()=>txt(x+14,yy,g,{size:sz-.5,mono:true,color:C.ink}));yy+=sz+6});
+  const t0=1.2+(W_.given||[]).length*.5;
+  (W_.conv||[]).forEach((g,i)=>{const a=seg(t,t0+i*.8,t0+.5+i*.8);if(a>0)withA(a,()=>{const ww=label(x+14,yy,g,{size:sz-.5,weight:700,mono:true,align:"left",border:C.gold,bg:C["gold-wash"]})});yy+=sz+12});
+  const t1=t0+(W_.conv||[]).length*.8+.4;const cp=clamp((t-t1)/(per*.45),0,1);
+  const fs=o.cfs||14;const cw=chainWidth(W_.items,W_.res,{size:fs});let cy=yy+fs+12;if(W_.items&&cp>0){const cx=o.center?x+Math.max(12,(w-cw)/2):x+14;chain(cx,cy,W_.items,W_.res,cp,{size:fs})}
+  yy=cy+fs*2+8;const t2=t1+per*.45+.3;
+  if(W_.sf){const a=seg(t,t2,t2+.6);if(a>0)withA(a,()=>wrapText(W_.sf,x+14,yy,w-28,sz+4,{size:sz-.5,color:C.good,weight:600}));yy+=sz+10}
+  if(W_.miss){const a=seg(t,t2+1.2,t2+1.8);if(a>0)withA(a,()=>{rr(x+10,yy-10,w-20,o.missH||38,5);ctx.fillStyle=C["warn-wash"];ctx.fill();ctx.strokeStyle=C.warn;ctx.lineWidth=1.2;ctx.stroke();wrapText("Common mistake: "+W_.miss,x+18,yy+3,w-36,sz+3,{size:sz-1,color:C.ink})})}
+  return t}
+function carrow(x1,y1,cx,cy,x2,y2,col,lw){ctx.beginPath();ctx.moveTo(x1,y1);ctx.quadraticCurveTo(cx,cy,x2,y2);ctx.strokeStyle=col;ctx.lineWidth=lw||2;ctx.stroke();const a=Math.atan2(y2-cy,x2-cx),h=8;ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-h*Math.cos(a-.45),y2-h*Math.sin(a-.45));ctx.lineTo(x2-h*Math.cos(a+.45),y2-h*Math.sin(a+.45));ctx.closePath();ctx.fillStyle=col;ctx.fill()}
+function pie(x,y,r,f,col,o){o=o||{};circ(x,y,r,hexA(C.sunk,.6),C["ink-soft"],1.5);if(f>0){ctx.beginPath();ctx.moveTo(x,y);ctx.arc(x,y,r,-Math.PI/2,-Math.PI/2+TAU*clamp(f,0,1));ctx.closePath();ctx.fillStyle=col;ctx.fill();ctx.strokeStyle=C.ink;ctx.lineWidth=1.2;ctx.stroke()}
+  if(o.lab)txt(x,y+r+14,o.lab,{size:12,weight:700,mono:true,align:"center",color:o.lc||C.ink})}
+function ctable(x,y,cols,rows,o){o=o||{};const rh=o.rh||26;const fs=o.size||12.5;let tw=cols.reduce((a,c)=>a+c[1],0);
+  rr(x,y,tw,rh*(rows.length+1),5);ctx.fillStyle=hexA(C.paper,.95);ctx.fill();ctx.strokeStyle=C.rule;ctx.lineWidth=1.2;ctx.stroke();
+  ctx.fillStyle=hexA(C.sunk,.55);ctx.fillRect(x+1,y+1,tw-2,rh-1);
+  let cx=x;cols.forEach((c,i)=>{txt(cx+c[1]/2,y+rh/2,c[0],{size:fs-.5,weight:700,align:"center",mono:true,color:C["ink-soft"]});if(i)line(cx,y+3,cx,y+rh*(rows.length+1)-3,C["rule-soft"],1);cx+=c[1]});
+  rows.forEach((r,ri)=>{const yy=y+rh*(ri+1);const a=o.ra?o.ra[ri]:1;if(a<=0)return;ctx.save();ctx.globalAlpha*=a;
+    if(o.hl&&o.hl[ri]){ctx.fillStyle=hexA(o.hl[ri],.18);ctx.fillRect(x+1,yy,tw-2,rh);ctx.strokeStyle=o.hl[ri];ctx.lineWidth=1.8;ctx.strokeRect(x+1.5,yy+.5,tw-3,rh-1)}
+    line(x+2,yy,x+tw-2,yy,C["rule-soft"],1);let c2=x;r.forEach((v,ci)=>{const hc=o.hc&&o.hc[ri+"_"+ci];txt(c2+cols[ci][1]/2,yy+rh/2,v,{size:fs,weight:hc?700:500,align:"center",mono:true,color:hc||C.ink});c2+=cols[ci][1]});ctx.restore()});
+  return {w:tw,h:rh*(rows.length+1),rowY:i=>y+rh*(i+1)+rh/2,colX:i=>{let s=x;for(let k=0;k<i;k++)s+=cols[k][1];return s+cols[i][1]/2}}}
+function wsteps(x,y,w,h,W_,t,o){o=o||{};panelBox(x,y,w,h,{fill:hexA(C.paper,.96)});title(x+12,y+16,W_.title||"Worked example",C["accent-ink"]);
+  const sz=o.size||12.5;let yy=y+36;if(W_.q){yy=wrapText(W_.q,x+12,yy,(o.qw||w-24),sz+4,{size:sz,weight:600})+sz+8}
+  const lx=o.lx!=null?x+o.lx:x+14;if(o.lx!=null)yy=y+(o.ly||40);
+  const per=o.step||1.6;let tt=.6;
+  (W_.lines||[]).forEach((L,i)=>{const p=clamp((t-tt)/per,0,1);
+    if(L.ch){const fs=o.cfs||14;const cy=yy+fs*.9;if(p>0){const cw=chainWidth(L.ch[0],L.ch[1],{size:fs});const sc=Math.min(1,(w-(lx-x)-16)/cw);ctx.save();ctx.translate(lx,cy);ctx.scale(sc,sc);chain(0,0,L.ch[0],L.ch[1],p,{size:fs});ctx.restore()}yy+=fs*2+24;tt+=per*1.6}
+    else if(L.gold){if(p>0)withA(p*2,()=>label(lx,yy,L.gold,{size:sz,weight:700,mono:true,align:"left",border:C.gold,bg:C["gold-wash"]}));yy+=sz+14;tt+=per*.6}
+    else{if(p>0)withA(p*2,()=>{ctx.font=`${L.b?700:600} ${sz+.5}px ${MONO}`;const tw=ctx.measureText(L.t).width;const mw=w-(lx-x)-16;const fs=tw>mw?(sz+.5)*mw/tw:sz+.5;txt(lx,yy,L.t,{size:fs,weight:L.b?700:600,mono:true,color:L.col||C.ink})});yy+=sz+10;tt+=per*.7}});
+  if(W_.ans){const a=seg(t,tt,tt+.6);if(a>0)withA(a,()=>{ctx.font=`700 ${sz+1.5}px ${MONO}`;const tw=ctx.measureText(W_.ans).width;rr(lx-4,yy-12,tw+14,26,6);ctx.fillStyle=C["good-wash"];ctx.fill();ctx.strokeStyle=C.good;ctx.lineWidth=1.8;ctx.stroke();txt(lx+3,yy+1,W_.ans,{size:sz+1.5,weight:700,mono:true})});yy+=30;tt+=1}
+  if(W_.miss){const a=seg(t,tt+.4,tt+1);if(a>0)withA(a,()=>{const mh=o.missH||36;rr(lx-4,yy-10,w-(lx-x)-8,mh,5);ctx.fillStyle=C["warn-wash"];ctx.fill();ctx.strokeStyle=C.warn;ctx.lineWidth=1.2;ctx.stroke();wrapText("Common mistake: "+W_.miss,lx+4,yy+4,w-(lx-x)-24,sz+3,{size:sz-1,color:C.ink})})}
+  return tt}
+function meterBar(x,y,w,f,col,lab){rr(x,y,w,14,7);ctx.fillStyle=hexA(C.sunk,.7);ctx.fill();if(f>0){rr(x,y,Math.max(14,w*clamp(f,0,1)),14,7);ctx.fillStyle=col;ctx.fill()}if(lab)txt(x+w+8,y+7,lab,{size:12,weight:700,mono:true})}
+function sup(s){return String(s).split("").map(c=>SUP[c]||c).join("")}
+function sci(v,n){if(!isFinite(v))return "?";if(v===0)return "0";const e=Math.floor(Math.log10(Math.abs(v)));if(e>=-2&&e<=3)return sig(v,n);let m=v/Math.pow(10,e);let ms=sig(m,n);if(Math.abs(+ms)>=10){m/=10;ms=sig(m,n);return ms+" × 10"+sup(e+1)}return ms+" × 10"+sup(e)}
+
+const SUP={"-":"⁻","0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"};
+/* ================= lipid drawing kit ================= */
+const D2R=Math.PI/180;
+/* level tags: food / body / cell-molecule / numbers */
+function vTag(x,y,k){const m={food:["FOOD",C.act1],body:["BODY",C.act5],cell:["MOLECULE / CELL",C.act3],calc:["NUMBERS",C.act6],lab:["LAB REPORT",C.act7]}[k];ctx.save();ctx.font=`700 10.5px ${MONO}`;const w=ctx.measureText(m[0]).width+12;rr(x,y-8,w,16,8);ctx.fillStyle=hexA(m[1],.16);ctx.fill();ctx.strokeStyle=m[1];ctx.lineWidth=1;ctx.stroke();ctx.fillStyle=C.ink;ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(m[0],x+6,y+.5);ctx.restore();return w}
+/* ---------- fatty acid geometry ----------
+   n carbons, dbl = {pos:'c'|'t'} where pos is the delta number (bond between C(pos) and C(pos+1)) */
+function faPts(n,dbl,o){o=o||{};const L=o.L||18,zig=(o.zig==null?30:o.zig)*D2R,bend=(o.bend==null?34:o.bend)*D2R*(o.bsign||1);let h=o.h||0;
+  const pts=[[o.x||0,o.y||0]];let nc=0;for(let i=0;i<n-1;i++){const d=h+(i%2===0?-zig:zig)*(o.flip?-1:1);const p=pts[i];pts.push([p[0]+Math.cos(d)*L,p[1]+Math.sin(d)*L]);
+    if(dbl&&dbl[i+1]==="c"){nc=(nc||0)+1;h+=bend*(o.alt?(nc%2?1:-1):1)}}
+  return pts}
+function faKind(n,dbl){const ks=Object.keys(dbl||{}).map(Number);if(!ks.length)return "sat";return ks.length===1?"mufa":"pufa"}
+function faOmega(n,dbl){const ks=Object.keys(dbl||{}).map(Number);if(!ks.length)return null;return n-Math.max(...ks)}
+function faCol(n,dbl){const k=faKind(n,dbl);const tr=Object.values(dbl||{}).indexOf("t")>=0;return tr?C.trans:k==="sat"?C.sfa:k==="mufa"?C.mufa:C.pufa}
+/* draw a fatty acid from its point list */
+function drawFA(pts,dbl,o){o=o||{};const col=o.col||C.chain,lw=o.lw||2.6;const n=pts.length;const a=o.a==null?1:o.a;if(a<=0)return;ctx.save();ctx.globalAlpha*=a;ctx.lineCap="round";
+  for(let i=0;i<n-1;i++){const p=pts[i],q=pts[i+1];const db=dbl&&dbl[i+1];
+    if(db){const dx=q[0]-p[0],dy=q[1]-p[1],l=Math.hypot(dx,dy);const nx=-dy/l*3.2,ny=dx/l*3.2;const dc=db==="t"?C.trans:(o.dcol||C.pufa);
+      line(p[0]+nx,p[1]+ny,q[0]+nx,q[1]+ny,dc,lw);line(p[0]-nx,p[1]-ny,q[0]-nx,q[1]-ny,dc,lw);if(o.hiDb===i+1)glow((p[0]+q[0])/2,(p[1]+q[1])/2,16,dc,.45)}
+    else line(p[0],p[1],q[0],q[1],col,lw)}
+  if(o.dots)pts.forEach((p,i)=>{if(i>0)circ(p[0],p[1],o.dots,C["el-c"])});
+  /* carboxyl head */
+  if(o.head!==false){const p=pts[0],q=pts[1];const ang=Math.atan2(q[1]-p[1],q[0]-p[0]);
+    if(o.head==="ester"){circ(p[0],p[1],3.5,C["el-c"])}
+    else{const o1=[p[0]+Math.cos(ang+Math.PI*.67)*16,p[1]+Math.sin(ang+Math.PI*.67)*16],o2=[p[0]+Math.cos(ang-Math.PI*.67)*16,p[1]+Math.sin(ang-Math.PI*.67)*16];
+      const nx=-(o1[1]-p[1])/16*2.4,ny=(o1[0]-p[0])/16*2.4;line(p[0]+nx,p[1]+ny,o1[0]+nx,o1[1]+ny,C.ink,2);line(p[0]-nx,p[1]-ny,o1[0]-nx,o1[1]-ny,C.ink,2);line(p[0],p[1],o2[0],o2[1],C.ink,2);
+      circ(o1[0],o1[1],6.5,C["el-o"],hexA(C.ink,.4),1);circ(o2[0],o2[1],6.5,C["el-o"],hexA(C.ink,.4),1);circ(o2[0]+Math.cos(ang-Math.PI*.95)*9,o2[1]+Math.sin(ang-Math.PI*.95)*9,4,C["el-h"],hexA(C.ink,.5),1);circ(p[0],p[1],4,C["el-c"]);
+      if(o.headLab)label(p[0]-6,p[1]-30,o.headLab,{size:11.5,weight:700,border:C["el-o"]})}}
+  if(o.tailLab){const p=pts[n-1];label(p[0]+(o.tailDx==null?26:o.tailDx),p[1]+(o.tailDy||0),o.tailLab,{size:11.5,weight:700,mono:true,border:C["ink-soft"]})}
+  if(o.nums){const ks=o.nums==="omega";pts.forEach((p,i)=>{if(i===0&&!ks)return;const num=ks?(n-i):(i+1);if(o.numEvery&&num%o.numEvery&&!(dbl&&(dbl[i+1]||dbl[i]))&&num!==1)return;
+    const up=(i%2===0)?-1:1;txt(p[0],p[1]+up*13*(o.flip?-1:1),(ks?"ω":"")+num,{size:o.numSize||10,mono:true,align:"center",weight:700,color:ks?C["accent-ink"]:C["ink-soft"]})})}
+  ctx.restore()}
+function fattyAcid(x,y,n,dbl,o){o=Object.assign({},o||{});const pts=faPts(n,dbl,Object.assign({x,y},o));drawFA(pts,dbl,o);return pts}
+/* small wavy hydrocarbon tail for icons */
+function tail(x,y,len,ang,col,lw,kink,T){ctx.beginPath();ctx.moveTo(x,y);const N=8;let h=ang;let px=x,py=y;for(let i=1;i<=N;i++){if(kink&&i===4)h+=.55;const d=len/N;const w=Math.sin(i*1.9+(T||0))*1.6;px+=Math.cos(h)*d-Math.sin(h)*w*.4;py+=Math.sin(h)*d+Math.cos(h)*w*.4;ctx.lineTo(px,py)}ctx.strokeStyle=col||C.chain;ctx.lineWidth=lw||2;ctx.lineCap="round";ctx.stroke();return [px,py]}
+/* ---------- triglyceride (glycerol + 3 fatty acids) ---------- */
+function glycerol(x,y,sep,o){o=o||{};const a=o.a==null?1:o.a;ctx.save();ctx.globalAlpha*=a;rr(x-10,y-sep-12,20,sep*2+24,8);ctx.fillStyle=hexA(C.glyc,.18);ctx.fill();ctx.strokeStyle=C.glyc;ctx.lineWidth=1.8;ctx.stroke();
+  for(let i=-1;i<=1;i++){circ(x,y+i*sep,5,C["el-c"]);if(i<1)line(x,y+i*sep+5,x,y+(i+1)*sep-5,C.ink,2)}ctx.restore()}
+function triglyceride(x,y,fas,o){o=o||{};const sep=o.sep||34,L=o.L||15;glycerol(x,y,sep,o);const ends=[];
+  fas.forEach((f,i)=>{const yy=y+(i-1)*sep;const gap=o.gap||0;line(x+5,yy,x+16+gap*.3,yy,C.ink,2);circ(x+18+gap*.3,yy,5,C["el-o"],hexA(C.ink,.4),1);
+    const pts=fattyAcid(x+30+gap,yy,f.n,f.dbl||{},{L,head:"ester",lw:o.lw||2.4,flip:i===1,dcol:f.dcol,a:o.fa});ends.push(pts[pts.length-1]);
+    if(o.labels)label(pts[pts.length-1][0]+30,yy,o.labels[i],{size:11,weight:700,border:faCol(f.n,f.dbl||{})})});return ends}
+/* compact TG icon used inside particles: glycerol bar with 3 tails */
+function tgIcon(x,y,s,ang,col){ctx.save();ctx.translate(x,y);ctx.rotate(ang||0);rr(-s*.18,-s*.55,s*.36,s*1.1,s*.15);ctx.fillStyle=C.glyc;ctx.fill();
+  for(let i=-1;i<=1;i++){ctx.beginPath();ctx.moveTo(s*.18,i*s*.4);ctx.lineTo(s*1.4,i*s*.4+(i===0?s*.12:0));ctx.strokeStyle=col||C.fat;ctx.lineWidth=Math.max(1.4,s*.22);ctx.lineCap="round";ctx.stroke()}ctx.restore()}
+/* ---------- phospholipid ---------- */
+function plIcon(x,y,s,ang,o){o=o||{};const hx_=Math.cos(ang),hy=Math.sin(ang);const px=-hy,py=hx_;
+  tail(x+px*s*.28+hx_*s*.4,y+py*s*.28+hy*s*.4,s*1.9,ang,o.tc||C.chain,Math.max(1.4,s*.2),false,o.T);tail(x-px*s*.28+hx_*s*.4,y-py*s*.28+hy*s*.4,s*1.9,ang,o.tc||C.chain,Math.max(1.4,s*.2),!o.noKink,o.T);
+  circ(x,y,s*.55,o.hc||C.plhead,hexA(C.ink,.45),1);if(o.P&&s>9)txt(x,y+.5,"P",{size:Math.round(s*.7),weight:700,align:"center",color:"#fff"})}
+/* ---------- cholesterol ---------- */
+function hexPath(cx,cy,r,rot){ctx.beginPath();for(let i=0;i<6;i++){const a=rot+i*Math.PI/3;const X=cx+Math.cos(a)*r,Y=cy+Math.sin(a)*r;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)}ctx.closePath()}
+function cholMol(x,y,s,o){o=o||{};const col=o.col||C.chol;ctx.save();ctx.translate(x,y);ctx.rotate(o.rot||0);const r=s;const dx=r*Math.sqrt(3);
+  const rings=[[0,0],[dx,0],[dx*1.5,-r*1.5]];rings.forEach(c=>{hexPath(c[0],c[1],r,Math.PI/6);ctx.fillStyle=hexA(col,.28);ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=Math.max(1.5,s*.18);ctx.stroke()});
+  /* five-membered ring */
+  const pc=[dx*2.45,-r*1.5];ctx.beginPath();for(let i=0;i<5;i++){const a=Math.PI+i*TAU/5;const X=pc[0]+Math.cos(a)*r*.86,Y=pc[1]+Math.sin(a)*r*.86;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)}ctx.closePath();ctx.fillStyle=hexA(col,.28);ctx.fill();ctx.stroke();
+  /* tail */
+  ctx.beginPath();ctx.moveTo(pc[0]+r*.6,pc[1]-r*.4);ctx.lineTo(pc[0]+r*1.4,pc[1]-r*.9);ctx.lineTo(pc[0]+r*2.2,pc[1]-r*.4);ctx.lineTo(pc[0]+r*3,pc[1]-r*.9);ctx.lineTo(pc[0]+r*3.7,pc[1]-r*.3);ctx.strokeStyle=col;ctx.stroke();
+  /* OH */
+  const oh=[-r*1.3,r*.9];line(-r*.85,r*.5,oh[0],oh[1],col,Math.max(1.5,s*.18));circ(oh[0],oh[1],Math.max(3,s*.38),C["el-o"],hexA(C.ink,.4),1);if(s>=9)txt(oh[0]-s*.95,oh[1]+s*.1,"HO",{size:Math.max(9,s*.75),weight:700,align:"right",color:C.ink});
+  ctx.restore()}
+function cholIcon(x,y,s,col){ctx.save();ctx.translate(x,y);const c=col||C.chol;hexPath(-s*.45,0,s*.5,Math.PI/6);ctx.fillStyle=c;ctx.fill();hexPath(s*.42,0,s*.5,Math.PI/6);ctx.fill();ctx.strokeStyle=hexA(C.ink,.45);ctx.lineWidth=.8;ctx.stroke();ctx.restore()}
+/* ---------- lipoproteins ---------- */
+const LP={chylo:{name:"Chylomicron",tg:86,ch:4,pl:8,pr:2,size:"75–1,200 nm",dens:"< 0.95",sz:1,col:"chylo"},vldl:{name:"VLDL",tg:55,ch:19,pl:18,pr:8,size:"30–80 nm",dens:"0.95–1.006",sz:.62,col:"vldl"},
+  ldl:{name:"LDL",tg:8,ch:47,pl:22,pr:23,size:"18–25 nm",dens:"1.019–1.063",sz:.42,col:"ldl"},hdl:{name:"HDL",tg:4,ch:20,pl:28,pr:48,size:"5–12 nm",dens:"1.063–1.21",sz:.3,col:"hdl"}};
+function lipo(x,y,r,kind,o){o=o||{};const L=LP[kind];const a=o.a==null?1:o.a;if(a<=0||r<=0)return;ctx.save();ctx.globalAlpha*=a;const col=C[L.col];
+  circ(x,y,r,hexA(col,.30),null);
+  if(r>9&&o.core!==false){const n=Math.round(clamp(r*r/22,4,60));const tgN=Math.round(n*L.tg/(L.tg+L.ch));for(let i=0;i<n;i++){const rr_=Math.sqrt(rnd(i*3.1+(o.seed||0)))*(r*.68),aa=rnd(i*7.7+(o.seed||0))*TAU+(o.T||0)*.15;const px=x+Math.cos(aa)*rr_,py=y+Math.sin(aa)*rr_;
+      if(i<tgN)circ(px,py,Math.max(1.5,r*.075),C.fat,null);else circ(px,py,Math.max(1.5,r*.075),C.chol,null)}}
+  /* shell */
+  ctx.lineWidth=Math.max(1.5,r*.1);ctx.strokeStyle=col;ctx.beginPath();ctx.arc(x,y,r*.9,0,TAU);ctx.stroke();
+  const nh=Math.round(clamp(r*.9,6,48));for(let i=0;i<nh;i++){const aa=i/nh*TAU;circ(x+Math.cos(aa)*r,y+Math.sin(aa)*r,Math.max(1.3,r*.075),C.plhead,null)}
+  /* apoproteins */
+  const np=Math.max(1,Math.round(L.pr/9+(r>20?1:0)));for(let i=0;i<np;i++){const aa=(i/np)*TAU+.6+(o.T||0)*.05;ctx.beginPath();ctx.arc(x,y,r*1.02,aa-.22,aa+.22);ctx.strokeStyle=C.apo;ctx.lineWidth=Math.max(2,r*.16);ctx.lineCap="round";ctx.stroke()}
+  ctx.lineCap="butt";circ(x,y,r,null,hexA(C.ink,.35),1);
+  if(o.lab)txt(x,y+(o.labDy||0),o.lab===true?L.name:o.lab,{size:o.labSize||(r>26?12:10.5),weight:700,align:"center",color:C.ink});
+  ctx.restore()}
+/* ---------- body organs ---------- */
+function liverShape(x,y,s,o){o=o||{};ctx.save();ctx.translate(x,y);ctx.scale(s/100,s/100);ctx.beginPath();ctx.moveTo(-95,-20);ctx.bezierCurveTo(-90,-60,10,-62,95,-45);ctx.bezierCurveTo(110,-40,100,-10,70,5);ctx.bezierCurveTo(30,28,-10,45,-45,40);ctx.bezierCurveTo(-80,36,-100,10,-95,-20);ctx.closePath();
+  ctx.fillStyle=o.fill||C.liver;ctx.fill();ctx.strokeStyle=hexA(C.ink,.45);ctx.lineWidth=2;ctx.stroke();ctx.beginPath();ctx.moveTo(-5,-55);ctx.quadraticCurveTo(0,-10,-15,38);ctx.strokeStyle=hexA("#000",.25);ctx.lineWidth=2;ctx.stroke();
+  ctx.globalAlpha*=.25;ell(-40,-25,30,10,-.2,"#fff");ctx.restore()}
+function gallbladder(x,y,s,squeeze){const sq=1-.35*clamp(squeeze||0,0,1);ell(x,y,s*.5*sq,s,0.3,C.gall,hexA(C.ink,.45),1.5);line(x+s*.25,y-s*.9,x+s*.5,y-s*1.5,C.gall,4)}
+function stomachShape(x,y,s,o){o=o||{};ctx.save();ctx.translate(x,y);ctx.scale(s/100,s/100);ctx.beginPath();ctx.moveTo(-30,-80);ctx.bezierCurveTo(-60,-70,-70,-10,-50,30);ctx.bezierCurveTo(-30,70,40,80,70,45);ctx.bezierCurveTo(85,30,90,10,80,0);ctx.bezierCurveTo(60,20,30,30,10,10);ctx.bezierCurveTo(-5,-10,-5,-50,-10,-80);ctx.closePath();
+  ctx.fillStyle=o.fill||C.stomach;ctx.fill();ctx.strokeStyle=hexA(C.ink,.45);ctx.lineWidth=2.4;ctx.stroke();ctx.restore()}
+function pancreasShape(x,y,s){ctx.save();ctx.translate(x,y);ctx.scale(s/100,s/100);ctx.beginPath();ctx.moveTo(-60,10);ctx.bezierCurveTo(-60,-15,0,-20,60,-18);ctx.bezierCurveTo(80,-16,82,-2,62,2);ctx.bezierCurveTo(20,8,-20,20,-40,30);ctx.bezierCurveTo(-55,36,-62,25,-60,10);ctx.closePath();ctx.fillStyle=C.pancreas;ctx.fill();ctx.strokeStyle=hexA(C.ink,.45);ctx.lineWidth=2;ctx.stroke();ctx.restore()}
+function bodyFig(x,y,h,o){o=o||{};const s=h/200;ctx.save();ctx.translate(x,y);ctx.scale(s,s);const f=o.fill||C.body,e=o.edge||C["body-edge"];ctx.lineWidth=2.2/s*.6;
+  circ(0,-170,22,f,e,2);rr(-9,-150,18,14,4);fillStroke(f,e,2);ctx.beginPath();ctx.moveTo(-42,-136);ctx.quadraticCurveTo(0,-146,42,-136);ctx.quadraticCurveTo(52,-90,44,-36);ctx.quadraticCurveTo(0,-26,-44,-36);ctx.quadraticCurveTo(-52,-90,-42,-136);ctx.closePath();fillStroke(f,e,2);
+  [[-1],[1]].forEach(([d])=>{ctx.beginPath();ctx.moveTo(d*42,-134);ctx.quadraticCurveTo(d*64,-100,d*62,-44);ctx.lineTo(d*50,-44);ctx.quadraticCurveTo(d*50,-96,d*38,-118);ctx.closePath();fillStroke(f,e,2);
+    ctx.beginPath();ctx.moveTo(d*4,-36);ctx.lineTo(d*40,-36);ctx.quadraticCurveTo(d*38,10,d*30,28);ctx.lineTo(d*10,28);ctx.quadraticCurveTo(d*6,-10,d*4,-36);ctx.closePath();fillStroke(f,e,2)});ctx.restore()}
+function villus(x,y,w,h,o){o=o||{};const T=o.T||0;ctx.save();ctx.beginPath();ctx.moveTo(x-w/2,y+h);ctx.lineTo(x-w/2,y+w/2);ctx.arc(x,y+w/2,w/2,Math.PI,0);ctx.lineTo(x+w/2,y+h);ctx.closePath();ctx.fillStyle=C.gut;ctx.fill();ctx.strokeStyle=C["gut-edge"];ctx.lineWidth=2;ctx.stroke();ctx.clip();
+  /* capillary loop */
+  ctx.beginPath();ctx.moveTo(x-w*.32,y+h);ctx.lineTo(x-w*.32,y+w*.45);ctx.arc(x,y+w*.45,w*.32,Math.PI,0);ctx.lineTo(x+w*.32,y+h);ctx.strokeStyle=hexA(C.blood,.8);ctx.lineWidth=3;ctx.stroke();
+  /* lacteal */
+  rr(x-w*.1,y+w*.35,w*.2,h,w*.1);ctx.fillStyle=C.lymph;ctx.fill();ctx.strokeStyle=C["lymph-edge"];ctx.lineWidth=1.5;ctx.stroke();ctx.restore();
+  /* brush border */
+  for(let a=0;a<=1;a+=1/14){const ang=Math.PI+a*Math.PI;const bx=x+Math.cos(ang)*w/2,by=y+w/2+Math.sin(ang)*w/2;line(bx,by,bx+Math.cos(ang)*5,by+Math.sin(ang)*5,C["gut-edge"],1.4)}
+  for(let yy=y+w/2;yy<y+h;yy+=9){line(x-w/2,yy,x-w/2-5,yy,C["gut-edge"],1.4);line(x+w/2,yy,x+w/2+5,yy,C["gut-edge"],1.4)}}
+function enterocyte(x,y,w,h,o){o=o||{};rr(x,y,w,h,8);ctx.fillStyle=o.fill||mix(C.gut,C.panel,.35);ctx.fill();ctx.strokeStyle=C["gut-edge"];ctx.lineWidth=2;ctx.stroke();
+  for(let i=0;i<w/7;i++){const bx=x+5+i*7;rr(bx-1.8,y-12,3.6,13,1.8);ctx.fillStyle=mix(C.gut,C["gut-edge"],.4);ctx.fill()}
+  ell(x+w*.5,y+h*.78,w*.14,h*.09,0,hexA(C.vit,.3),hexA(C.vit,.8),1.4);if(o.lab)txt(x+w/2,y+h*.78,o.lab,{size:10.5,weight:700,align:"center",color:C["ink-soft"]})}
+function adipocyte(x,y,r,fill,o){o=o||{};circ(x,y,r,hexA(C.adipose,.6),C["adipose-edge"],2);const dr=r*(.55+.37*clamp(fill,0,1));circ(x-r*.05,y,dr,C.fat,hexA(C["adipose-edge"],.7),1);
+  ell(x+r*.82,y+r*.25,r*.12,r*.2,.3,hexA(C.vit,.5),hexA(C.vit,.9),1);ctx.save();ctx.globalAlpha*=.35;ell(x-dr*.35,y-dr*.4,dr*.3,dr*.15,-.4,"#fff");ctx.restore()}
+function muscleFiber(x,y,w,h,o){rr(x,y,w,h,h/2);ctx.fillStyle=C.muscle;ctx.fill();ctx.strokeStyle=hexA(C.ink,.4);ctx.lineWidth=1.5;ctx.stroke();ctx.save();rr(x,y,w,h,h/2);ctx.clip();for(let i=x+6;i<x+w;i+=7)line(i,y,i,y+h,hexA(C.muscle2,.8),2);ctx.restore()}
+/* artery, lengthwise section: returns geometry */
+function artery(x,y,w,h,o){o=o||{};const wall=o.wall||22;rr(x,y,w,h,10);ctx.fillStyle=C.wall;ctx.fill();rr(x,y+wall,w,h-2*wall,4);ctx.fillStyle=C.plasma;ctx.fill();
+  line(x,y+wall,x+w,y+wall,C.blood,2);line(x,y+h-wall,x+w,y+h-wall,C.blood,2);
+  ctx.save();ctx.globalAlpha*=.4;for(let i=x+8;i<x+w;i+=14){line(i,y+4,i+6,y+wall-4,hexA(C.ink,.35),1);line(i,y+h-wall+4,i+6,y+h-4,hexA(C.ink,.35),1)}ctx.restore();
+  return {top:y+wall,bot:y+h-wall,x,w}}
+/* receptor Y */
+function receptorY(x,y,s,ang,col,o){o=o||{};ctx.save();ctx.translate(x,y);ctx.rotate(ang||0);ctx.strokeStyle=col||C.rec;ctx.lineWidth=Math.max(2,s*.22);ctx.lineCap="round";ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,-s);ctx.moveTo(0,-s);ctx.lineTo(-s*.55,-s*1.6);ctx.moveTo(0,-s);ctx.lineTo(s*.55,-s*1.6);ctx.stroke();if(o.busy){circ(0,-s*1.55,s*.45,null,C.good,2)}ctx.restore()}
+/* lipase enzyme: a pac-man that chomps */
+function lipase(x,y,s,open,col,lab,ang){ctx.save();ctx.translate(x,y);ctx.rotate(ang||0);const m=.12+.5*clamp(open,0,1);ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,s,m,TAU-m);ctx.closePath();ctx.fillStyle=col||C.act4;ctx.fill();ctx.strokeStyle=hexA(C.ink,.5);ctx.lineWidth=1.5;ctx.stroke();circ(-s*.2,-s*.5,s*.12,C.ink);ctx.restore();if(lab)label(x,y+s+12,lab,{size:11,weight:700,border:col||C.act4})}
+/* bile salt: rod with a water-loving (blue) side */
+function bileSalt(x,y,s,ang){ctx.save();ctx.translate(x,y);ctx.rotate(ang||0);rr(-s,-s*.32,s*2,s*.64,s*.3);ctx.fillStyle=C.bile;ctx.fill();ctx.strokeStyle=hexA(C.ink,.4);ctx.lineWidth=1;ctx.stroke();for(let i=-1;i<=1;i++)circ(i*s*.6,-s*.32,s*.17,C.h2o);ctx.restore()}
+/* ---------- foods ---------- */
+function bottle(x,y,w,h,fill,lab,o){o=o||{};const lv=o.lv==null?.8:o.lv;ctx.save();ctx.beginPath();ctx.moveTo(x-w*.18,y-h);ctx.lineTo(x-w*.18,y-h*.78);ctx.quadraticCurveTo(x-w*.5,y-h*.68,x-w*.5,y-h*.5);ctx.lineTo(x-w*.5,y-6);ctx.quadraticCurveTo(x-w*.5,y,x-w*.44,y);ctx.lineTo(x+w*.44,y);ctx.quadraticCurveTo(x+w*.5,y,x+w*.5,y-6);ctx.lineTo(x+w*.5,y-h*.5);ctx.quadraticCurveTo(x+w*.5,y-h*.68,x+w*.18,y-h*.78);ctx.lineTo(x+w*.18,y-h);ctx.closePath();
+  ctx.fillStyle=hexA(C.glass,.6);ctx.fill();ctx.save();ctx.clip();ctx.fillStyle=fill;ctx.fillRect(x-w,y-h*.62*lv-2,w*2,h);ctx.restore();ctx.strokeStyle=C["glass-edge"];ctx.lineWidth=2;ctx.stroke();
+  rr(x-w*.22,y-h-8,w*.44,10,3);ctx.fillStyle=C.steel;ctx.fill();if(lab){rr(x-w*.42,y-h*.42,w*.84,h*.24,3);ctx.fillStyle=hexA(C.paper,.95);ctx.fill();ctx.strokeStyle=hexA(C.ink,.3);ctx.lineWidth=1;ctx.stroke();txt(x,y-h*.3,lab,{size:o.ls||10.5,weight:700,align:"center"})}ctx.restore()}
+function butterStick(x,y,w,h,melt){rr(x,y,w,h,3);ctx.fillStyle=C.butter;ctx.fill();ctx.strokeStyle=hexA(C.ink,.45);ctx.lineWidth=1.5;ctx.stroke();rr(x+w*.55,y-1,w*.45+1,h+2,3);ctx.fillStyle=hexA(C.paper,.9);ctx.fill();ctx.stroke();if(melt>0){ell(x+w*.2,y+h+2,w*.3*melt,3+3*melt,0,hexA(C.butter,.8))}}
+function avocado(x,y,s){ctx.save();ctx.translate(x,y);ctx.beginPath();ctx.moveTo(0,-s);ctx.bezierCurveTo(s*.55,-s,s*.75,s*.2,s*.65,s*.5);ctx.bezierCurveTo(s*.5,s*1.05,-s*.5,s*1.05,-s*.65,s*.5);ctx.bezierCurveTo(-s*.75,s*.2,-s*.55,-s,0,-s);ctx.fillStyle="#3E6B24";ctx.fill();
+  ctx.beginPath();ctx.moveTo(0,-s*.82);ctx.bezierCurveTo(s*.45,-s*.82,s*.6,s*.2,s*.52,s*.48);ctx.bezierCurveTo(s*.4,s*.88,-s*.4,s*.88,-s*.52,s*.48);ctx.bezierCurveTo(-s*.6,s*.2,-s*.45,-s*.82,0,-s*.82);ctx.fillStyle="#CFE08A";ctx.fill();circ(0,s*.35,s*.3,"#8A5A2E");ctx.restore()}
+function fishIcon(x,y,s,col,dir){ctx.save();ctx.translate(x,y);ctx.scale(dir||1,1);ctx.beginPath();ctx.moveTo(s,0);ctx.quadraticCurveTo(s*.3,-s*.55,-s*.5,-s*.1);ctx.lineTo(-s,-s*.45);ctx.lineTo(-s*.85,0);ctx.lineTo(-s,s*.45);ctx.lineTo(-s*.5,s*.1);ctx.quadraticCurveTo(s*.3,s*.55,s,0);ctx.closePath();ctx.fillStyle=col||C.fish;ctx.fill();ctx.strokeStyle=hexA(C.ink,.5);ctx.lineWidth=1.4;ctx.stroke();circ(s*.6,-s*.08,s*.07,C.ink);ctx.restore()}
+function nutIcon(x,y,s){ell(x,y,s,s*.8,0,"#B98A5A",hexA(C.ink,.5),1.4);line(x,y-s*.75,x,y+s*.75,hexA("#000",.3),1.2);ctx.beginPath();ctx.arc(x-s*.4,y,s*.35,-1,1);ctx.strokeStyle=hexA("#000",.25);ctx.stroke();ctx.beginPath();ctx.arc(x+s*.4,y,s*.35,Math.PI-1,Math.PI+1);ctx.stroke()}
+function eggIcon(x,y,s){ell(x,y,s*.75,s,0,"#FFF7EA",hexA(C.ink,.5),1.4)}
+function eggYolk(x,y,s){ell(x,y,s*1.4,s,0,"#FFFFFF",hexA(C.ink,.4),1.2);circ(x,y,s*.55,"#F2B92E",hexA(C.ink,.4),1)}
+function cheese(x,y,s){ctx.beginPath();ctx.moveTo(x-s,y+s*.5);ctx.lineTo(x+s,y+s*.5);ctx.lineTo(x+s,y-s*.2);ctx.lineTo(x-s,y+s*.1);ctx.closePath();ctx.fillStyle="#F2CF5A";ctx.fill();ctx.strokeStyle=hexA(C.ink,.5);ctx.lineWidth=1.4;ctx.stroke();circ(x+s*.3,y+s*.25,s*.12,"#D9AE3A");circ(x-s*.4,y+s*.3,s*.09,"#D9AE3A")}
+function plateIcon(x,y,r){ell(x,y,r,r*.36,0,C.plate,C["plate-edge"],2);ell(x,y,r*.7,r*.24,0,null,hexA(C["plate-edge"],.6),1.2)}
+function drop(x,y,s,col){ctx.beginPath();ctx.moveTo(x,y-s);ctx.quadraticCurveTo(x+s*.8,y+s*.1,x,y+s*.6);ctx.quadraticCurveTo(x-s*.8,y+s*.1,x,y-s);ctx.fillStyle=col;ctx.fill()}
+/* thermometer */
+function thermoS(x,y,h,f,o){o=o||{};const col=o.col||C.hot;rr(x-6,y-h,12,h,6);fillStroke(C.paper,C["ink-soft"],1.4);circ(x,y+6,10,col,C["ink-soft"],1.4);rr(x-3,y-h*clamp(f,0,1)+4,6,h*clamp(f,0,1),3);ctx.fillStyle=col;ctx.fill();if(o.read)label(x,y+26,o.read,{size:11.5,weight:700,mono:true,border:col})}
+/* heart icon */
+function heartIcon(x,y,s,col,beat){const k=1+.06*(beat||0);ctx.save();ctx.translate(x,y);ctx.scale(k,k);ctx.beginPath();ctx.moveTo(0,s*.35);ctx.bezierCurveTo(-s*1.1,-s*.3,-s*.5,-s*1.05,0,-s*.45);ctx.bezierCurveTo(s*.5,-s*1.05,s*1.1,-s*.3,0,s*.35);ctx.fillStyle=col||C.blood;ctx.fill();ctx.restore()}
+/* ---------- Nutrition Facts style label ----------
+   rows: [[text, value, dv, {b:bold, ind:indent, hl:colour}]] */
+function nfLabel(x,y,w,o){o=o||{};const rows=o.rows||[];const lh=o.lh||19;const h=o.h||(134+rows.length*lh+(o.foot?28:0));rr(x,y,w,h,3);ctx.fillStyle="#FFFFFF";ctx.fill();ctx.strokeStyle="#10161A";ctx.lineWidth=2;ctx.stroke();
+  const ink="#10161A";ctx.save();ctx.font=`800 ${o.big||22}px ${FONT}`;ctx.fillStyle=ink;ctx.textBaseline="middle";ctx.textAlign="left";ctx.fillText("Nutrition Facts",x+8,y+18);
+  line(x+6,y+33,x+w-6,y+33,ink,1);txt(x+8,y+44,o.serv||"1 serving",{size:11,color:ink});txt(x+8,y+60,"Serving size",{size:12,weight:700,color:ink});txt(x+w-8,y+60,o.size||"",{size:12,weight:700,color:ink,align:"right"});
+  ctx.fillStyle=ink;ctx.fillRect(x+6,y+70,w-12,6);txt(x+8,y+86,"Amount per serving",{size:10.5,weight:700,color:ink});ctx.font=`800 20px ${FONT}`;ctx.textAlign="left";ctx.fillStyle=ink;ctx.fillText("Calories",x+8,y+104);ctx.textAlign="right";ctx.font=`800 24px ${FONT}`;ctx.fillText(String(o.kcal),x+w-8,y+103);
+  if(o.hlKcal){rr(x+4,y+92,w-8,24,3);ctx.strokeStyle=o.hlKcal;ctx.lineWidth=2.5;ctx.stroke()}
+  ctx.fillStyle=ink;ctx.fillRect(x+6,y+116,w-12,3.5);txt(x+w-8,y+128,"% Daily Value*",{size:10.5,weight:700,color:ink,align:"right"});
+  let yy=y+128+lh*.95;rows.forEach(r=>{const op=r[3]||{};line(x+6+(op.ind?14:0),yy-lh/2,x+w-6,yy-lh/2,"#10161A",.8);
+    if(op.hl){rr(x+4,yy-lh/2+1,w-8,lh-2,3);ctx.fillStyle=hexA(op.hl,.22);ctx.fill();ctx.strokeStyle=op.hl;ctx.lineWidth=2;ctx.stroke()}
+    ctx.font=`${op.b?800:500} 12px ${FONT}`;ctx.textAlign="left";ctx.fillStyle=ink;const lx=x+8+(op.ind?14:0);ctx.fillText(r[0],lx,yy);const tw=ctx.measureText(r[0]+" ").width;ctx.font=`500 12px ${FONT}`;ctx.fillText(r[1],lx+tw,yy);
+    if(r[2]!=null&&r[2]!==""){ctx.font=`800 12px ${FONT}`;ctx.textAlign="right";ctx.fillText(r[2],x+w-8,yy)}yy+=lh});
+  if(o.foot){wrapText(o.foot,x+8,yy-2,w-16,12,{size:9.5,color:ink})}ctx.restore();return yy}
+/* stacked fatty-acid bar: f = [sfa, mufa, pufa] fractions of 100 */
+function faBar(x,y,w,h,f,o){o=o||{};const cols=[C.sfa,C.mufa,C.pufa];let xx=x;const tot=f[0]+f[1]+f[2];f.forEach((v,i)=>{const ww=w*v/tot;if(ww>0){ctx.fillStyle=cols[i];ctx.fillRect(xx,y,ww,h);if(o.nums&&ww>26)txt(xx+ww/2,y+h/2,Math.round(v)+"%",{size:10.5,weight:700,align:"center",color:onFillFor(cols[i])})}xx+=ww});rr(x,y,w,h,2);ctx.strokeStyle=hexA(C.ink,.5);ctx.lineWidth=1;ctx.stroke();
+  if(o.n3){const ww=w*o.n3/tot;const sx=x+w*(f[0]+f[1])/tot;ctx.save();ctx.beginPath();ctx.rect(sx,y,ww,h);ctx.clip();for(let i=-h;i<ww;i+=5)line(sx+i,y+h,sx+i+h,y,hexA("#fff",.75),1.6);ctx.restore()}}
+function onFillFor(c){return lumOf(c)>.32?"#10161A":"#fff"}
+/* ---------- particles that travel along a path (shared) ---------- */
+function pathAt(path,p){return along(path,((p%1)+1)%1)}
+/* small labelled arrow along a curve for flows */
+function flowDots(path,T,n,col,r,spd){for(let i=0;i<n;i++){const p=P(T*(spd||.15)+i/n,1);const q=along(path,p);circ(q[0],q[1],r||3,col)}}
+/* ---------- scene state + effects ---------- */
+let SYS={},SC={};function sys(key,make){if(!SYS[key])SYS[key]=make();return SYS[key]}
+function burst(x,y,r,col,p,out){if(p<=0||p>=1)return;ctx.save();ctx.globalAlpha*=Math.sin(p*Math.PI);for(let i=0;i<8;i++){const a=i/8*TAU+.2;const r0=out?r*(.4+p*.8):r*(1.6-p*1.1),r1=r0+r*.5;line(x+Math.cos(a)*r0,y+Math.sin(a)*r0,x+Math.cos(a)*r1,y+Math.sin(a)*r1,col,2.4)}ctx.restore()}
+function sparkle(x,y,s,col,T){ctx.save();ctx.globalAlpha*=.6+.4*Math.sin(T*6);line(x-s,y,x+s,y,col,2);line(x,y-s,x,y+s,col,2);ctx.restore()}
+function lens(x,y,R,fn,o){o=o||{};if(o.from){const d=Math.hypot(o.from[0]-x,o.from[1]-y);line(o.from[0],o.from[1],x+(o.from[0]-x)*R/d,y+(o.from[1]-y)*R/d,hexA(C["ink-soft"],.7),1.4,[4,3])}
+  ctx.save();ctx.beginPath();ctx.arc(x,y,R,0,TAU);ctx.fillStyle=o.bg||C.paper;ctx.fill();ctx.clip();fn();ctx.restore();circ(x,y,R,null,C["ink-soft"],3);circ(x,y,R+3,null,hexA(C["ink-soft"],.35),2)}
+function water(x,y,s){circ(x,y,s,C["el-o"],hexA(C.ink,.4),1);circ(x-s*.9,y+s*.6,s*.55,C["el-h"],hexA(C.ink,.5),1);circ(x+s*.9,y+s*.6,s*.55,C["el-h"],hexA(C.ink,.5),1)}
+function gaugeBar(x,y,w,h,f,col,lab,o){o=o||{};rr(x,y,w,h,h/2);ctx.fillStyle=hexA(C.sunk,.8);ctx.fill();if(f>0){rr(x,y,Math.max(h,w*clamp(f,0,1)),h,h/2);ctx.fillStyle=col;ctx.fill()}if(lab)txt(x+(o.lx==null?w+8:o.lx),y+h/2,lab,{size:o.size||12,weight:700,mono:o.mono!==false,align:o.align||"left",color:o.lc||C.ink})}
+function vGauge(x,y,w,h,f,col,lab,o){o=o||{};rr(x,y,w,h,4);ctx.fillStyle=hexA(C.sunk,.8);ctx.fill();const hh=h*clamp(f,0,1);if(hh>0){rr(x,y+h-hh,w,hh,4);ctx.fillStyle=col;ctx.fill()}rr(x,y,w,h,4);ctx.strokeStyle=hexA(C.ink,.35);ctx.lineWidth=1;ctx.stroke();if(lab)txt(x+w/2,y+h+12,lab,{size:o.size||11.5,weight:700,align:"center",color:C.ink})}
+/* shared small food icons */
+function glucoseRing(x,y,s){hexPath(x,y,s,0);ctx.fillStyle=hexA(C.carb,.25);ctx.fill();ctx.strokeStyle=C.carb;ctx.lineWidth=2;ctx.stroke();circ(x+s*.5,y-s*.86,4,C["el-o"]);[[-1.4,0],[1.4,.3],[0,1.4],[-.8,-1.1],[.9,1.1]].forEach(o=>circ(x+o[0]*s*.9,y+o[1]*s*.9,3.5,C["el-o"]))}
+function shrimpIcon(x,y,s){ctx.beginPath();ctx.arc(x,y,s,Math.PI*.2,Math.PI*1.4);ctx.strokeStyle="#E58F6A";ctx.lineWidth=s*.55;ctx.lineCap="round";ctx.stroke();ctx.lineCap="butt";circ(x+Math.cos(Math.PI*.2)*s,y+Math.sin(Math.PI*.2)*s,s*.25,"#E58F6A")}
+function appleIcon(x,y,s){circ(x,y,s,"#C8402E",hexA(C.ink,.4),1);ell(x+s*.3,y-s*1.05,s*.35,s*.18,-.5,"#5E9E3A");line(x,y-s*.8,x,y-s*1.2,"#6B4A2A",2)}
+function beansIcon(x,y,s){for(let k=0;k<5;k++)ell(x+(k%3)*s*.9-s*.9,y+Math.floor(k/3)*s*.7,s*.45,s*.3,.3,"#8A3A3A",hexA(C.ink,.4),1)}
+/* ---------------- lab helpers ---------------- */
+const $=s=>document.querySelector(s);
+function makeStage(id,W,H){const cv=document.getElementById(id);const st={cv,ctx:cv.getContext("2d"),W,H,K:1};
+  st.fit=()=>{const w=cv.parentElement.clientWidth;if(!w)return;const dpr=window.devicePixelRatio||1;cv.style.height=(w*H/W)+"px";cv.width=Math.round(w*dpr);cv.height=Math.round(w*H/W*dpr);st.K=cv.width/W};return st}
+function use(st){ctx=st.ctx;ctx.setTransform(st.K,0,0,st.K,0,0);ctx.clearRect(0,0,st.W,st.H);ctx.globalAlpha=1;bg(C.ecf)}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function fmt(s){s=Math.round(s);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+const store={get:k=>{try{return localStorage.getItem("lipids-lab-"+k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem("kinetics-lab-"+k,v)}catch(e){}}};
+function segBtns(el,items,cur,onPick){el.innerHTML="";items.forEach(it=>{const b=document.createElement("button");b.type="button";b.className="tbtn";b.innerHTML=it[1];b.setAttribute("aria-pressed",String(it[0]===cur()));b.onclick=()=>{onPick(it[0]);el.querySelectorAll("button").forEach((x,i)=>x.setAttribute("aria-pressed",String(items[i][0]===cur())))};el.appendChild(b)})}
+function chalUI(el,list,done){el.innerHTML=list.map((c,i)=>`<li class="${done.has(i)?"done":""}"><span class="ck" aria-hidden="true">${done.has(i)?"✓":i+1}</span><span>${c}${done.has(i)?'<span class="gk-sr"> (done)</span>':""}</span></li>`).join("")}
+let DT=0;
+const S1=makeStage("cvSim",800,480),S2=makeStage("cvBuild",800,480),S3=makeStage("cvCalc",800,472),S5=makeStage("cvLife",800,470);
+/* ================= PART 1: lipoprotein traffic simulator ================= */
+const SIM={sat:12,fib:4,rec:100,meal:false,P:[],FX:[],disp:null,spawnT:0,chyT:0,hist:[],histT:0,plaque:.2,done:new Set(),t:0,wallN:0};
+const TRACK=[[220,240],[220,150],[740,150],[740,330],[220,330],[220,240]];
+const ZONE={mus:[.307,.436],adi:[.564,.693],art:[.721,.893]};
+const L0=118;
+function simProd(s){return clamp(1+.017*(s.sat-8)-.014*(s.fib-3),.55,2)}
+function simModel(s){s=s||SIM;const prod=simProd(s);const recEff=(s.rec/100)/prod;const ldl=L0/recEff;const hdl=52+.3*(s.sat-12);const tg=s.meal?195:110;const tc=ldl+hdl+tg/5;return {ldl,hdl,tg,tc,nonhdl:tc-hdl,recEff,prod}}
+const SIM_CH=["Lower LDL by at least 15 mg/dL from the typical setting using only the two diet sliders (receptors at 100%).","Lower receptor activity until LDL reaches 190 mg/dL or more (very high), as in an inherited receptor problem.","Switch to “3 hours after a high-fat meal” and watch triglycerides climb above 150 mg/dL.","Reach an optimal LDL: under 100 mg/dL."];
+const TYPICAL={sat:12,fib:4,rec:100};
+function rangeOf(k,v){if(k==="ldl")return v<100?["Optimal","ok"]:v<130?["Near optimal","ok"]:v<160?["Borderline high","mid"]:v<190?["High","hi"]:["Very high","hi"];
+  if(k==="tc")return v<200?["Desirable","ok"]:v<240?["Borderline high","mid"]:["High","hi"];
+  if(k==="hdl")return v<40?["Low","hi"]:v>=60?["High (protective)","ok"]:["Acceptable","ok"];
+  if(k==="tg")return v<150?["Normal","ok"]:v<200?["Borderline high","mid"]:v<500?["High","hi"]:["Very high","hi"];
+  if(k==="nonhdl")return v<130?["Desirable","ok"]:v<160?["Above desirable","mid"]:["High","hi"];return ["",""]}
+const RANGE_TXT={tc:"under 200",ldl:"under 100 optimal; 190+ very high",hdl:"40 or more; 60+ protective",tg:"under 150 (fasting)",nonhdl:"under 130"};
+function simUI(){const s=SIM;$("#slSat").value=s.sat;$("#oSat").textContent=s.sat+"% of kcal";$("#slFib").value=s.fib;$("#oFib").textContent=s.fib+" g/day";$("#slRec").value=s.rec;$("#oRec").textContent=s.rec+"%";
+  segBtns($("#simMeal"),[[false,"Fasting<small>9 to 12 h, no food</small>"],[true,"After a meal<small>3 h after a high-fat meal</small>"]],()=>SIM.meal,v=>{SIM.meal=v;simChanged()});
+  $("#simLegend").innerHTML=[["chylo","Chylomicron"],["vldl","VLDL"],["ldl","LDL"],["hdl","HDL"],["fat","Fatty acids / triglyceride"],["chol","Cholesterol"],["rec","LDL receptor","s"],["fiber","Soluble fiber","s"],["bile","Bile acids"]].map(l=>`<span><i class="${l[2]||""}" style="background:var(--${l[0]})"></i>${l[1]}</span>`).join("")}
+function simPresetUI(){const P_=[["typ","Typical<small>sat 12%, fiber 4 g</small>",TYPICAL],["heart","Heart-healthy swap<small>sat 6%, fiber 10 g</small>",{sat:6,fib:10,rec:100}],["fh","Inherited low receptors<small>receptors 50%</small>",{sat:12,fib:4,rec:50}]];
+  const el=$("#simPreset");el.innerHTML="";P_.forEach(p=>{const b=document.createElement("button");b.type="button";b.className="tbtn";b.innerHTML=p[1];b.onclick=()=>{Object.assign(SIM,p[2]);simUI();simChanged()};el.appendChild(b)})}
+function simChanged(){const m=simModel();const s=$("#simStatus");const r=rangeOf("ldl",m.ldl);s.className="status "+(r[1]==="hi"?"bad":r[1]==="mid"?"warn":"good");
+  s.textContent=`Target LDL about ${Math.round(m.ldl)} mg/dL (${r[0].toLowerCase()}). Liver receptor clearance at ${Math.round(m.recEff*100)}% of typical`+(SIM.sat>10?"; saturated fat above 10% of calories turns receptors down.":SIM.fib>=8?"; soluble fiber is pulling extra cholesterol into bile.":".");a11yKey=""}
+["slSat","slFib","slRec"].forEach(id=>{$("#"+id).addEventListener("input",e=>{const v=+e.target.value;if(id==="slSat")SIM.sat=v;if(id==="slFib")SIM.fib=v;if(id==="slRec")SIM.rec=v;$("#oSat").textContent=SIM.sat+"% of kcal";$("#oFib").textContent=SIM.fib+" g/day";$("#oRec").textContent=SIM.rec+"%";simChanged()})});
+function simRead(){const d=SIM.disp;const rows=[["tc","Total cholesterol"],["ldl","LDL cholesterol"],["hdl","HDL cholesterol"],["tg","Triglycerides"],["nonhdl","Non-HDL cholesterol"]];
+  $("#simRead tbody").innerHTML=rows.map(r=>{const v=d[r[0]];const g=rangeOf(r[0],v);return `<tr><th scope="row">${r[1]}</th><td>${Math.round(v)}</td><td class="rng">${RANGE_TXT[r[0]]}</td><td class="flag ${g[1]}">${g[0]}</td></tr>`}).join("")}
+function simChecks(){const d=SIM.disp,m=simModel();const typ=simModel(Object.assign({},SIM,TYPICAL,{meal:false})).ldl;let ch=false;
+  const c=[SIM.rec===100&&m.ldl<=typ-15&&d.ldl<=typ-14,m.ldl>=190&&d.ldl>=189,SIM.meal&&d.tg>150,d.ldl<100];c.forEach((v,i)=>{if(v&&!SIM.done.has(i)){SIM.done.add(i);ch=true}});if(ch)chalUI($("#simChal"),SIM_CH,SIM.done)}
+/* ---------- particles ---------- */
+function simPos(s){return along(TRACK,((s%1)+1)%1)}
+function inZ(s,z){const q=((s%1)+1)%1;return q>=z[0]&&q<=z[1]}
+function simSpawn(k,o){const p=Object.assign({k,s:0,tg:k==="chylo"?1:k==="vldl"?1:0,load:0,st:"loop",t:0,v:1/14*(0.9+Math.random()*.2),id:Math.random()},o||{});SIM.P.push(p);return p}
+function simInit(){SIM.P=[];SIM.FX=[];SIM.disp=Object.assign({},simModel());const m=simModel();const N=Math.round(m.ldl/9);for(let i=0;i<N;i++)simSpawn("ldl",{s:i/N});for(let i=0;i<Math.round(m.hdl/7);i++)simSpawn("hdl",{s:i/7+.05,load:i%3});for(let i=0;i<3;i++)simSpawn("vldl",{s:.1+i*.15})}
+function recCount(m){return clamp(Math.round(8*m.recEff),2,12)}
+function recPos(i,n){return [212,160+i*(150/Math.max(1,n-1))]}
+function simStep(dt){const m=simModel();SIM.t+=dt;
+  const k=1-Math.exp(-dt/1.6);const d=SIM.disp;["ldl","hdl","tg","tc","nonhdl"].forEach(x=>{d[x]+=(m[x]-d[x])*k});
+  const pT=clamp((m.ldl-70)/220,0,1)*(1.15-m.hdl/200);SIM.plaque+=(pT-SIM.plaque)*(1-Math.exp(-dt/5));
+  SIM.histT+=dt;if(SIM.histT>.25){SIM.histT=0;SIM.hist.push(d.ldl);if(SIM.hist.length>120)SIM.hist.shift()}
+  const N=Math.round(d.ldl/9),NH=Math.round(d.hdl/7);const cnt=k_=>SIM.P.filter(p=>p.k===k_&&p.st==="loop").length;
+  SIM.spawnT-=dt;if(SIM.spawnT<=0&&cnt("ldl")+cnt("vldl")<N){simSpawn("vldl",{s:0});SIM.spawnT=.45}
+  if(cnt("hdl")<NH)simSpawn("hdl",{s:0});
+  SIM.chyT-=dt;if(SIM.meal&&SIM.chyT<=0&&SIM.P.filter(p=>p.k==="chylo").length<9){SIM.P.push({k:"chylo",s:.9357,tg:1,load:0,st:"lymph",t:0,v:1/14,id:Math.random()});SIM.chyT=.9}
+  const nRec=recCount(m);
+  SIM.P.forEach(p=>{p.t+=dt;
+    if(p.st==="lymph"){if(p.t>1.6){p.st="loop";p.t=0}return}
+    if(p.st==="dock"){if(p.t>1.2){p.st="dead";const q=recPos(p.ri,nRec);for(let j=0;j<2;j++)SIM.FX.push({x:q[0],y:q[1],tx:110+rnd(p.id*9+j)*60-30,ty:120+rnd(p.id*7+j)*50-25,t:0,d:1,k:"chol"})}return}
+    if(p.st==="wall"){if(p.t>1.6){p.st="dead";SIM.wallN++}return}
+    const s0=p.s;p.s+=dt*p.v;
+    if((p.k==="chylo"||p.k==="vldl")&&(inZ(p.s,ZONE.mus)||inZ(p.s,ZONE.adi))){p.tg=Math.max(0,p.tg-dt*(p.k==="chylo"?.75:.62));if(Math.random()<dt*(p.k==="chylo"?5:2.5)){const q=simPos(p.s);const up=inZ(p.s,ZONE.mus);SIM.FX.push({x:q[0],y:q[1],tx:q[0]+(Math.random()-.5)*30,ty:up?96:396,t:0,d:.9,k:"fa"})}}
+    if(p.k==="vldl"&&p.tg<.3){p.k="ldl"}
+    if(p.k==="ldl"&&inZ(p.s,ZONE.art)&&!p.wallTried){p.wallTried=true;if(Math.random()<clamp((d.ldl-70)/500,0,.4)){p.st="wall";p.t=0;const q=simPos(p.s);p.wx=q[0];p.wy=q[1];return}}
+    if(p.k==="hdl"){[ZONE.art,ZONE.adi,ZONE.mus].forEach((z,zi)=>{if(inZ(p.s,z)&&!p["got"+zi]&&p.load<3&&Math.random()<dt*1.4){p["got"+zi]=1;p.load++;const q=simPos(p.s);SIM.FX.push({x:zi===0?q[0]:q[0],y:zi===0?380:zi===1?396:96,tx:q[0],ty:q[1],t:0,d:.8,k:"chol"})}})}
+    if(p.s>=1){p.s-=1;p.wallTried=false;p.got0=p.got1=p.got2=0;
+      if(p.k==="chylo"){p.st="dead";SIM.FX.push({x:220,y:240,tx:130,ty:130,t:0,d:1,k:"remnant"})}
+      else if(p.k==="hdl"){for(let j=0;j<p.load;j++)SIM.FX.push({x:220,y:240,tx:120+j*14,ty:130,t:0,d:.9+j*.15,k:"chol"});p.load=0}
+      else if(p.k==="ldl"){const excess=cnt("ldl")-N;const pr=clamp(.25*m.recEff+(excess>0?.35:0),0,.9);if(Math.random()<pr){p.st="dock";p.t=0;p.ri=Math.floor(Math.random()*nRec)}}}
+  });
+  SIM.P=SIM.P.filter(p=>p.st!=="dead");
+  SIM.FX.forEach(f=>f.t+=dt);SIM.FX=SIM.FX.filter(f=>f.t<f.d)}
+/* ---------- drawing ---------- */
+function drawSim(now){use(S1);const T=now/1000;const m=simModel();const d=SIM.disp;
+  /* liver panel */
+  panelBox(14,14,192,246);vTag(26,30,"body");liverShape(108,128,80);label(108,196,"liver",{size:12,weight:700,border:C.liver});
+  const nRec=recCount(m);
+  txt(110,232,nRec+" receptors shown",{size:11,weight:600,align:"center",color:C["ink-soft"]});txt(110,248,"(clearance "+Math.round(m.recEff*100)+"%)",{size:11,align:"center",color:C["ink-soft"]});
+  /* intestine panel */
+  panelBox(14,272,192,194);vTag(26,288,"food");
+  ctx.beginPath();for(let i=0;i<=48;i++){const a=i/48*TAU*2.2;const r=10+i*.8;const X=96+Math.cos(a)*r*1.4,Y=380+Math.sin(a)*r*.75;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)}ctx.strokeStyle=C.gut;ctx.lineWidth=12;ctx.stroke();ctx.strokeStyle=C["gut-edge"];ctx.lineWidth=1.2;ctx.stroke();
+  const nRed=Math.round(6*SIM.sat/33);for(let i=0;i<6;i++){const p=P(T*.18+i/6,1);const x=lerp(30,90,p),y=300+i*6;if(p<.85)fattyAcid(x,y,6,i<nRed?{}:{3:"c"},{L:5,head:false,lw:1.8,col:i<nRed?C.sfa:C.mufa,dcol:C.mufa})}
+  txt(138,304,"fat eaten",{size:10.5,weight:600,color:C["ink-soft"]});
+  const nF=Math.round(SIM.fib/2.5);for(let k=0;k<nF;k++){ctx.beginPath();for(let x=36;x<=180;x+=6){const y=414+k*7+Math.sin(x*.07+T*1.4+k)*3;x===36?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.strokeStyle=hexA(C.fiber,.85);ctx.lineWidth=2;ctx.stroke()}
+  const nB=2+Math.round(SIM.fib/3);for(let k=0;k<nB;k++){const p=P(T*.15+k/nB,1);circ(40+p*150,418+(k%3)*8,3.2,C.bile)}
+  txt(110,458,SIM.fib>0?"fiber carries bile acids out":"bile acids mostly recycled",{size:10.5,weight:600,align:"center",color:C["ink-soft"]});
+  /* lymph duct from intestine to the circulation */
+  poly([[150,352],[196,346],[220,330]],C["lymph-edge"],5);
+  /* LDL history */
+  panelBox(232,14,276,124,{fill:hexA(C.paper,.92)});txt(242,30,"LDL over time (model seconds)",{size:11.5,weight:700});
+  const g={x:262,y:42,w:236,h:80};const yMax=Math.max(220,...SIM.hist,d.ldl)*1.05;[100,130,160,190].forEach(v=>{if(v<yMax){const y=g.y+g.h-v/yMax*g.h;line(g.x,y,g.x+g.w,y,C.grid,1);txt(g.x-4,y,String(v),{size:9.5,mono:true,align:"right",color:C["ink-soft"]})}});
+  ctx.fillStyle=hexA(C.good,.12);ctx.fillRect(g.x,g.y+g.h-100/yMax*g.h,g.w,100/yMax*g.h);
+  if(SIM.hist.length>1){ctx.beginPath();SIM.hist.forEach((v,i)=>{const x=g.x+g.w*(i/(119)),y=g.y+g.h-v/yMax*g.h;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.strokeStyle=C.ldl;ctx.lineWidth=2.4;ctx.stroke()}
+  line(g.x,g.y,g.x,g.y+g.h,C["ink-soft"],1.2);line(g.x,g.y+g.h,g.x+g.w,g.y+g.h,C["ink-soft"],1.2);
+  /* muscle */
+  panelBox(520,14,266,112);vTag(532,30,"body");muscleFiber(540,44,226,46,{});txt(653,110,"muscle: burns fatty acids",{size:11.5,weight:700,align:"center"});
+  for(let i=0;i<4;i++){const w=Math.sin(T*12+i)*.15;const x=566+i*52,y=88,s=6+(SIM.meal?3:0);ctx.beginPath();ctx.moveTo(x,y-s*(1.3+w));ctx.quadraticCurveTo(x+s*.7,y-s*.2,x,y);ctx.quadraticCurveTo(x-s*.7,y-s*.2,x,y-s*(1.3+w));ctx.fillStyle=C.act2;ctx.fill()}
+  /* track */
+  ctx.beginPath();TRACK.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.closePath();ctx.lineJoin="round";ctx.strokeStyle=C.blood;ctx.lineWidth=30;ctx.stroke();ctx.strokeStyle=C.plasma;ctx.lineWidth=24;ctx.stroke();
+  [[480,150,0],[740,240,Math.PI/2],[480,330,Math.PI],[220,195,-Math.PI/2]].forEach(a=>{ctx.save();ctx.translate(a[0],a[1]);ctx.rotate(a[2]);ctx.beginPath();ctx.moveTo(6,0);ctx.lineTo(-4,-5);ctx.lineTo(-4,5);ctx.closePath();ctx.fillStyle=hexA(C.blood,.5);ctx.fill();ctx.restore()});
+  for(let i=0;i<nRec;i++){const q=recPos(i,nRec);receptorY(q[0]-12,q[1],9,Math.PI/2,C.rec)}
+  /* LPL marks */
+  [[560,163],[620,163],[680,163],[700,317],[640,317],[580,317]].forEach((q,i)=>lipase(q[0],q[1],6,.4+.3*Math.sin(T*8+i),C.act4,null,i<3?Math.PI/2:-Math.PI/2));
+  /* adipose */
+  panelBox(528,352,258,114);vTag(540,368,"body");const af=.45+(SIM.meal?.25*(.5+.5*Math.sin(T*.6)):0);[590,660,730].forEach((x,i)=>adipocyte(x,404,30,af));txt(657,454,"fat cells: store triglyceride",{size:11.5,weight:700,align:"center"});
+  /* artery */
+  panelBox(232,352,286,114);vTag(244,368,"body");const A=artery(244,378,262,62,{wall:16});const ph=SIM.plaque*34;
+  if(ph>1){ctx.beginPath();ctx.moveTo(300,A.bot);for(let x=300;x<=460;x+=4)ctx.lineTo(x,A.bot-ph*Math.exp(-Math.pow((x-380)/50,2)));ctx.lineTo(460,A.bot);ctx.closePath();ctx.fillStyle=C.plaque;ctx.fill();for(let i=0;i<Math.round(SIM.plaque*8);i++)circ(330+i*13,A.bot-ph*.35*Math.exp(-Math.pow((330+i*13-380)/50,2))+4,3.5,mix(C.macro,C.plaque,.4))}
+  txt(375,456,"artery wall (years at this level)",{size:11,weight:700,align:"center"});
+  /* center lab panel */
+  panelBox(246,168,488,148,{fill:hexA(C.paper,.95)});vTag(258,184,"lab");txt(378,184,d.tg>150&&SIM.meal?"after a meal: triglycerides are up":"lipid panel (mg/dL)",{size:11.5,weight:700});
+  const rows=[["Total",d.tc,320,[[0,200,"good"],[200,240,"warn"],[240,320,"bad"]]],["LDL",d.ldl,260,[[0,130,"good"],[130,160,"warn"],[160,260,"bad"]]],["HDL",d.hdl,100,[[0,40,"bad"],[40,60,"warn"],[60,100,"good"]]],["TG",d.tg,400,[[0,150,"good"],[150,200,"warn"],[200,400,"bad"]]]];
+  rows.forEach((r,i)=>{const y=202+i*28;txt(262,y+8,r[0],{size:12.5,weight:700});const bx=318,bw=320;r[3].forEach(z=>{ctx.fillStyle=hexA(C[z[2]],.22);ctx.fillRect(bx+bw*z[0]/r[2],y,bw*(z[1]-z[0])/r[2],16)});rr(bx,y,bw,16,3);ctx.strokeStyle=C.rule;ctx.lineWidth=1;ctx.stroke();
+    const x=bx+bw*clamp(r[1]/r[2],0,1);line(x,y-3,x,y+19,C.ink,3);txt(bx+bw+10,y+8,String(Math.round(r[1])),{size:13,weight:700,mono:true});const fl=rangeOf(["tc","ldl","hdl","tg"][i],r[1]);txt(bx+bw+44,y+8,fl[1]==="hi"?"!":fl[1]==="mid"?"~":"✓",{size:13,weight:700,color:fl[1]==="hi"?C.bad:fl[1]==="mid"?C["warn-ink"]:C.good})});
+  /* particles */
+  SIM.P.forEach(p=>{let q;if(p.st==="lymph"){const f=clamp(p.t/1.6,0,1);q=along([[150,352],[196,346],[220,330]],f)}else if(p.st==="dock"){const r=recPos(p.ri,recCount(m));const s0=simPos(p.s);const f=clamp(p.t/1.2,0,1);q=[lerp(s0[0],r[0]+4,f),lerp(s0[1],r[1],f)];if(f>.8){withA(1-(f-.8)/.2,()=>lipo(q[0],q[1],7,"ldl",{core:false}));return}}
+    else if(p.st==="wall"){const f=clamp(p.t/1.6,0,1);q=[p.wx,lerp(p.wy,A.bot+8,f)];circ(q[0],q[1],5,mix(C.ldl,"#3A1A1A",f),hexA(C.ink,.4),1);if(f>.6)sparkle(q[0]+6,q[1]-6,3,C.gold,T);return}else q=simPos(p.s);
+    const jit=Math.sin(T*3+p.id*40)*3;const ofs=p.k==="hdl"?-6:p.k==="chylo"?2:5;const X=q[0]+(Math.abs(q[1]-150)<2||Math.abs(q[1]-330)<2?0:jit*.6+ofs*.0),Y=q[1]+((Math.abs(q[1]-150)<2||Math.abs(q[1]-330)<2)?jit+ofs*.5:0);
+    if(p.k==="chylo")lipo(X,Y,6+7*p.tg,"chylo",{core:p.tg>.4});else if(p.k==="vldl")lipo(X,Y,6+3*p.tg,"vldl",{core:false});else if(p.k==="ldl")lipo(X,Y,6,"ldl",{core:false});else{lipo(X,Y,4.5+p.load,"hdl",{core:false});for(let j=0;j<p.load;j++)circ(X-3+j*3,Y,1.8,C.chol)}});
+  SIM.FX.forEach(f=>{const q=smooth(f.t/f.d);const x=lerp(f.x,f.tx,q),y=lerp(f.y,f.ty,q);if(f.k==="fa")fattyAcid(x-5,y,4,{},{L:4,head:false,lw:1.8,col:C.fat});else if(f.k==="chol")cholIcon(x,y,4.5);else withA(1-q,()=>lipo(x,y,6,"chylo",{core:false}))});
+  if(SIM.meal)label(150,330,"chylomicrons via lymph",{size:10.5,weight:700,border:C.chylo});
+}
+function simA11y(){const d=SIM.disp,m=simModel();const f=k=>rangeOf(k,d[k])[0].toLowerCase();
+  const lab=`Lipoprotein traffic. LDL ${Math.round(d.ldl)} mg/dL, ${f("ldl")}; HDL ${Math.round(d.hdl)}; triglycerides ${Math.round(d.tg)}, ${f("tg")}; total cholesterol ${Math.round(d.tc)}.`;
+  const desc=`A loop-shaped blood vessel runs clockwise around a lipid panel. On the left, the liver has ${recCount(m)} purple LDL receptors facing the vessel; below it the intestine shows ${Math.round(6*SIM.sat/33)} of 6 incoming fat chains in red for saturated fat and ${Math.round(SIM.fib/2.5)} green fiber strands carrying bile acids out. `+(SIM.meal?"Pale yellow chylomicrons pour in from the lymph after a meal and shrink as they pass muscle at the top right and fat cells at the bottom right. ":"No chylomicrons are present because the blood is drawn fasting. ")+`Orange VLDL leave the liver, unload triglyceride and turn into red LDL; about ${Math.round(d.ldl/9)} LDL particles circulate, and some dock on liver receptors. Small green HDL pick up orange cholesterol at the artery and tissues and return it to the liver. The artery wall at the bottom shows ${SIM.plaque>.5?"a large":SIM.plaque>.2?"a moderate":"little or no"} plaque bump for this LDL level.`;
+  return [lab,desc]}
+/* ================= PART 2: fatty-acid builder ================= */
+const B={n:18,dbl:{9:"c"},tool:null,edited:false,done:new Set(),msg:"",flash:0,flashPos:null};
+const KNOWN=[[4,"","Butyric acid"],[6,"","Caproic acid"],[8,"","Caprylic acid"],[10,"","Capric acid"],[12,"","Lauric acid"],[14,"","Myristic acid"],[16,"","Palmitic acid"],[18,"","Stearic acid"],[20,"","Arachidic acid"],[22,"","Behenic acid"],
+  [16,"9c","Palmitoleic acid"],[18,"9c","Oleic acid"],[18,"9t","Elaidic acid (trans)"],[18,"11t","Vaccenic acid (natural trans, dairy and beef)"],[18,"9c12c","Linoleic acid"],[18,"9c12c15c","Alpha-linolenic acid (ALA)"],[18,"6c9c12c","Gamma-linolenic acid"],
+  [20,"5c8c11c14c","Arachidonic acid"],[20,"5c8c11c14c17c","EPA (eicosapentaenoic acid)"],[22,"4c7c10c13c16c19c","DHA (docosahexaenoic acid)"],[22,"13c","Erucic acid"]];
+const PRESETS=[["Butyric",4,{}],["Lauric",12,{}],["Palmitic",16,{}],["Stearic",18,{}],["Oleic",18,{9:"c"}],["Elaidic",18,{9:"t"}],["Linoleic",18,{9:"c",12:"c"}],["ALA",18,{9:"c",12:"c",15:"c"}],["EPA",20,{5:"c",8:"c",11:"c",14:"c",17:"c"}],["DHA",22,{4:"c",7:"c",10:"c",13:"c",16:"c",19:"c"}]];
+const BUILD_CH=["Build stearic acid: 18 carbons, no double bonds (18:0).","Build oleic acid: 18 carbons with one cis double bond at Δ9, an omega-9.","Make any trans fatty acid.","Build an omega-3 with 18 carbons and 3 double bonds (ALA).","Build a medium-chain saturated fatty acid (6 to 12 carbons, no double bonds).","Build EPA: 20 carbons, 5 cis double bonds, omega-3."];
+function dblKey(dbl){return Object.keys(dbl).map(Number).sort((a,b)=>a-b).map(k=>k+dbl[k]).join("")}
+function satMP(n){const E={4:-8,6:-3,8:16,10:31,12:44,14:54,16:63,18:70,20:75,22:80,24:84};if(E[n]!=null)return E[n];const lo=E[n-1]!=null?E[n-1]:E[n+1],hi=E[n+1]!=null?E[n+1]:E[n-1];return (lo+hi)/2-5}
+function faInfo(n,dbl){const ks=Object.keys(dbl).map(Number).sort((a,b)=>a-b);const kc=ks.filter(k=>dbl[k]==="c").length,kt=ks.length-kc;
+  const type=ks.length===0?"Saturated":ks.length===1?"Monounsaturated":"Polyunsaturated";const om=ks.length?n-ks[ks.length-1]:null;
+  const cisDrop=[0,57,75,82,122,128,130,132,134,136][Math.min(kc,9)];const trDrop=kt?(kc?10*kt:25+12*(kt-1)):0;const mp=Math.round(satMP(n)-cisDrop-trDrop);
+  const len=n<6?"Short-chain":n<=12?"Medium-chain":"Long-chain";const shape=kc>0?(kc>1?"Kinked and curved (several cis bends)":"Kinked (one cis bend)"):kt>0?"Nearly straight (trans)":"Straight";
+  const geo=ks.length===0?"No double bonds":kt&&kc?"Mixed cis and trans":kt?"Trans":"Cis";const known=KNOWN.find(k=>k[0]===n&&k[1]===dblKey(dbl));
+  const omTxt=om==null?"None (no double bonds)":om===3?"Omega-3 (n-3)":om===6?"Omega-6 (n-6)":om===9?"Omega-9 (n-9)":"Omega-"+om+" (n-"+om+")";
+  return {ks,kc,kt,type,om,omTxt,mp,len,shape,geo,known:known?known[2]:null,short:n+":"+ks.length+(om!=null?" n-"+om:""),solid:mp>22}}
+function canDouble(p){return p>=2&&p<=B.n-1&&!B.dbl[p-1]&&!B.dbl[p+1]}
+function setBond(p,st){B.edited=true;if(!st){delete B.dbl[p];buildUpd();return}
+  if(p<2||p>B.n-1){bMsg("Bond C1–C2 holds the acid group, so double bonds start at Δ2.",true);return}
+  if(!canDouble(p)){bMsg(`C${p}–C${p+1} touches a carbon that already has a double bond. In fatty acids each carbon has at most one double bond, so space them out.`,true);return}
+  B.dbl[p]=st;B.flash=performance.now();B.flashPos=p;buildUpd()}
+function cycleBond(p){const s=B.dbl[p];if(B.tool){const t=B.tool;B.tool=null;chipPress();setBond(p,s===t?null:t);return}setBond(p,!s?"c":s==="c"?"t":null)}
+function setN(n){n=clamp(n,4,24);if(n===B.n){bMsg(n===24?"24 carbons is the longest chain in this builder.":"4 carbons is the shortest chain in this builder.",true);return}B.n=n;Object.keys(B.dbl).forEach(k=>{if(+k>n-1)delete B.dbl[k]});B.edited=true;buildUpd()}
+function bMsg(t,warn){B.msg=t;const m=$("#buildMsg");m.textContent=t;m.className="buildmsg"+(warn?" warn":"")}
+function buildUpd(){const I=faInfo(B.n,B.dbl);
+  $("#buildFacts tbody").innerHTML=[["Shorthand",I.short],["Name",I.known||"Not a common named fatty acid"],["Type",I.type],["Chain length",B.n+" carbons, "+I.len.toLowerCase()],["Omega family",I.omTxt],["Double bonds",I.ks.length?I.ks.map(k=>"Δ"+k+(B.dbl[k]==="t"?" trans":" cis")).join(", "):"none"],["Shape",I.shape],["Melting point","about "+I.mp+" °C (rough)"],["At 22 °C",I.solid?"Solid (packs tightly)":"Liquid (an oil)"]].map(r=>`<tr><th scope="row">${r[0]}</th><td>${r[1]}</td></tr>`).join("");
+  if(!B.msg||B.msg.indexOf("✓")!==0)bMsg(I.known?`This is ${I.known}.`+(I.om===3?" An omega-3.":I.om===6?" An omega-6.":""):`${I.type}, ${I.short}. Try a preset or keep building.`,false);
+  if(B.edited){const c=[B.n===18&&!I.ks.length,B.n===18&&I.ks.length===1&&B.dbl[9]==="c",I.kt>0,B.n===18&&I.ks.length===3&&I.om===3,B.n>=6&&B.n<=12&&!I.ks.length,B.n===20&&I.kc===5&&I.kt===0&&I.om===3];
+    c.forEach((v,i)=>{if(v&&!B.done.has(i)){B.done.add(i);bMsg("✓ Challenge done: "+BUILD_CH[i],false)}});}
+  chalUI($("#buildChal"),BUILD_CH,B.done);bondStripUI();$("#buildCap").textContent=`${I.short}${I.known?" ("+I.known+")":""}: ${I.type.toLowerCase()}, ${I.shape.toLowerCase()}, ${I.solid?"solid":"liquid"} at room temperature.`;a11yKey=""}
+function bondStripUI(){const el=$("#bondStrip");const f=document.activeElement&&document.activeElement.dataset?document.activeElement.dataset.p:null;el.innerHTML="";
+  for(let p=2;p<=B.n-1;p++){const b=document.createElement("button");b.type="button";b.className="bondbtn";const s=B.dbl[p]||"";b.dataset.s=s;b.dataset.p=p;b.innerHTML=`Δ${p}<span class="gk-sr"> bond C${p} to C${p+1}:</span><span class="st">${s==="c"?"cis":s==="t"?"trans":"single"}</span><span class="gk-sr">${s?" double bond":" bond"}</span>`;b.onclick=()=>{cycleBond(p);const nb=$("#bondStrip").querySelector(`[data-p="${p}"]`);if(nb)nb.focus()};el.appendChild(b)}
+  if(f){const nb=el.querySelector(`[data-p="${f}"]`);if(nb&&document.activeElement===document.body)nb.focus()}}
+function presetUI(){const el=$("#buildPreset");el.innerHTML="";PRESETS.forEach(p=>{const b=document.createElement("button");b.type="button";b.className="tbtn";b.innerHTML=p[0]+`<small>${p[1]}:${Object.keys(p[2]).length}</small>`;b.onclick=()=>{B.n=p[1];B.dbl=Object.assign({},p[2]);B.edited=false;B.msg="";buildUpd()};el.appendChild(b)})}
+$("#bPlus").onclick=()=>setN(B.n+1);$("#bMinus").onclick=()=>setN(B.n-1);$("#bClear").onclick=()=>{B.dbl={};B.edited=true;buildUpd()};
+/* geometry for the main drawing */
+function fitPts(pts,x0,y0,w,h,maxS){let a=1e9,b=-1e9,c=1e9,d=-1e9;pts.forEach(p=>{a=Math.min(a,p[0]);b=Math.max(b,p[0]);c=Math.min(c,p[1]);d=Math.max(d,p[1])});const s=Math.min(maxS||1.4,w/Math.max(1,b-a),h/Math.max(1,d-c));const ox=x0+(w-(b-a)*s)/2,oy=y0+(h-(d-c)*s)/2;return pts.map(p=>[ox+(p[0]-a)*s,oy+(p[1]-c)*s])}
+function buildPts(){return fitPts(faPts(B.n,B.dbl,{x:0,y:0,L:30,bend:28,alt:true}),80,92,620,96,1.15)}
+function bondHit(x,y){const pts=buildPts();let best=null,bd=1e9;for(let p=2;p<=B.n-1;p++){const a=pts[p-1],b=pts[p];const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;const d=Math.hypot(mx-x,my-y);if(d<bd){bd=d;best=p}}return bd<26?best:null}
+function cvXY(e){const r=S2.cv.getBoundingClientRect();return [(e.clientX-r.left)/r.width*S2.W,(e.clientY-r.top)/r.height*S2.H]}
+S2.cv.addEventListener("click",e=>{const q=cvXY(e);if(q[1]>250)return;const p=bondHit(q[0],q[1]);if(p)cycleBond(p)});
+/* drag chips */
+let bdrag=null;function chipPress(){["chipDc","chipDt"].forEach(id=>$("#"+id).setAttribute("aria-pressed",String(B.tool===(id==="chipDc"?"c":"t"))))}
+["chipC","chipDc","chipDt"].forEach(id=>{const el=$("#"+id);if(id!=="chipC")el.setAttribute("aria-pressed","false");
+  el.addEventListener("pointerdown",e=>{if(e.button>0)return;bdrag={el,k:el.dataset.k,sx:e.clientX,sy:e.clientY,g:null,id:e.pointerId};window.addEventListener("pointermove",bMove);window.addEventListener("pointerup",bUp);window.addEventListener("pointercancel",bUp)});
+  el.addEventListener("click",()=>{if(el.dataset.dragged){delete el.dataset.dragged;return}const k=el.dataset.k;if(k==="C"){setN(B.n+1);return}B.tool=B.tool===k?null:k;chipPress();bMsg(B.tool?`Now press a bond button (or click a bond in the picture) to make it a ${k==="c"?"cis":"trans"} double bond.`:"Chip put down.",false)})});
+function bMove(e){if(!bdrag||e.pointerId!==bdrag.id)return;if(!bdrag.g){if(Math.hypot(e.clientX-bdrag.sx,e.clientY-bdrag.sy)<6)return;const g=bdrag.el.cloneNode(true);g.classList.add("ghost");g.removeAttribute("id");g.setAttribute("aria-hidden","true");g.tabIndex=-1;document.body.appendChild(g);bdrag.g=g}
+  e.preventDefault();bdrag.g.style.left=(e.clientX-20)+"px";bdrag.g.style.top=(e.clientY-16)+"px"}
+function bUp(e){if(!bdrag)return;window.removeEventListener("pointermove",bMove);window.removeEventListener("pointerup",bUp);window.removeEventListener("pointercancel",bUp);const d=bdrag;bdrag=null;if(!d.g)return;d.g.remove();d.el.dataset.dragged="1";
+  const r=S2.cv.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom){bMsg("Drop the chip on the molecule picture.",true);return}
+  const q=cvXY(e);if(d.k==="C"){setN(B.n+1);return}const p=bondHit(q[0],q[1])||(()=>{const pts=buildPts();let best=null,bd=1e9;for(let p=2;p<=B.n-1;p++){const a=pts[p-1],b=pts[p];const dd=Math.hypot((a[0]+b[0])/2-q[0],(a[1]+b[1])/2-q[1]);if(dd<bd){bd=dd;best=p}}return bd<60?best:null})();
+  if(p)setBond(p,d.k);else bMsg("Drop the double bond right on a bond in the chain.",true)}
+/* drawing */
+function drawBuild(now){use(S2);const T=now/1000;const I=faInfo(B.n,B.dbl);
+  panelBox(14,14,772,236);vTag(26,30,"cell");
+  const pts=buildPts();const fl=clamp(1-(now-B.flash)/900,0,1);
+  if(I.om!=null){const a=pts[B.n-I.om-1],b=pts[B.n-I.om];glow((a[0]+b[0])/2,(a[1]+b[1])/2,24,I.om===3?C.n3:I.om===6?C.n6:C.n9,.35)}
+  drawFA(pts,B.dbl,{lw:3.2,dcol:C.mufa,head:true,dots:3});
+  if(fl>0&&B.flashPos){const a=pts[B.flashPos-1],b=pts[B.flashPos];if(a&&b)pulseRing((a[0]+b[0])/2,(a[1]+b[1])/2,26,C.gold,1-fl)}
+  pts.forEach((p,i)=>{const up=(i%2===0)?-1:1;txt(p[0],p[1]-up*15,String(i+1),{size:10,mono:true,align:"center",color:C["ink-soft"]});const w=B.n-i;if(w<=Math.max(9,(I.om||0)))txt(p[0],p[1]-up*29,"ω"+w,{size:10,weight:700,mono:true,align:"center",color:C["accent-ink"]})});
+  const e=pts[B.n-1];txt(e[0]+12,e[1],"CH₃",{size:12,weight:700,mono:true});label(70,56,"acid end",{size:11,weight:700,border:C["el-o"]});
+  label(400,30,I.short+(I.known?"  ·  "+I.known:""),{size:13.5,weight:700,mono:false,border:I.kt?C.trans:I.ks.length===0?C.sfa:I.ks.length===1?C.mufa:C.pufa});
+  txt(30,236,"Click a bond to cycle single → cis → trans. Grey numbers count carbons from the acid end; gold ω numbers count from the methyl end.",{size:11.5,color:C["ink-soft"]});
+  if(B.tool)label(640,62,"placing a "+(B.tool==="c"?"cis":"trans")+" double bond",{size:11.5,weight:700,border:B.tool==="c"?C.mufa:C.trans});
+  /* packing view */
+  panelBox(14,262,420,204);vTag(26,278,"food");txt(110,278,"many copies at 22 °C",{size:12,weight:700});
+  ctx.save();rr(22,290,330,168,6);ctx.clip();ctx.fillStyle=hexA(I.solid?C.butter:C.oil,.12);ctx.fillRect(22,290,330,168);
+  const col=I.kt?C.trans:I.ks.length===0?C.sfa:I.ks.length===1?C.mufa:C.pufa;const Ls=Math.min(8,170/(B.n-1));
+  for(let i=0;i<8;i++){let x,y,rot;if(I.solid){x=36+(i%2)*160+Math.sin(T*3+i)*.8;y=306+Math.floor(i/2)*38+Math.cos(T*2.5+i)*.8;rot=0}else{x=60+P(rnd(i)*3+T*(.03+rnd(i+5)*.04),1)*240;y=310+(.5+.5*Math.sin(T*(.5+rnd(i+9)*.6)+i*1.7))*130;rot=T*(rnd(i+2)-.5)*1.2+i}
+    ctx.save();ctx.translate(x,y);ctx.rotate(rot);const pp=faPts(B.n,B.dbl,{x:I.solid?0:-Ls*(B.n-1)*.43,y:0,L:Ls,bend:28,alt:true});drawFA(pp,B.dbl,{head:false,lw:2,col,dcol:C.mufa});ctx.restore()}
+  ctx.restore();
+  const tf=clamp((I.mp+60)/160,0,1);thermoS(392,430,130,clamp((22+60)/160,0,1),{col:C.hot});const my=430-130*tf+4;line(380,my,404,my,C.ink,2.5);label(372,my,"melts ≈ "+I.mp+" °C",{size:10.5,weight:700,mono:true,align:"right"});
+  label(392,282,"22 °C",{size:10.5,weight:700,mono:true,border:C.hot});
+  /* summary card */
+  panelBox(446,262,340,204,{fill:hexA(C.paper,.95)});vTag(458,278,"calc");
+  const lines=[["Type",I.type],["Omega family",I.omTxt],["Shape",I.shape],["At 22 °C",I.solid?"solid: chains pack tightly":"liquid: chains cannot pack"]];
+  lines.forEach((l,i)=>{txt(460,306+i*36,l[0],{size:11.5,weight:600,color:C["ink-soft"]});txt(460,322+i*36,l[1],{size:13,weight:700})});
+}
+function buildA11y(){const I=faInfo(B.n,B.dbl);const lab=`Fatty acid ${I.short}${I.known?", "+I.known:""}. ${I.type}, ${I.omTxt}, ${I.shape.toLowerCase()}, ${I.solid?"solid":"liquid"} at room temperature.`;
+  const desc=`The top shows a zigzag chain of ${B.n} carbons with the red acid group at the left and CH3 at the right end. `+(I.ks.length?`Double bonds are drawn as two parallel lines at ${I.ks.map(k=>"delta "+k+" "+(B.dbl[k]==="t"?"trans, magenta, chain stays straight":"cis, green, chain bends")).join("; ")}. The first double bond from the methyl end glows, marking omega-${I.om}. `:"All bonds are single, so the chain is straight. ")+`Below, eight copies of the molecule ${I.solid?"line up in neat rows like a solid":"tumble loosely like a liquid"} next to a thermometer at 22 degrees, with a marker showing an estimated melting point of about ${I.mp} degrees Celsius.`;
+  return [lab,desc]}
+/* ================= PART 3: practice trainer ================= */
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const rint=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+function nf(v,dp){if(dp==null)dp=1;const r=Math.round(v*Math.pow(10,dp))/Math.pow(10,dp);let s=r.toFixed(dp);if(dp>0)s=s.replace(/\.?0+$/,"");const p=s.split(".");p[0]=p[0].replace(/\B(?=(\d{3})+(?!\d))/g,",");return p.join(".")}
+const CTYPES=[["mix","All types, mixed"],["kcal","Fat grams → kcal"],["pct","% of calories from fat (label)"],["sat","Saturated fat as % of energy"],["amdr","Fat AMDR in grams"],["satlim","Saturated fat limit in grams"],["dv","%DV for fat or cholesterol"],["serv","Servings and label grams"],["omega","Omega naming from structures"]];
+const FOODS=[["snack crackers","6 crackers (30 g)"],["granola bar","1 bar (40 g)"],["frozen pizza","1 slice (110 g)"],["trail mix","1/4 cup (35 g)"],["yogurt cup","1 container (150 g)"],["peanut butter","2 tbsp (32 g)"],["cheese slices","1 slice (21 g)"],["salad dressing","2 tbsp (30 g)"],["muffin","1 muffin (85 g)"],["tortilla chips","10 chips (28 g)"],["oatmeal cup","1 cup (240 g)"],["bean burrito","1 burrito (150 g)"]];
+function mkLabel(o){const fd=pick(FOODS);return {food:fd[0],kcal:o.kcal,fat:o.fat,sat:o.sat,trans:o.trans||0,chol:o.chol||0,sod:o.sod||rint(4,40)*10,carb:o.carb||rint(8,40),prot:o.prot||rint(2,12),serv:fd[1]}}
+const GEN={
+ kcal(){const g=rint(4,60)/2;const ans=g*9;
+  return {title:"Fat grams → kcal",html:`A serving of ${pick(FOODS)[0]} has <b>${nf(g)} g of fat</b>. How many <b>kcal</b> come from that fat?`,ans,unit:"kcal",tol:Math.max(.5,ans*.004),dp:1,
+   lines:[{t:"Fat provides 9 kcal per gram.",col:C["ink-soft"]},{ch:[[F(nf(g),["g fat"]),F("9",["kcal"],"1",["g fat"])],[nf(ans),["kcal"]]]}],
+   slips:[[g*4,"That used 4 kcal per gram, the value for carbohydrate and protein. Fat has 9 kcal per gram."],[g/9,"That divided by 9. To go from grams to kcal, multiply by 9."],[g*7,"7 kcal per gram is alcohol. Fat is 9 kcal per gram."]],
+   hints:["Each gram of fat provides 9 kcal.",`kcal = grams × 9 kcal/g.`,`${nf(g)} × 9 = ?`],vis:{k:"kcal",g,ans}}},
+ pct(){let fat,kcal;do{fat=rint(2,40)/2;kcal=rint(8,40)*10}while(fat*9>kcal*.8||fat*9<kcal*.1);const L=mkLabel({fat,kcal,sat:Math.round(fat*rint(15,55)/100*2)/2});const fk=fat*9;const ans=fk/kcal*100;
+  return {title:"% of calories from fat",html:`Use the label for ${L.food}. What <b>percent of the Calories</b> per serving come from fat? (nearest whole percent)`,ans,unit:"%",tol:.6,dp:0,
+   lines:[{ch:[[F(nf(fat),["g"]),F("9",["kcal"],"1",["g"])],[nf(fk),["kcal"]]]},{ch:[[F(nf(fk),["kcal"],String(kcal),["kcal"]),F("100",["%"])],[nf(ans,0),["%"]]]}],
+   slips:[[fat*4/kcal*100,"That used 4 kcal per gram. Fat is 9 kcal per gram."],[fat/kcal*100,"That divided grams by kcal. Turn fat grams into kcal first (× 9)."],[fk,"That is the kcal from fat. Now divide by the Calories per serving and multiply by 100."],[fat/78*100,"That is the %DV for fat (grams ÷ 78 g), a different idea. Here we want the share of Calories."]],
+   hints:["First find kcal from fat: grams × 9.",`${nf(fat)} g × 9 = ${nf(fk)} kcal from fat.`,`${nf(fk)} ÷ ${kcal} × 100 = ?`],vis:{k:"label",L,hl:["kcal","fat"]}}},
+ sat(){const kcal=pick([1600,1800,2000,2200,2400,2600,2800]);const sg=rint(10,44);const ans=sg*9/kcal*100;
+  return {title:"Saturated fat as % of energy",html:`Over one day, someone eats <b>${sg} g of saturated fat</b> within <b>${nf(kcal,0)} kcal</b>. What <b>percent of calories</b> is that? (nearest whole percent)`,ans,unit:"%",tol:.6,dp:0,
+   lines:[{ch:[[F(String(sg),["g"]),F("9",["kcal"],"1",["g"])],[nf(sg*9),["kcal"]]]},{ch:[[F(nf(sg*9),["kcal"],nf(kcal,0),["kcal"]),F("100",["%"])],[nf(ans,0),["%"]]]},{gold:ans<10?"Under the 10% guideline":"Above the 10% guideline (under 10% is advised)"}],
+   slips:[[sg*4/kcal*100,"That used 4 kcal per gram. Saturated fat, like all fat, gives 9 kcal per gram."],[sg/kcal*100,"Convert grams to kcal first (× 9), then divide by the day's kcal."],[sg*9,"That is the kcal from saturated fat. Divide by the day's total and multiply by 100."]],
+   hints:["Convert grams to kcal: × 9.",`${sg} × 9 = ${sg*9} kcal from saturated fat.`,`${sg*9} ÷ ${kcal} × 100 = ?`],vis:{k:"ring",kcal,part:sg*9,frac:ans/100,lab:"saturated fat",col:"sfa",guide:.10}}},
+ amdr(){const kcal=pick([1400,1600,1800,2000,2200,2400,2600,2800,3000]);const up=Math.random()<.5;const p=up?.35:.20;const ans=kcal*p/9;
+  return {title:"Fat AMDR in grams",html:`The AMDR for fat is 20 to 35% of calories. For an intake of <b>${nf(kcal,0)} kcal</b>, what is the <b>${up?"upper":"lower"} end</b> of the range in <b>grams of fat</b>? (nearest gram)`,ans,unit:"g",tol:.6,dp:0,
+   lines:[{t:`${up?"Upper":"Lower"} end = ${up?"35":"20"}% of calories`,col:C["ink-soft"]},{ch:[[F(nf(kcal,0),["kcal"]),F(up?"0.35":"0.20"),F("1",["g"],"9",["kcal"])],[nf(ans,0),["g"]]]}],
+   slips:[[kcal*p/4,"That divided by 4. Fat has 9 kcal per gram."],[kcal*p,"That is the kcal from fat. Divide by 9 kcal/g to get grams."],[kcal*(up?.20:.35)/9,`That is the ${up?"lower":"upper"} end. The question asks for the ${up?"upper (35%)":"lower (20%)"} end.`]],
+   hints:[`Find ${up?"35":"20"}% of the kcal first.`,`${nf(kcal,0)} × ${up?"0.35":"0.20"} = ${nf(kcal*p,0)} kcal.`,`${nf(kcal*p,0)} ÷ 9 = ? g`],vis:{k:"ring",kcal,part:kcal*p,frac:p,lab:"fat ("+(up?"35":"20")+"%)",col:"fat",band:true}}},
+ satlim(){const kcal=pick([1400,1600,1800,2000,2200,2400,2600,2800,3000]);const ans=kcal*.10/9;
+  return {title:"Saturated fat limit in grams",html:`Saturated fat should be under 10% of calories. For <b>${nf(kcal,0)} kcal</b>, what is that limit in <b>grams</b>? (nearest gram)`,ans,unit:"g",tol:.6,dp:0,
+   lines:[{ch:[[F(nf(kcal,0),["kcal"]),F("0.10"),F("1",["g"],"9",["kcal"])],[nf(ans,0),["g"]]]}],
+   slips:[[kcal*.1/4,"That divided by 4. Fat, including saturated fat, has 9 kcal per gram."],[kcal*.1,"That is the kcal limit. Divide by 9 to get grams."],[kcal*.35/9,"That is the top of the AMDR for total fat (35%). The saturated limit is 10%."]],
+   hints:["10% of the kcal is the saturated fat kcal limit.",`${nf(kcal,0)} × 0.10 = ${nf(kcal*.1,0)} kcal.`,`${nf(kcal*.1,0)} ÷ 9 = ? g`],vis:{k:"ring",kcal,part:kcal*.1,frac:.1,lab:"saturated fat (10%)",col:"sfa",guide:.10}}},
+ dv(){const which=pick(["fat","sat","chol"]);const fat=rint(2,48)/2;const sat=Math.min(fat,rint(1,20)/2);const chol=pick([0,5,10,15,20,25,30,35,40,45,55,60,70,75,85,95,110,150,185,210]);
+  const L=mkLabel({fat,sat,chol,kcal:Math.round((fat*9+rint(60,200))/10)*10});const amt=which==="fat"?fat:which==="sat"?sat:chol;const DV=which==="fat"?78:which==="sat"?20:300;const u=which==="chol"?"mg":"g";if(amt===0)return null;const ans=amt/DV*100;
+  const nm=which==="fat"?"total fat":which==="sat"?"saturated fat":"cholesterol";
+  return {title:"%DV from a label",html:`The label lists <b>${nf(amt)} ${u} ${nm}</b> per serving. The Daily Value for ${nm} is <b>${DV} ${u}</b>. What %DV should the label show? (nearest whole percent)`,ans,unit:"%",tol:.6,dp:0,
+   lines:[{ch:[[F(nf(amt),[u],String(DV),[u]),F("100",["%"])],[nf(ans,0),["%"]]]},{t:"5% DV or less is low; 20% DV or more is high.",col:C["ink-soft"]}],
+   slips:[[DV/amt*100,`That is upside down. Divide the amount by the Daily Value: ${nf(amt)} ÷ ${DV}.`],[amt,"That is the amount, not the percent. Divide by the Daily Value and multiply by 100."]].concat(which==="fat"?[[amt/65*100,"65 g was the Daily Value on older labels. Current labels use 78 g for total fat."],[amt*9/L.kcal*100,"That is the % of Calories from fat, a different idea. %DV divides grams by the 78 g Daily Value."]]:[]),
+   hints:["%DV = amount per serving ÷ Daily Value × 100.",`Daily Value for ${nm}: ${DV} ${u}.`,`${nf(amt)} ÷ ${DV} × 100 = ?`],vis:{k:"label",L,hl:[which]}}},
+ serv(){const fat=rint(4,30)/2,sat=Math.min(fat,rint(2,16)/2);const L=mkLabel({fat,sat,kcal:Math.round((fat*9+rint(60,180))/10)*10});const n=pick([1.5,2,2,3,2.5]);const ask=pick(["sat","fat","kcalfat"]);
+  const per=ask==="sat"?sat:ask==="fat"?fat:fat*9;const ans=per*n;const u=ask==="kcalfat"?"kcal":"g";const nm=ask==="sat"?"saturated fat":ask==="fat"?"total fat":"kcal from fat";
+  return {title:"Servings and label amounts",html:`Label values are per serving. Someone eats <b>${nf(n)} servings</b> of ${L.food}. How many <b>${ask==="kcalfat"?"kcal come from fat":"grams of "+nm}</b> is that?`,ans,unit:u,tol:Math.max(.06,ans*.004),dp:1,
+   lines:(ask==="kcalfat"?[{ch:[[F(nf(fat),["g"]),F("9",["kcal"],"1",["g"])],[nf(per),["kcal"]]]}]:[]).concat([{ch:[[F(nf(per),[u],"1",["serving"]),F(nf(n),["serving"])],[nf(ans),[u]]]}]),
+   slips:[[per,"That is one serving. Multiply by the number of servings eaten."],[per/n,"Multiply by the servings eaten, do not divide."]].concat(ask==="kcalfat"?[[fat*4*n,"Fat has 9 kcal per gram, not 4."],[fat*n,"That is grams of fat. Multiply by 9 to get kcal."]]:[]),
+   hints:["Everything on the label is for one serving.",ask==="kcalfat"?`One serving: ${nf(fat)} g × 9 = ${nf(fat*9)} kcal from fat.`:`One serving has ${nf(per)} g ${nm}.`,`${nf(per)} × ${nf(n)} = ?`],vis:{k:"label",L,hl:[ask==="sat"?"sat":"fat"],n}}},
+ omega(){let n,om,k,pos;for(let g=0;g<50;g++){n=pick([16,18,18,20,20,22]);om=pick([3,6,9]);k=om===9?pick([1,1,2,3]):om===3?rint(2,6):rint(1,5);const last=n-om;pos=[];for(let i=0;i<k;i++)pos.push(last-3*i);pos=pos.filter(p=>p>=4);if(pos.length===k)break}k=pos.length;
+  const dbl={};pos.forEach(p=>dbl[p]="c");const showD=Math.random()<.5;const mx=Math.max(...pos);
+  return {title:"Omega naming",html:showD?`A fatty acid has <b>${n} carbons</b> with cis double bonds at <b>${pos.slice().sort((a,b)=>a-b).map(p=>"Δ"+p).join(", ")}</b> (counted from the acid end). It is an omega-<b>?</b> fatty acid. Type the omega number.`:`Look at the structure in the picture (${n} carbons, ${k} double bond${k>1?"s":""}). Count from the methyl (CH₃) end. Which omega family is it? Type the omega number.`,ans:om,unit:"",tol:0,dp:0,exact:true,
+   lines:showD?[{t:`ω number = carbons − highest Δ number`},{t:`= ${n} − ${mx} = ${om}`,b:true}]:[{t:"Start at the CH₃ carbon as ω1 and count toward the acid end."},{t:`The first double bond starts at carbon ω${om}.`,b:true},{t:`Check: ${n} − ${mx} = ${om}`,col:C["ink-soft"]}],
+   slips:[[mx,`${mx} is counted from the acid end (Δ${mx}). Omega numbers count from the methyl end: ${n} − ${mx}.`],[n,"That is the number of carbons. Count from the methyl end to the first double bond."],[k,"That is how many double bonds there are. The omega number is where the first one is, counted from the methyl end."],[Math.min(...pos),"That is the double bond nearest the acid end. Count from the other (methyl) end."]].filter(s=>s[0]!==om),
+   hints:["Omega numbers count from the methyl (CH₃) end.",showD?"Use the highest Δ number: it is the double bond closest to the methyl end.":"Put your finger on CH₃ and call it ω1. Step toward the acid end.",showD?`${n} − ${mx} = ?`:`The first double bond is ${om} carbons in from the methyl end. Count again carefully.`],vis:{k:"omega",n,dbl,showD,om,pos}}}
+};
+const TR={type:"mix",p:null,hint:0,first:true,sol:false,solved:false,streak:0,best:0,count:0,solT:0};
+function genOne(k){let q=null;for(let i=0;i<40&&!q;i++){try{q=GEN[k]()}catch(e){console.error(e)}if(q&&!(isFinite(q.ans)&&q.ans>0))q=null}q.kind=k;q.slips=q.slips.filter(s=>isFinite(s[0])&&Math.abs(s[0]-q.ans)>Math.max(q.tol*2,.01));return q}
+function calcNew(){const keys=Object.keys(GEN);const k=TR.type==="mix"?pick(keys):TR.type;const q=genOne(k);
+  TR.p=q;TR.hint=0;TR.first=true;TR.sol=false;TR.solved=false;
+  $("#calcProb").innerHTML=`<span class="pt">${q.title}</span>${q.html}`+`<span class="rd">${q.exact?"Give a whole number.":q.dp===0?"Round to a whole number.":"Up to one decimal place."}</span>`;
+  $("#calcUnit").textContent=q.unit;$("#calcAns").value="";$("#calcMsg").className="msg";$("#calcHintBox").hidden=true;$("#calcCap").textContent=q.title+": the picture shows the problem and your answer.";a11yKey=""}
+function parseAns(s){s=String(s).trim().replace(/,/g,"").replace(/−/g,"-").replace(/\s*(kcal|g|%|mg)\s*$/i,"");if(!/^[-+]?(\d+\.?\d*|\.\d+)$/.test(s))return null;return parseFloat(s)}
+function judge(p,str){const v=parseAns(str);if(v==null)return {ok:false,kind:"empty"};const tol=p.tol||0;
+  if(Math.abs(v-p.ans)<=tol+1e-9)return {ok:true};
+  const sl=p.slips.find(s=>Math.abs(v-s[0])<=Math.max(tol*1.5,.01)+1e-9||(p.exact?false:Math.abs(v-Math.round(s[0]))<1e-9&&p.dp===0));if(sl)return {ok:false,kind:"slip",msg:sl[1]};
+  if(!p.exact&&Math.abs(v-p.ans)<=Math.max(tol*3,Math.abs(p.ans)*.03))return {ok:false,kind:"close"};return {ok:false,kind:"wrong"}}
+function ansStr(p){return (p.exact?String(p.ans):nf(p.ans,p.dp))+(p.unit?(p.unit==="%"?"%":" "+p.unit):"")}
+function calcMsg(cls,t){const m=$("#calcMsg");m.className="msg show "+cls;m.textContent=t}
+function calcCheck(){const p=TR.p;const str=$("#calcAns").value;const j=judge(p,str);
+  if(j.kind==="empty"){calcMsg("info","Type a number in the answer box first (for example 45 or 22.5).");return}
+  if(j.ok){const wasFirst=TR.first&&!TR.sol;if(!TR.solved){TR.count++;if(wasFirst){TR.streak++;if(TR.streak>TR.best){TR.best=TR.streak;store.set("best",TR.best)}}}TR.solved=true;
+    calcMsg("good",`✓ Correct: ${ansStr(p)}. Watch the worked solution build in the picture.`);showSol(false)}
+  else{TR.first=false;TR.streak=0;let msg="Not quite. ";if(j.kind==="slip")msg+=j.msg;else if(j.kind==="close")msg+="Very close. Check your rounding: keep full numbers until the last step.";else msg+="Check the setup. "+p.hints[0];calcMsg("warn",msg)}
+  updCalcMeter();a11yKey=""}
+function showSol(byBtn){if(byBtn&&!TR.solved){TR.streak=0;TR.first=false}TR.sol=true;TR.solT=performance.now();updCalcMeter();a11yKey=""}
+function updCalcMeter(){$("#calcStreak").textContent=TR.streak;$("#calcBest").textContent=TR.best;$("#calcSolved").textContent=TR.count}
+$("#calcCheck").onclick=()=>calcCheck();$("#calcAns").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();calcCheck()}});
+$("#calcHint").onclick=()=>{const p=TR.p;const b=$("#calcHintBox");if(TR.hint<p.hints.length)TR.hint++;b.hidden=false;
+  b.innerHTML=p.hints.slice(0,TR.hint).map((h,i)=>`<div><b>Hint ${i+1}:</b> ${h}</div>`).join("")+(TR.hint>=p.hints.length?`<div class="small">That is the whole ladder. Try it, or press Show worked solution.</div>`:"");a11yKey=""};
+$("#calcSol").onclick=()=>{showSol(true);calcMsg("info",`Worked solution: ${ansStr(TR.p)}. Watch each step, then try a new problem.`)};
+$("#calcNew").onclick=()=>{calcNew();$("#calcAns").focus()};
+(function(){const sel=$("#calcType");sel.innerHTML=CTYPES.map(c=>`<option value="${c[0]}">${c[1]}</option>`).join("");sel.onchange=()=>{TR.type=sel.value;calcNew()}})();
+TR.best=+(store.get("best")||0);
+/* ---------- trainer drawing ---------- */
+function labelRows(L,hl){const H=k=>hl.indexOf(k)>=0;return [["Total Fat",nf(L.fat)+"g",Math.round(L.fat/78*100)+"%",{b:true,hl:H("fat")?C.fat:null}],["Saturated Fat",nf(L.sat)+"g",Math.round(L.sat/20*100)+"%",{ind:true,hl:H("sat")?C.sfa:null}],["Trans Fat",nf(L.trans)+"g","",{ind:true}],["Cholesterol",L.chol+"mg",Math.round(L.chol/300*100)+"%",{b:true,hl:H("chol")?C.chol:null}],["Sodium",L.sod+"mg",Math.round(L.sod/2300*100)+"%",{b:true}],["Total Carbohydrate",L.carb+"g",Math.round(L.carb/275*100)+"%",{b:true}],["Protein",L.prot+"g","",{b:true}]]}
+function hideDV(rows,k){const m={fat:0,sat:1,chol:3};if(m[k]!=null)rows[m[k]][2]="?%";return rows}
+function drawCalc(now){use(S3);const p=TR.p;const T=now/1000;const vs=p.vis;const tv0=parseAns($("#calcAns").value);const tv=tv0!=null&&isFinite(tv0)?tv0:null;
+  const tt=TR.sol?Math.max(0,(now-TR.solT)/1000)+.0001:0;
+  if(vs.k==="label"){
+    let rows=labelRows(vs.L,vs.hl);if(p.kind==="dv"&&!TR.sol)rows=hideDV(rows,vs.hl[0]);
+    nfLabel(14,14,290,{serv:"about 6 servings per container",size:vs.L.serv,kcal:vs.L.kcal,hlKcal:p.kind==="pct"?C.accent:null,rows,lh:20,foot:"*The % Daily Value tells you how much a nutrient in a serving contributes to a daily diet."});
+    txt(160,440,vs.L.food,{size:12.5,weight:700,align:"center"});if(vs.n)label(160,460,"eaten: "+nf(vs.n)+" servings",{size:12,weight:700,border:C.accent});
+    if(TR.solved){circ(770,30,13,C.good);checkMark(770,30,6,"#fff")}
+    if(TR.sol)wsteps(316,14,470,452,{title:"Worked solution",lines:p.lines,ans:"Answer: "+ansStr(p)},tt,{step:.9,cfs:14,size:12.5});
+    else{panelBox(316,14,470,452,{fill:hexA(C.paper,.96)});title(328,32,"Your answer",C["accent-ink"]);label(550,120,tv!=null?nf(tv,2)+(p.unit==="%"?"%":" "+p.unit):"type an answer",{size:16,weight:700,mono:true,border:C.accent});
+      wrapText("Read the highlighted line on the label. The worked solution builds here after a correct answer, or when you press Show worked solution. Units that cancel are struck through in red.",332,190,430,18,{size:13,color:C["ink-soft"]})}
+    return}
+  panelBox(10,10,780,232);if(TR.solved){circ(764,30,13,C.good);checkMark(764,30,6,"#fff")}
+  if(vs.k==="kcal"){vTag(22,26,"calc");const g=vs.g;const nb=Math.min(30,Math.ceil(g));
+    for(let i=0;i<nb;i++){const x=40+(i%15)*24,y=60+Math.floor(i/15)*28;const fr=i<Math.floor(g)?1:g-Math.floor(g);rr(x,y,20*fr,20,3);ctx.fillStyle=C.fat;ctx.fill();ctx.strokeStyle=hexA(C.ink,.4);ctx.lineWidth=1;ctx.stroke()}
+    txt(40,128,nf(g)+" g of fat (each block = 1 g)",{size:12.5,weight:700});
+    const sc=330/Math.max(vs.ans*1.3,tv||0,1);rr(40,150,vs.ans*sc*(TR.solved?1:0)+1,22,4);ctx.fillStyle=hexA(C.fat,.8);ctx.fill();txt(40,140+0,"",{});
+    txt(40,186,TR.solved?"× 9 kcal per gram = "+nf(vs.ans)+" kcal":"× 9 kcal per gram = ?",{size:13,weight:700,mono:true});
+    if(tv!=null){rr(40,200,Math.min(700,tv*sc),18,4);ctx.fillStyle=hexA(C.bad,.55);ctx.fill();txt(48+Math.min(690,tv*sc),209,"your answer: "+nf(tv,2)+" kcal",{size:12,weight:700,mono:true})}
+    fattyAcid(470,70,14,{},{L:16,dots:2.5,lw:2.6});txt(470,112,"fat = long C–H chains: lots of energy per gram",{size:12,weight:600});
+    [["carb",4],["prot",4],["fat",9]].forEach((b,i)=>{const x=500+i*90;rr(x,212-b[1]*7,40,b[1]*7,3);ctx.fillStyle=C[b[0]];ctx.fill();txt(x+20,224,b[1]+" kcal/g",{size:10.5,weight:700,align:"center",mono:true})})}
+  else if(vs.k==="ring"){vTag(22,26,"calc");const cx=150,cy=128,R=90;circ(cx,cy,R,hexA(C.sunk,.7),C.rule,1.4);const a0=-Math.PI/2;
+    if(vs.band){ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,a0+TAU*.2,a0+TAU*.35);ctx.closePath();ctx.fillStyle=hexA(C.fat,.35);ctx.fill()}
+    if(vs.guide){ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,a0,a0+TAU*vs.guide);ctx.closePath();ctx.strokeStyle=C.sfa;ctx.setLineDash([5,4]);ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([])}
+    const fr=TR.solved?vs.frac:0;if(fr>0){ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R*.85,a0,a0+TAU*fr);ctx.closePath();ctx.fillStyle=C[vs.col];ctx.fill()}
+    circ(cx,cy,R*.4,C.panel);txt(cx,cy-6,nf(vs.kcal,0),{size:15,weight:700,mono:true,align:"center"});txt(cx,cy+12,"kcal/day",{size:11,align:"center",color:C["ink-soft"]});
+    txt(280,60,vs.lab,{size:14,weight:700,color:C[vs.col]});txt(280,88,p.unit==="%"?"share of the day's kcal":"grams of fat",{size:12.5,color:C["ink-soft"]});
+    if(vs.guide)txt(280,116,"dashed wedge: the 10% guideline",{size:12,color:C["ink-soft"]});if(vs.band)txt(280,116,"pale band: AMDR 20–35%",{size:12,color:C["ink-soft"]});
+    label(520,170,tv!=null?"your answer: "+nf(tv,1)+(p.unit==="%"?"%":" "+p.unit):"type an answer",{size:13,weight:700,mono:true,border:C.accent});
+    if(tv!=null&&p.unit==="g"){const nbk=Math.min(60,Math.round(tv));for(let i=0;i<nbk;i++){const x=290+(i%30)*15,y=200+Math.floor(i/30)*14;rr(x,y,12,11,2);ctx.fillStyle=hexA(C[vs.col],.8);ctx.fill()}}}
+  else if(vs.k==="omega"){vTag(22,26,"cell");const L=Math.min(30,560/((vs.n-1)*Math.cos(30*D2R)));const pts=faPts(vs.n,vs.dbl,{x:80,y:120,L,bend:26,alt:true});drawFA(pts,vs.dbl,{lw:3,dcol:C.pufa,dots:2.5});
+    const e=pts[vs.n-1];txt(e[0]+10,e[1],"CH₃",{size:12,weight:700,mono:true});label(70,48,"acid end",{size:11,weight:700,border:C["el-o"]});
+    if(vs.showD)pts.forEach((q,i)=>{if(vs.dbl[i+1]){const b=pts[i+1];txt((q[0]+b[0])/2,(q[1]+b[1])/2+((i%2)?-20:20),"Δ"+(i+1),{size:11,weight:700,mono:true,align:"center",color:C["ink-soft"]})}});
+    if(TR.sol){const steps=Math.min(vs.om,Math.floor(tt*1.6)+1);for(let k=0;k<steps;k++){const q=pts[vs.n-1-k];txt(q[0],q[1]+(((vs.n-1-k)%2===0)?-18:18),"ω"+(k+1),{size:11.5,weight:700,mono:true,align:"center",color:C["accent-ink"]})}const q=pts[vs.n-steps];circ(q[0],q[1],8,null,C.gold,3)}
+    label(400,214,tv!=null?"your answer: omega-"+nf(tv,0):"type the omega number",{size:13,weight:700,mono:true,border:C.accent})}
+  if(TR.sol){wsteps(10,250,780,212,{title:"Worked solution",lines:p.lines,ans:"Answer: "+ansStr(p)},tt,{step:.9,cfs:14,size:12.5})}
+  else{panelBox(10,250,780,212,{fill:hexA(C.paper,.96)});title(22,268,"Worked solution",C["accent-ink"]);wrapText("The worked solution builds here after a correct answer, or when you press Show worked solution. Units that cancel are struck through in red.",24,300,740,18,{size:13,color:C["ink-soft"]})}}
+function calcA11y(){const p=TR.p;const v=$("#calcAns").value.trim();const lab=`Practice problem, ${p.title}. Your answer ${v||"not entered"}.${TR.solved?" Correct.":""}`;
+  const vk={label:"a Nutrition Facts label on the left with the needed lines highlighted",kcal:"gold blocks, one per gram of fat, a bar for the kcal and a red bar sized by your answer",ring:"a ring chart of the day's calories with the asked-for share shaded once solved",omega:"a fatty-acid chain with its double bonds; once the solution shows, omega numbers count in from the CH3 end"}[p.vis.k];
+  return [lab,`The picture shows ${vk}. ${TR.sol?"The worked solution builds line by line, with units struck through in red as they cancel, ending with the answer "+ansStr(p)+" in a green box.":"The worked solution is hidden until you check a correct answer or ask for it."}`]}
+/* ================= PART 4: sorting game ================= */
+function zz(x,y,n,L,col,kinks){let s=`<polyline fill="none" stroke="${col}" stroke-width="2.6" stroke-linejoin="round" points="`;let h=0;let px=x,py=y;s+=px+","+py+" ";for(let i=0;i<n;i++){const d=h+(i%2?.5:-.5);px+=Math.cos(d)*L;py+=Math.sin(d)*L;s+=px.toFixed(1)+","+py.toFixed(1)+" ";if(kinks&&kinks.indexOf(i)>=0)h+=.55}return s+'"/>'}
+function binSVG(k){const sv=s=>`<svg viewBox="0 0 56 46" aria-hidden="true">${s}</svg>`;const c=(x,y,r,f,st)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" stroke="${st||"var(--ink)"}" stroke-width="1.2"/>`;
+  switch(k){
+    case "sat":return sv(zz(4,12,8,7,"var(--sfa)")+zz(4,24,8,7,"var(--sfa)")+zz(4,36,8,7,"var(--sfa)"));
+    case "mono":return sv(zz(4,14,8,7,"var(--mufa)",[3])+zz(4,30,8,7,"var(--mufa)",[3]));
+    case "poly":return sv(zz(4,10,8,7,"var(--pufa)",[2,5])+zz(4,26,8,7,"var(--pufa)",[2,4,6]));
+    case "chylo":return sv(c(28,23,19,"var(--chylo)","var(--ink)")+c(22,18,3,"var(--fat)")+c(32,26,3,"var(--fat)")+c(26,30,3,"var(--fat)")+c(34,16,3,"var(--fat)"));
+    case "vldl":return sv(c(28,23,14,"var(--vldl)")+c(24,20,2.5,"var(--fat)")+c(31,26,2.5,"var(--chol)"));
+    case "ldl":return sv(c(28,23,10,"var(--ldl)")+c(26,22,2.2,"var(--chol)")+c(30,25,2.2,"var(--chol)"));
+    case "hdl":return sv(c(28,23,7,"var(--hdl)")+'<path d="M22 17 a8 8 0 0 1 12 0" stroke="var(--apo)" stroke-width="3" fill="none"/>');
+    case "tg":return sv('<rect x="6" y="6" width="7" height="34" rx="3" fill="var(--glyc)"/>'+zz(13,10,6,7,"var(--fat)")+zz(13,23,6,7,"var(--fat)")+zz(13,36,6,7,"var(--fat)"));
+    case "pl":return sv(c(28,10,7,"var(--plhead)")+'<path d="M25 17 v24 M31 17 v10 l4 6 v8" stroke="var(--chain)" stroke-width="2.4" fill="none"/>');
+    case "sterol":return sv('<path d="M8 28 l6 -4 l6 4 v7 l-6 4 l-6 -4 z M20 28 l6 -4 l6 4 v7 l-6 4 l-6 -4 z M26 20 l6 -4 l6 4 v8 l-6 4 l-6 -4 z" fill="var(--chol)" fill-opacity=".35" stroke="var(--chol)" stroke-width="2"/><path d="M38 20 l7 -4 l5 5" stroke="var(--chol)" stroke-width="2" fill="none"/>'+c(6,38,3,"var(--el-o)"));
+    case "n3":return sv('<path d="M48 23 Q34 9 16 21 L6 13 L9 23 L6 33 L16 25 Q34 37 48 23 Z" fill="var(--fish)" stroke="var(--ink)" stroke-width="1.2"/>'+c(40,21,1.8,"var(--ink)"));
+    case "n6":return sv('<path d="M23 4 h10 v8 q9 4 9 12 v18 h-28 v-18 q0 -8 9 -12 z" fill="var(--oil)" stroke="var(--glass-edge)" stroke-width="1.6"/>');
+  }return ""}
+const SROUNDS=[
+{name:"Main fat type in foods",goal:"Sort each food by the kind of fatty acid it has the most of. (Every fat is a mixture.)",bins:[["sat","Mostly saturated"],["mono","Mostly monounsaturated"],["poly","Mostly polyunsaturated"]],cards:[
+ ["Butter","sat","Butter fat is about two-thirds saturated."],["Coconut oil","sat","About 90% saturated, even though it is a plant oil."],["Cheese","sat","Dairy fat is mostly saturated."],["Palm kernel oil","sat","A tropical oil, mostly saturated."],["Whole milk","sat","Milk fat is mostly saturated."],
+ ["Olive oil","mono","About three-quarters monounsaturated (oleic acid)."],["Canola oil","mono","Mostly monounsaturated, with some ALA (omega-3)."],["Avocado","mono","Avocado fat is mostly oleic acid, a monounsaturated fat."],["Almonds","mono","Almond fat is mostly monounsaturated."],["Peanuts","mono","Peanut fat is about half monounsaturated."],
+ ["Walnuts","poly","Walnut fat is mostly polyunsaturated, including ALA."],["Sunflower oil","poly","Regular sunflower oil is mostly linoleic acid, a polyunsaturated omega-6."],["Soybean oil","poly","Mostly polyunsaturated: linoleic acid plus some ALA."],["Corn oil","poly","Mostly polyunsaturated (linoleic acid)."],["Flaxseed","poly","Flax fat is mostly polyunsaturated, rich in ALA."]]},
+{name:"Lipoprotein to its job",goal:"Match each description to the lipoprotein it describes.",bins:[["chylo","Chylomicron"],["vldl","VLDL"],["ldl","LDL"],["hdl","HDL"]],cards:[
+ ["Carries dietary fat from the intestine through the lymph","chylo","Chylomicrons are built in intestine cells and enter the lymph."],["Largest and least dense","chylo","About 85 to 90% triglyceride makes them big and light."],["Made with apoB-48 in the gut","chylo","apoB-48 is the chylomicron's protein."],
+ ["Made by the liver to send its triglycerides out","vldl","The liver packs triglyceride into VLDL."],["Shrinks into IDL and then LDL","vldl","As lipoprotein lipase removes triglyceride, VLDL becomes IDL, then LDL."],["About half triglyceride, from the liver","vldl","VLDL is roughly half triglyceride."],
+ ["Delivers cholesterol to cells through receptors","ldl","LDL binds LDL receptors with its apoB-100."],["Highest share of cholesterol","ldl","LDL is roughly half cholesterol."],["High levels are linked to plaque in arteries","ldl","Excess LDL enters artery walls and starts plaque."],
+ ["Collects extra cholesterol and returns it to the liver","hdl","That is reverse cholesterol transport."],["Smallest and densest; about half protein","hdl","More protein makes HDL the densest lipoprotein."],["Nicknamed “good cholesterol”","hdl","It carries cholesterol away from the arteries."]]},
+{name:"Lipid classes",goal:"Sort each item into triglycerides, phospholipids or sterols.",bins:[["tg","Triglyceride"],["pl","Phospholipid"],["sterol","Sterol"]],cards:[
+ ["Glycerol + three fatty acids","tg","That is the definition of a triglyceride."],["About 95% of the fat in foods","tg","Most food fat is triglyceride."],["Stored in fat cells for energy","tg","Adipose tissue stores triglycerides."],["Olive oil and butter are mostly this","tg","Fats and oils are mostly triglycerides."],
+ ["Lecithin","pl","Lecithin (phosphatidylcholine) is a phospholipid."],["Has a phosphate-containing head that mixes with water","pl","The phosphate head is hydrophilic."],["Forms the bilayer of cell membranes","pl","Membranes are phospholipid bilayers."],["Emulsifier in mayonnaise","pl","Egg-yolk lecithin holds mayonnaise together."],
+ ["Cholesterol","sterol","Cholesterol is the main animal sterol."],["Four fused carbon rings","sterol","The ring structure defines sterols."],["Starting material for estrogen and testosterone","sterol","Steroid hormones are made from cholesterol."],["Plant compounds that block cholesterol absorption","sterol","Plant sterols and stanols are sterols too."]]},
+{name:"Omega-3 or omega-6",goal:"Sort each food or fatty acid by its main omega family.",bins:[["n3","Omega-3"],["n6","Omega-6"]],cards:[
+ ["Salmon","n3","Fatty fish supply EPA and DHA, both omega-3."],["Sardines","n3","Small fatty fish rich in EPA and DHA."],["Flaxseed","n3","Flax is one of the richest sources of ALA."],["Chia seeds","n3","Chia fat is mostly ALA."],["EPA","n3","Eicosapentaenoic acid, 20:5 n-3."],["DHA","n3","Docosahexaenoic acid, 22:6 n-3, rich in brain and retina."],["Alpha-linolenic acid (ALA)","n3","The essential omega-3, 18:3 n-3."],
+ ["Linoleic acid","n6","The essential omega-6, 18:2 n-6."],["Arachidonic acid","n6","20:4 n-6, made from linoleic acid."],["Corn oil","n6","Mostly linoleic acid, an omega-6."],["Sunflower oil","n6","Regular sunflower oil is rich in linoleic acid."],["Safflower oil (regular)","n6","Regular safflower oil is mostly linoleic acid."]]}
+];
+const SG={r:0,placed:{},mist:0,sel:null,t0:0,timer:null,hint:null,doneRounds:{}};
+function cardBins(c){return Array.isArray(c[1])?c[1]:[c[1]]}
+function sRoundsUI(){$("#sRounds").innerHTML=SROUNDS.map((r,i)=>`<button type="button" class="round" aria-pressed="${i===SG.r}" data-i="${i}">Round ${i+1}: ${r.name}${SG.doneRounds[i]?`<span class="ok" aria-label="${SG.doneRounds[i]} stars">${"★".repeat(SG.doneRounds[i])}</span>`:""}</button>`).join("");
+  $("#sRounds").querySelectorAll("button").forEach(b=>b.onclick=()=>sLoad(+b.dataset.i))}
+function sLoad(i){SG.r=i;SG.placed={};SG.mist=0;SG.sel=null;SG.hint=null;SG.t0=Date.now();const R=SROUNDS[i];SG.order=shuffle(R.cards.map((c,k)=>k));
+  $("#sN").textContent=`Round ${i+1} of ${SROUNDS.length}`;$("#sTitle").textContent=R.name;$("#sGoal").textContent=R.goal;
+  const bins=$("#sBins");bins.innerHTML="";R.bins.forEach(b=>{const d=document.createElement("div");d.className="bin";d.dataset.k=b[0];
+    d.innerHTML=`<button type="button" class="binhead" data-k="${b[0]}">${binSVG(b[0])}<span>${b[1]}</span></button><div class="binitems"></div>`;
+    d.querySelector(".binhead").onclick=()=>{if(SG.sel!=null)sDrop(SG.sel,b[0]);else sMsg("info","Pick a card first, then tap a box.")};bins.appendChild(d)});
+  const best=store.get("best-"+i);$("#sBest").textContent=best?`Best for this round: ${"★".repeat(+best)}`:"";
+  $("#sMsg").className="msg";sRoundsUI();sRender();sTimerUI();a11yKey=""}
+function sRender(){const R=SROUNDS[SG.r];const pool=$("#sPool");pool.innerHTML="";
+  SG.order.forEach(k=>{if(SG.placed[k])return;const c=R.cards[k];const b=document.createElement("button");b.type="button";b.className="scard"+(SG.hint===k?" hinted":"");b.innerHTML=(c[3]||"")+"<span>"+c[0]+"</span>";b.dataset.k=k;
+    b.setAttribute("aria-pressed",SG.sel===k);b.onclick=e=>{if(b.dataset.dragged){delete b.dataset.dragged;return}SG.sel=SG.sel===k?null:k;sRender();const nb=pool.querySelector(`[data-k="${k}"]`);if(nb)nb.focus()};
+    b.addEventListener("pointerdown",e=>sDragStart(e,b,k));pool.appendChild(b)});
+  if(!pool.children.length)pool.innerHTML='<span class="small">All cards sorted.</span>';
+  document.querySelectorAll("#sBins .bin").forEach(d=>{const items=d.querySelector(".binitems");items.innerHTML="";d.classList.toggle("hintbin",SG.hint!=null&&cardBins(R.cards[SG.hint]).indexOf(d.dataset.k)>=0);
+    R.cards.forEach((c,k)=>{if(SG.placed[k]===d.dataset.k){const s=document.createElement("div");s.className="scard placed";s.innerHTML=(c[3]||"")+"<span>✓ "+c[0]+"</span>";items.appendChild(s)}})});
+  const n=Object.keys(SG.placed).length,tot=R.cards.length;$("#sStars").textContent=n===tot?"★".repeat(sStars())+"☆".repeat(3-sStars()):"";$("#sStars").setAttribute("aria-label",n===tot?sStars()+" of 3 stars":"Stars appear when the round is done")}
+function sStars(){return SG.mist===0?3:SG.mist<=2?2:1}
+function sMsg(cls,t){const m=$("#sMsg");m.className="msg show "+cls;m.textContent=t}
+function sDrop(k,bin){const R=SROUNDS[SG.r];const c=R.cards[k];SG.sel=null;SG.hint=null;
+  if(cardBins(c).indexOf(bin)>=0){SG.placed[k]=bin;sMsg("good","✓ "+c[0]+": "+c[2])}else{SG.mist++;const nm=R.bins.find(b=>b[0]===bin)[1];sMsg("warn",`Not quite. "${c[0]}" does not go in ${nm}. Hint: ${c[2].split(":")[0].split(".")[0]}.`)}
+  sRender();a11yKey="";if(Object.keys(SG.placed).length===R.cards.length)sFinish();else{const f=$("#sPool .scard");if(f&&document.activeElement===document.body)f.focus()}}
+function sFinish(){const st=sStars();SG.doneRounds[SG.r]=Math.max(SG.doneRounds[SG.r]||0,st);const best=+(store.get("best-"+SG.r)||0);if(st>best)store.set("best-"+SG.r,st);
+  const tm=!$("#sRelaxed").checked?` Time: ${fmt((Date.now()-SG.t0)/1000)}.`:"";sMsg("good",`Round complete with ${SG.mist} ${SG.mist===1?"mistake":"mistakes"}: ${st} of 3 stars.${tm} `+(SG.r<SROUNDS.length-1?"Press Next round when you are ready.":"That was the last round. Well done."));sRoundsUI();sRender()}
+let drag=null;
+function sDragStart(e,b,k){if(e.button>0)return;const r=b.getBoundingClientRect();drag={k,b,sx:e.clientX,sy:e.clientY,dx:e.clientX-r.left,dy:e.clientY-r.top,g:null,over:null,id:e.pointerId};
+  window.addEventListener("pointermove",sDragMove);window.addEventListener("pointerup",sDragEnd);window.addEventListener("pointercancel",sDragEnd)}
+function sDragMove(e){if(!drag||e.pointerId!==drag.id)return;if(!drag.g){if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)<6)return;const g=drag.b.cloneNode(true);g.classList.add("ghost");g.removeAttribute("id");g.setAttribute("aria-hidden","true");g.tabIndex=-1;g.style.width=drag.b.offsetWidth+"px";document.body.appendChild(g);drag.g=g;drag.b.style.opacity=".35"}
+  e.preventDefault();drag.g.style.left=(e.clientX-drag.dx)+"px";drag.g.style.top=(e.clientY-drag.dy)+"px";
+  const el=document.elementFromPoint(e.clientX,e.clientY);const bin=el&&el.closest?el.closest(".bin"):null;document.querySelectorAll(".bin.over").forEach(x=>x!==bin&&x.classList.remove("over"));if(bin)bin.classList.add("over");drag.over=bin}
+function sDragEnd(e){if(!drag)return;window.removeEventListener("pointermove",sDragMove);window.removeEventListener("pointerup",sDragEnd);window.removeEventListener("pointercancel",sDragEnd);
+  const d=drag;drag=null;document.querySelectorAll(".bin.over").forEach(x=>x.classList.remove("over"));if(!d.g)return;d.g.remove();d.b.style.opacity="";d.b.dataset.dragged="1";
+  if(d.over)sDrop(d.k,d.over.dataset.k);else sRender()}
+$("#sHint").onclick=()=>{const R=SROUNDS[SG.r];const k=SG.sel!=null?SG.sel:SG.order.find(k=>!SG.placed[k]);if(k==null){sMsg("info","Everything is sorted.");return}SG.hint=k;
+  const bn=cardBins(R.cards[k]).map(b=>R.bins.find(x=>x[0]===b)[1]).join(" or ");sMsg("info",`Hint: "${R.cards[k][0]}" goes in the glowing box (${bn}).`);sRender()};
+$("#sShow").onclick=()=>{const R=SROUNDS[SG.r];R.cards.forEach((c,k)=>{if(!SG.placed[k])SG.placed[k]=cardBins(c)[0]});SG.mist=Math.max(SG.mist,3);sMsg("info","All cards placed. Read each box to see why they belong there.");sRender();sFinish()};
+$("#sShuffle").onclick=()=>sLoad(SG.r);$("#sNext").onclick=()=>sLoad((SG.r+1)%SROUNDS.length);
+function sTimerUI(){const relaxed=$("#sRelaxed").checked;$("#sTimer").hidden=relaxed;clearInterval(SG.timer);if(!relaxed){SG.timer=setInterval(()=>{if(Object.keys(SG.placed).length<SROUNDS[SG.r].cards.length)$("#sTimer").textContent=fmt((Date.now()-SG.t0)/1000)},500)}}
+$("#sRelaxed").onchange=()=>{SG.t0=Date.now();sTimerUI()};
+function sortA11y(){const R=SROUNDS[SG.r];const n=Object.keys(SG.placed).length;
+  return [null,`Round ${SG.r+1}, ${R.name}. ${n} of ${R.cards.length} cards sorted. Each box has a small drawing and a name: `+R.bins.map(b=>b[1]).join(", ")+`. Cards still to sort: `+(SG.order.filter(k=>!SG.placed[k]).map(k=>R.cards[k][0]).join(", ")||"none")+"."]}
+/* ================= PART 5: lipids in real life ================= */
+function person(x,y,h,col,o){o=o||{};bodyFig(x,y,h,{fill:col||C.body});if(o.name)label(x,y+24,o.name,{size:12,weight:700,border:C["body-edge"]})}
+function labReport(x,y,w,rows,T,hlRow){rr(x,y,w,40+rows.length*34,6);ctx.fillStyle=hexA(C.paper,.98);ctx.fill();ctx.strokeStyle=C.rule;ctx.lineWidth=1.5;ctx.stroke();
+  txt(x+12,y+18,"Lipid panel (fasting), mg/dL",{size:12.5,weight:700});line(x+8,y+32,x+w-8,y+32,C.rule,1);
+  rows.forEach((r,i)=>{const yy=y+52+i*34;if(i===hlRow){rr(x+4,yy-15,w-8,30,4);ctx.fillStyle=hexA(C.ldl,.12+.08*Math.sin(T*3));ctx.fill()}
+    txt(x+12,yy,r[0],{size:13,weight:600});txt(x+w*.52,yy,r[1],{size:15,weight:700,mono:true,align:"right"});txt(x+w*.56,yy,r[2],{size:11.5,color:C["ink-soft"]});
+    if(r[3])label(x+w-38,yy,r[3],{size:11,weight:700,border:r[3]==="H"?C.bad:r[3]==="BH"?C.warn:C.good})})}
+function capsuleBottle(x,y){rr(x-26,y-70,52,70,8);ctx.fillStyle=hexA(C.glass,.8);ctx.fill();ctx.strokeStyle=C["glass-edge"];ctx.lineWidth=2;ctx.stroke();rr(x-20,y-84,40,16,4);ctx.fillStyle=C.steel;ctx.fill();for(let i=0;i<6;i++){ell(x-12+(i%3)*12,y-20-Math.floor(i/3)*16,6,3.5,.3,hexA(C.oil,.95),hexA(C.ink,.3),1)}rr(x-22,y-58,44,18,3);ctx.fillStyle=hexA(C.paper,.95);ctx.fill();txt(x,y-49,"omega-3",{size:10,weight:700,align:"center"})}
+function stones(x,y,n,s){for(let i=0;i<n;i++)circ(x+Math.cos(i*2.4)*s*.6,y+Math.sin(i*2.4)*s*.6,s*.32,"#C9B27A",hexA(C.ink,.5),1)}
+function miniLabel(x,y,w,t,o){rr(x,y,w,214,4);ctx.fillStyle="#fff";ctx.fill();ctx.strokeStyle="#10161A";ctx.lineWidth=1.6;ctx.stroke();const ink="#10161A";
+  txt(x+8,y+16,t,{size:12,weight:800,color:ink});ctx.fillStyle=ink;ctx.fillRect(x+6,y+28,w-12,4);txt(x+8,y+46,"Calories",{size:14,weight:800,color:ink});txt(x+w-8,y+46,String(o.kcal),{size:16,weight:800,align:"right",color:ink});ctx.fillRect(x+6,y+58,w-12,2);
+  const rows=[["Total Fat "+o.fat+"g",o.fdv,o.hl==="fat"],["  Saturated Fat "+o.sat+"g",o.sdv,o.hl==="sat"],["  Trans Fat 0g","",o.hl==="trans"],["Sodium "+o.na+"mg",o.ndv,false],["Protein "+o.pr+"g","",false]];
+  rows.forEach((r,i)=>{const yy=y+76+i*22;if(r[2]){rr(x+4,yy-10,w-8,20,3);ctx.fillStyle=hexA(C.accent,.2);ctx.fill();ctx.strokeStyle=C.accent;ctx.lineWidth=2;ctx.stroke()}txt(x+8,yy,r[0],{size:11.5,weight:i===0||i===3?700:500,color:ink});if(r[1])txt(x+w-8,yy,r[1],{size:11.5,weight:800,align:"right",color:ink});line(x+6,yy+11,x+w-6,yy+11,ink,.6)});
+  wrapText("Ingredients: "+o.ing,x+8,y+190,w-16,12,{size:9.5,color:ink})}
+const LIFE=[
+{name:"Reading a lipid panel",who:"Scenario 1 · a clinic visit",
+ story:"Marcus, 52, gets his yearly blood work. His fasting lipid panel shows total cholesterol 238, LDL 162, HDL 44 and triglycerides 160 mg/dL. He eats butter on most foods, fried meals several times a week and very few beans or whole grains. His clinician asks him to talk with a dietitian.",
+ cap:"Marcus's report: LDL 162 is flagged high; triglycerides 160 are borderline; HDL 44 is acceptable.",
+ desc:"On the left, a neutral grey-blue figure labelled Marcus holds a clipboard. In the middle, a lab report lists total cholesterol 238 (borderline high), LDL 162 (high, highlighted with a pulsing red band), HDL 44 (acceptable), triglycerides 160 (borderline high) and non-HDL as a question mark. On the right, an LDL scale runs from optimal (under 100) to very high (190 and over) with a marker at 162 in the high zone, and below it two swap cards show butter changing to olive oil and a bowl of oats and beans.",
+ draw(T){vTag(26,30,"lab");person(100,400,280,null,{name:"Marcus, 52"});rr(126,250,44,60,4);ctx.fillStyle=hexA(C.paper,.95);ctx.fill();ctx.strokeStyle=C.rule;ctx.stroke();for(let i=0;i<4;i++)line(132,264+i*11,164,264+i*11,C.rule,1.5);
+   labReport(200,40,300,[["Total cholesterol","238","under 200","BH"],["LDL cholesterol","162","under 100","H"],["HDL cholesterol","44","40 or more",""],["Triglycerides","160","under 150","BH"],["Non-HDL","?","under 130",""]],T,1);
+   panelBox(520,40,266,200);txt(534,60,"Where LDL 162 sits",{size:13,weight:700});const zones=[[0,100,"good","optimal"],[100,130,"good","near"],[130,160,"warn","borderline"],[160,190,"bad","high"],[190,230,"bad","very high"]];
+   zones.forEach((z,i)=>{const x=534+z[0]*1.0,w=(z[1]-z[0])*1.0;ctx.fillStyle=hexA(C[z[2]],.18+i*.06);ctx.fillRect(x,90,w,30);txt(x+w/2,i%2?146:132,z[3],{size:10,align:"center",color:C["ink-soft"]});if(i)txt(x,162,String(z[0]),{size:10,mono:true,align:"center",color:C["ink-soft"]})});
+   const mx=534+162;line(mx,82,mx,126,C.ink,3);label(mx,72,"162",{size:12,weight:700,mono:true,border:C.bad});
+   wrapText("Main target: lower LDL. The panel is one part of a full risk check.",534,190,240,16,{size:12,weight:600});
+   panelBox(520,252,266,200);txt(534,272,"Mainstream food swaps",{size:13,weight:700});butterStick(540,300,56,20,0);arrow(604,310,640,310,C["ink-soft"],2);bottle(670,340,28,60,C.olive,"",{lv:.85});txt(712,310,"oils",{size:12,weight:600});
+   ell(560,400,26,10,0,"#D9C39A",hexA(C.ink,.4),1);beansIcon(630,400,14);fishIcon(712,400,26,C.fish,1);txt(653,436,"oats, beans, fish",{size:12,weight:600,align:"center"})},
+ qs:[{q:"Which result is the main target for lowering Marcus's heart-disease risk through diet?",opts:[["LDL cholesterol (162, high)",1,"Right. LDL is the main lipid target, and saturated-fat swaps and soluble fiber can lower it."],["HDL cholesterol (44)",0,"44 is above the 40 mg/dL cut-off. Raising HDL alone has not been shown to lower risk; LDL is the main target."],["Triglycerides (160)",0,"Triglycerides are borderline and worth watching, but LDL is the main target here."],["None: the panel is fine",0,"LDL 162 is in the high range, so it is worth acting on."]]},
+  {q:"Non-HDL cholesterol is total cholesterol minus HDL. What is Marcus's non-HDL?",opts:[["194 mg/dL",1,"Yes. 238 − 44 = 194, above the under-130 goal. It counts the cholesterol in all the particles that can build plaque."],["282 mg/dL",0,"That added HDL instead of subtracting it."],["122 mg/dL",0,"Subtract HDL (44) from total cholesterol (238)."],["76 mg/dL",0,"That subtracted LDL from total. Non-HDL is total minus HDL."]]},
+  {q:"Which change fits mainstream guidance for Marcus's LDL?",opts:[["Swap butter and fried foods toward vegetable oils, nuts and fish, and add soluble fiber such as oats and beans",1,"Yes. Replacing saturated fat with unsaturated fat and adding soluble fiber both lower LDL. A dietitian can tailor it, and his clinician may also discuss medicine."],["Cut out all fat completely",0,"The body needs some fat, and unsaturated fats help lower LDL when they replace saturated fat."],["Replace butter with white bread and sugary snacks",0,"Swapping saturated fat for refined starch and sugar does not bring the same benefit and can raise triglycerides."],["Take a fish oil capsule and change nothing else",0,"Fish oil mainly lowers triglycerides; it does not replace the LDL-lowering effect of a fat swap and fiber."]]}]},
+{name:"Choosing cooking oils",who:"Scenario 2 · the grocery store",
+ story:"Priya, 34, is choosing an oil for everyday cooking. She compares canola, olive, sunflower and coconut oils on the shelf. A friend told her coconut oil is the healthiest choice for the heart.",
+ cap:"Four oils on the shelf with their fatty-acid bars: canola and olive are mostly monounsaturated, sunflower mostly polyunsaturated, coconut mostly saturated.",
+ desc:"A store shelf holds four bottles labelled canola, olive, sunflower and coconut. Under each bottle, a stacked bar shows red saturated, green monounsaturated and blue polyunsaturated fat: canola 7, 64, 29 percent with white stripes for omega-3; olive 14, 75, 11; sunflower 10, 21, 69; coconut 91, 7, 2. A highlight moves from bottle to bottle. On the left, a neutral figure labelled Priya holds a basket.",
+ draw(T){vTag(26,30,"food");person(80,420,260,null,{name:"Priya, 34"});rr(120,300,60,40,6);ctx.strokeStyle=C.wood;ctx.lineWidth=3;ctx.stroke();
+   rr(180,190,600,16,3);ctx.fillStyle=C.wood;ctx.fill();const O=[["canola",C.oil,[7,64,29],9],["olive",C.olive,[14,75,11],0],["sunflower",mix(C.oil,"#fff",.2),[10,21,69],0],["coconut","#F4EFE6",[91,7,2],0]];const k=Math.floor(P(T,12)*4);
+   O.forEach((o,i)=>{const x=250+i*145;if(i===k)glow(x,140,70,C.accent,.25);bottle(x,190,56,130,o[1],o[0],{lv:.85});faBar(x-60,230,120,22,o[2],{nums:true,n3:o[3]});txt(x,268,o[0],{size:13,weight:700,align:"center"})});
+   panelBox(200,300,586,150);txt(214,322,"Key",{size:12.5,weight:700});[[C.sfa,"saturated"],[C.mufa,"monounsaturated"],[C.pufa,"polyunsaturated"]].forEach((c,i)=>{rr(214+i*170,340,16,16,3);ctx.fillStyle=c[0];ctx.fill();txt(236+i*170,348,c[1],{size:12.5})});
+   wrapText("White stripes: notable ALA (omega-3). For everyday heart-healthy cooking, mainstream guidance favours oils that are mostly unsaturated. Values approximate.",214,384,560,16,{size:12.5})},
+ qs:[{q:"Which bottle has the least saturated fat?",opts:[["Canola oil",1,"Yes. Canola is about 7% saturated, the smallest red section on the shelf."],["Coconut oil",0,"Coconut oil is about 90% saturated, the most on the shelf."],["Olive oil",0,"Olive oil is low (about 14%) but canola is lower."],["Sunflower oil",0,"Sunflower is about 10% saturated, a bit more than canola."]]},
+  {q:"Which of these oils also gives a useful amount of ALA, an omega-3?",opts:[["Canola oil",1,"Right. Canola has about 9% ALA (the striped part). Soybean oil, flax and walnuts also supply ALA."],["Coconut oil",0,"Coconut oil has almost no polyunsaturated fat."],["Sunflower oil",0,"Regular sunflower oil is rich in linoleic acid, an omega-6, with very little ALA."],["Olive oil",0,"Olive oil is mostly oleic acid (omega-9), with very little ALA."]]},
+  {q:"Priya's friend says coconut oil is the best for the heart. Based on the bars, what is a fair reply?",opts:[["It is about 90% saturated fat, which tends to raise LDL compared with unsaturated oils, so mainstream advice favours unsaturated oils for everyday use",1,"That matches mainstream heart guidance and the fatty-acid bar."],["It is a plant oil, so it cannot affect cholesterol",0,"Plant oils can be high in saturated fat. Coconut oil is the clearest example."],["It has no fat at all",0,"Coconut oil is 100% fat, mostly saturated."],["It is the best source of omega-3",0,"Coconut oil has almost no omega-3."]]}]},
+{name:"Fish oil questions",who:"Scenario 3 · a pharmacy aisle",
+ story:"Dolores, 61, takes a blood-thinning medicine after a heart rhythm problem. She has read that fish oil capsules prevent heart attacks and wants to start a high-dose product. She rarely eats fish.",
+ cap:"What the evidence says: fish oil lowers triglycerides at high doses; heart-attack prevention in most people is mixed; eating fatty fish is the food-first advice.",
+ desc:"On the left, a neutral figure labelled Dolores stands next to a generic capsule bottle labelled omega-3 and a plate with a salmon fillet. In the middle, three evidence bars: 'lowers triglycerides at high doses' is long and green, 'prevents heart attacks in most people' is half-filled and amber, labelled mixed, and 'fatty fish about twice a week' is long and green, labelled recommended. On the right, a warning card shows a blood drop and a pill with an exclamation mark: 'high doses plus blood thinners: ask your clinician'.",
+ draw(T){vTag(26,30,"body");person(90,410,270,null,{name:"Dolores, 61"});capsuleBottle(190,330);plateIcon(190,410,50);fishIcon(190,404,30,C.fish,1);
+   panelBox(260,30,330,300);txt(274,52,"What the evidence says",{size:13.5,weight:700});
+   [["Lowers triglycerides (high doses)",.88,C.good,"strong"],["Prevents heart attacks in most people",.45,C.warn,"mixed"],["Fatty fish about twice a week",.85,C.good,"recommended"]].forEach((b,i)=>{const y=96+i*74;txt(274,y,b[0],{size:12.5,weight:600});const f=b[1]*smooth(seg(P(T,10)*10,.3+i*.4,1.8+i*.4));gaugeBar(274,y+14,200,16,f,b[2],"");label(528,y+22,b[3],{size:11.5,weight:700,border:b[2]})});
+   panelBox(604,30,182,300,{fill:hexA(C["warn-wash"],.9),stroke:C.warn});drop(650,110,24,C.blood);ell(720,110,22,11,.6,C.prot,hexA(C.ink,.4),1);txt(694,74,"!",{size:28,weight:800,align:"center",color:C["warn-ink"]});
+   wrapText("High doses plus blood thinners can raise bleeding risk. Ask your clinician first.",616,170,160,16,{size:12.5,weight:700});
+   wrapText("Supplements are not approved for safety or effectiveness before they are sold, and doses vary.",616,262,160,15,{size:11.5,color:C["ink-soft"]});
+   panelBox(260,342,526,110);wrapText("Food first: salmon, sardines, trout and mackerel provide EPA and DHA along with protein, vitamin D and selenium.",274,372,500,17,{size:12.5,weight:600})},
+ qs:[{q:"What does research most consistently show high-dose fish oil does?",opts:[["Lowers blood triglycerides",1,"Yes. At high doses, EPA and DHA reliably lower triglycerides. Prevention of heart attacks in most people is less clear."],["Lowers LDL cholesterol a lot",0,"Fish oil has little effect on LDL and can even nudge it up a little."],["Cures heart disease",0,"No supplement cures heart disease. Effects on heart events in most people are mixed."],["Raises HDL to protective levels in everyone",0,"Any HDL change is small. The main effect is lower triglycerides."]]},
+  {q:"Why should Dolores talk with her clinician before starting high-dose fish oil?",opts:[["High doses can add to bleeding risk alongside her blood thinner",1,"Right. That interaction is a real safety concern. Some trials also linked high doses with heart rhythm problems."],["Fish oil has no effects, so it does not matter",0,"Fish oil has real effects, which is why doses and medicines matter."],["Fish oil contains cholesterol that will block her arteries",0,"The concern is bleeding risk with her medicine, not cholesterol."],["It is only a concern for children",0,"Medicine interactions matter at any age, especially with blood thinners."]]},
+  {q:"Which food-first approach matches mainstream advice?",opts:[["Eat fatty fish such as salmon or sardines about twice a week",1,"Yes. That supplies EPA and DHA along with other nutrients."],["Eat fried fish sticks every day",0,"Frying and breading change the fat profile. Baked, grilled or canned fatty fish is the usual advice."],["Take fish oil instead of eating fruits and vegetables",0,"Supplements do not replace an overall healthy eating pattern."],["Avoid all fish because of the fat",0,"Fish fat is mostly unsaturated, and fatty fish is recommended."]]}]},
+{name:"Gallbladder and fat digestion",who:"Scenario 4 · after a large meal",
+ story:"Sam, 45, gets sharp pain under his right ribs about an hour after large, high-fat meals. An ultrasound shows gallstones. His surgeon suggests removing the gallbladder, and Sam wonders how he will digest fat afterwards.",
+ cap:"Fat triggers CCK, which squeezes the gallbladder against its stones. Without a gallbladder, the liver still makes bile; it just drips in steadily instead of in squirts.",
+ desc:"Two panels. On the left, labelled 'with gallstones', a red-brown liver sits above a green gallbladder holding pale yellow stones. A gold fat droplet arrives in the duodenum, purple CCK dots travel to the gallbladder, which squeezes, and red pain lines flash around it. On the right, labelled 'after removal', the gallbladder is gone and small green bile drops drip steadily from the liver down the bile duct into the intestine, where they meet a fat droplet. A neutral figure labelled Sam stands at the far left.",
+ draw(T){vTag(26,30,"body");person(70,420,250,null,{name:"Sam, 45"});const t=P(T,8)*8;
+   panelBox(140,30,310,420);txt(295,52,"with gallstones",{size:13.5,weight:700,align:"center"});liverShape(280,150,110);const sq=seg(t,3,4.5)*(1-seg(t,6.5,7.5));gallbladder(300,236,30,sq);stones(296,240,5,20);
+   ctx.beginPath();ctx.moveTo(310,268);ctx.quadraticCurveTo(320,320,290,360);ctx.strokeStyle=C.bile;ctx.lineWidth=5;ctx.stroke();rr(170,360,250,40,20);ctx.fillStyle=C.gut;ctx.fill();ctx.strokeStyle=C["gut-edge"];ctx.lineWidth=2;ctx.stroke();txt(295,420,"duodenum",{size:12,weight:600,align:"center"});
+   circ(lerp(190,280,seg(t,.2,2)),380,12,C.fat,hexA(C.ink,.4),1);if(t>2&&t<4){for(let i=0;i<4;i++){const q=seg(t,2+i*.2,3.4+i*.2);circ(lerp(280,300,q),lerp(372,240,q),4,C.vit)}label(220,330,"CCK",{size:12,weight:700,border:C.vit})}
+   if(sq>.3){for(let i=0;i<6;i++){const a=i/6*TAU;line(300+Math.cos(a)*44,236+Math.sin(a)*44,300+Math.cos(a)*58,236+Math.sin(a)*58,C.bad,3)}label(380,280,"pain",{size:12,weight:700,border:C.bad})}
+   panelBox(470,30,316,420);txt(628,52,"after removal",{size:13.5,weight:700,align:"center"});liverShape(620,150,110);
+   ctx.beginPath();ctx.moveTo(640,200);ctx.quadraticCurveTo(650,280,620,330);ctx.strokeStyle=C.bile;ctx.lineWidth=5;ctx.stroke();for(let i=0;i<5;i++){const p=P(T*.35+i/5,1);const q=along([[640,200],[648,270],[620,330]],p);drop(q[0],q[1],6,C.bile)}
+   rr(500,330,250,40,20);ctx.fillStyle=C.gut;ctx.fill();ctx.strokeStyle=C["gut-edge"];ctx.lineWidth=2;ctx.stroke();circ(560,350,11,C.fat,hexA(C.ink,.4),1);
+   wrapText("Bile flows steadily from the liver. Most people digest fat well; very large, high-fat meals may cause loose stools at first.",490,396,280,15,{size:11.5,weight:600})},
+ qs:[{q:"Why does Sam's pain often start after a high-fat meal?",opts:[["Fat triggers CCK, which makes the gallbladder squeeze against the stones",1,"Right. CCK is the signal for the gallbladder to contract, and stones can block the outflow."],["Fat is digested in the gallbladder",0,"Fat is digested in the small intestine. The gallbladder only stores and releases bile."],["High-fat meals make the liver stop working",0,"The liver keeps working. The pain comes from the gallbladder contracting."],["Gallstones are made of fat from that meal",0,"Gallstones form over time, mostly from cholesterol in bile, not from one meal."]]},
+  {q:"If Sam's gallbladder is removed, what still makes bile?",opts:[["The liver",1,"Yes. The liver makes bile; the gallbladder only stored and concentrated it."],["The pancreas",0,"The pancreas makes lipase and other enzymes, not bile."],["The stomach",0,"The stomach makes acid and gastric lipase, not bile."],["Nothing; he can no longer digest fat",0,"The liver keeps making bile, which drips into the intestine. Most people digest fat well."]]},
+  {q:"If bile could not reach the intestine at all, what would you expect?",opts:[["Poor absorption of fat and of vitamins A, D, E and K, with greasy, floating stools",1,"Right. Without bile, micelles cannot form, so fat and fat-soluble vitamins are poorly absorbed."],["Better absorption of fat",0,"Bile is needed for emulsification and micelles. Without it, fat absorption falls."],["No change, because lipase does all the work",0,"Lipase needs emulsified droplets, and micelles need bile salts to carry products to the cells."],["Poor absorption of vitamin C only",0,"Vitamin C is water-soluble. The fat-soluble vitamins A, D, E and K would be affected."]]}]},
+{name:"Comparing two snack labels",who:"Scenario 5 · reading labels",
+ story:"Jordan, 28, is choosing between two crackers for work lunches. Cracker A has 150 Calories, 8 g total fat (10% DV) and 3.5 g saturated fat (18% DV), made with palm oil. Cracker B has 140 Calories, 6 g total fat (8% DV) and 1 g saturated fat (5% DV), made with sunflower oil. Both list 0 g trans fat.",
+ cap:"Two labels side by side. The saturated-fat lines are the clearest difference: 18% DV versus 5% DV.",
+ desc:"Two white Nutrition Facts labels stand side by side. Cracker A shows 150 Calories, total fat 8 g at 10%, saturated fat 3.5 g at 18%, trans fat 0 g, sodium 200 mg and protein 3 g, with palm oil in the ingredients. Cracker B shows 140 Calories, total fat 6 g at 8%, saturated fat 1 g at 5%, trans fat 0 g, sodium 180 mg and protein 3 g, with sunflower oil. A gold highlight moves across matching lines on both labels. On the right, a 5-20 guide bar marks 5% as low and 20% as high, with markers at 18% for A and 5% for B. A neutral figure labelled Jordan stands at the left.",
+ draw(T){vTag(26,30,"food");person(70,420,250,null,{name:"Jordan, 28"});const k=Math.floor(P(T,9)*3);const hl=["fat","sat","trans"][k];
+   miniLabel(140,40,200,"Cracker A",{kcal:150,fat:8,fdv:"10%",sat:3.5,sdv:"18%",na:200,ndv:"9%",pr:3,ing:"enriched flour, palm oil, salt…",hl});
+   miniLabel(360,40,200,"Cracker B",{kcal:140,fat:6,fdv:"8%",sat:1,sdv:"5%",na:180,ndv:"8%",pr:3,ing:"whole wheat flour, sunflower oil, salt…",hl});
+   panelBox(580,40,206,214);txt(592,62,"5/20 guide (saturated fat)",{size:12,weight:700});rr(596,90,170,14,7);const g=ctx.createLinearGradient(596,0,766,0);g.addColorStop(0,hexA(C.good,.6));g.addColorStop(1,hexA(C.bad,.6));ctx.fillStyle=g;ctx.fill();
+   [[5,"5% low"],[20,"20% high"]].forEach(m=>{const x=596+170*m[0]/25;line(x,84,x,110,C.ink,2);txt(x,122,m[1],{size:10.5,weight:700,align:"center"})});
+   [["A",18],["B",5]].forEach((m,i)=>{const x=596+170*m[1]/25;circ(x,97,6,i?C.good:C.bad,C.panel,2);txt(x,i?78:78,m[0],{size:11.5,weight:800,align:"center"});circ(604,160+i*30,7,i?C.good:C.bad);txt(618,160+i*30,"Cracker "+m[0]+": "+m[1]+"% DV",{size:12,weight:700})});
+   panelBox(140,270,646,180);wrapText("Label math reminders: % of Calories from fat = fat g × 9 ÷ Calories × 100. %DV = amount ÷ Daily Value × 100 (total fat 78 g, saturated fat 20 g). “0 g trans fat” means less than 0.5 g per serving.",156,300,610,18,{size:13,weight:600});
+   wrapText("Both crackers can fit in a balanced pattern; the label shows what each one provides.",156,400,610,16,{size:12,color:C["ink-soft"]})},
+ qs:[{q:"Which cracker is lower in saturated fat per serving?",opts:[["Cracker B: 1 g, 5% DV",1,"Yes. 5% DV is low by the 5/20 guide; Cracker A's 18% is close to high."],["Cracker A: 3.5 g, 18% DV",0,"18% DV is more than three times Cracker B's 5%."],["They are the same because both have 0 g trans fat",0,"Trans fat is the same, but saturated fat differs a lot."],["You cannot tell from a label",0,"The saturated fat line and its %DV show it directly."]]},
+  {q:"About what percent of Cracker A's Calories come from fat?",opts:[["About 48%",1,"Right. 8 g × 9 = 72 kcal; 72 ÷ 150 = 0.48, or about 48%."],["About 21%",0,"That used 4 kcal per gram (8 × 4 = 32). Fat has 9 kcal per gram."],["10%",0,"10% is the %DV for total fat, which compares grams with 78 g. It is not the share of Calories."],["72%",0,"72 is the kcal from fat. Divide by 150 Calories and multiply by 100."]]},
+  {q:"Both labels say Trans Fat 0 g. What does that mean?",opts:[["Each serving has less than 0.5 g of trans fat",1,"Right. Labels may round amounts under 0.5 g down to 0 g."],["The crackers contain no fat at all",0,"Both crackers contain fat; the trans line refers only to trans fat."],["The crackers are free of saturated fat",0,"Saturated fat is listed separately: 3.5 g and 1 g."],["Trans fat is not allowed on labels",0,"Trans fat must be listed on U.S. labels; here it rounds to 0 g."]]}]}
+];
+const LS={i:0,ans:{}};
+function lifeUI(){const S=LIFE[LS.i];$("#lifeN").textContent=S.who;$("#lifeTitle").textContent=S.name;$("#lifeStory").textContent=S.story;$("#lifeCap").textContent=S.cap;
+  $("#lifeChips").innerHTML=LIFE.map((s,i)=>`<button type="button" class="casechip" aria-pressed="${i===LS.i}" data-i="${i}">${i+1}. ${s.name}${LS.ans[i+"-0"]&&LS.ans[i+"-1"]&&LS.ans[i+"-2"]?'<span class="ok" aria-label="all answered">✓</span>':""}</button>`).join("");
+  $("#lifeChips").querySelectorAll("button").forEach(b=>b.onclick=()=>{LS.i=+b.dataset.i;lifeUI()});
+  const box=$("#lifeQs");box.innerHTML="";S.qs.forEach((q,qi)=>{const d=document.createElement("div");d.className="qblock lifeq";d.innerHTML=`<p class="qlab" id="lq${qi}">${qi+1}. ${q.q}</p><div class="opts" role="group" aria-labelledby="lq${qi}"></div><div class="fb" role="status"></div>`;
+    const ob=d.querySelector(".opts"),fb=d.querySelector(".fb");shuffle(q.opts).forEach(o=>{const b=document.createElement("button");b.type="button";b.className="opt";b.textContent=o[0];
+      b.onclick=()=>{ob.querySelectorAll(".opt").forEach(x=>x.classList.remove("wrong"));if(o[1]){b.classList.add("right");fb.className="fb show ok";fb.textContent="✓ "+o[2];LS.ans[LS.i+"-"+qi]=1;lifeChipsOnly()}else{b.classList.add("wrong");fb.className="fb show no";fb.textContent="Not quite. "+o[2]}};ob.appendChild(b)});box.appendChild(d)});a11yKey=""}
+function lifeChipsOnly(){const i=LS.i;const b=$("#lifeChips").querySelector(`[data-i="${i}"]`);if(b&&LS.ans[i+"-0"]&&LS.ans[i+"-1"]&&LS.ans[i+"-2"]&&!b.querySelector(".ok"))b.insertAdjacentHTML("beforeend",'<span class="ok" aria-label="all answered">✓</span>')}
+$("#lifePrev").onclick=()=>{LS.i=(LS.i+LIFE.length-1)%LIFE.length;lifeUI()};$("#lifeNext").onclick=()=>{LS.i=(LS.i+1)%LIFE.length;lifeUI()};
+function drawLife(now){use(S5);LIFE[LS.i].draw(now/1000)}
+function lifeA11y(){const S=LIFE[LS.i];return [S.name+". "+S.cap,S.desc]}
+/* ---------------- accessibility: live labels and picture descriptions ---------------- */
+const A11Y={sim:{cv:"#cvSim",f:simA11y},build:{cv:"#cvBuild",f:buildA11y},calc:{cv:"#cvCalc",f:calcA11y},sort:{cv:null,f:sortA11y},life:{cv:"#cvLife",f:lifeA11y}};
+let a11yKey="",a11yT=0;
+function a11yTick(){if((++a11yT)%20)return;const a=A11Y[curTab];const [lab,d]=a.f();const key=curTab+"|"+lab+"|"+(curTab==="sim"?"":d);if(key===a11yKey)return;a11yKey=key;
+  if(a.cv&&lab)$(a.cv).setAttribute("aria-label",lab);if(window.gkDescribe)window.gkDescribe(d);
+  const box=document.getElementById("gk-desc");if(box){const host=a.cv?$(a.cv).closest(".canvas-holder"):$("#sPool");if(host&&host.nextElementSibling!==box)host.after(box);if(a.cv)$(a.cv).setAttribute("aria-describedby","gk-desc")}}
+/* ---------------- tabs / theme / loop ---------------- */
+let curTab="sim";
+const TABS=["sim","build","calc","sort","life"];
+function showTab(k,focus){curTab=k;document.querySelectorAll(".tab").forEach(x=>{const on=x.dataset.tab===k;x.setAttribute("aria-selected",on);x.tabIndex=on?0:-1;if(on&&focus)x.focus()});
+  TABS.forEach(t=>$("#tab-"+t).hidden=t!==k);fitAll();a11yKey="";a11yT=19}
+document.querySelectorAll(".tab").forEach(t=>{t.onclick=()=>showTab(t.dataset.tab);t.onkeydown=e=>{const i=TABS.indexOf(t.dataset.tab);
+  if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();showTab(TABS[(i+(e.key==="ArrowRight"?1:TABS.length-1))%TABS.length],true)}
+  if(e.key==="Home"){e.preventDefault();showTab(TABS[0],true)}if(e.key==="End"){e.preventDefault();showTab(TABS[TABS.length-1],true)}}});
+function fitAll(){[S1,S2,S3,S5].forEach(s=>s.fit())}
+window.addEventListener("resize",fitAll);
+$("#themeBtn").onclick=()=>{const r=document.documentElement;const dark=getComputedStyle(r).getPropertyValue("--ground").trim().toLowerCase()==="#0e1519";r.setAttribute("data-theme",dark?"light":"dark");readColors()};
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>setTimeout(readColors,30));
+let last=performance.now(),readT=0;
+function frame(now){const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;DT=dt;
+  try{simStep(dt);readT+=dt;if(readT>.3){readT=0;simRead();simChecks()}}catch(err){console.error(err)}
+  try{if(curTab==="sim")drawSim(now);else if(curTab==="build")drawBuild(now);else if(curTab==="calc")drawCalc(now);else if(curTab==="life")drawLife(now)}catch(err){console.error(err)}
+  try{a11yTick()}catch(err){console.error(err)}
+  requestAnimationFrame(frame)}
+/* test hooks */
+window.__lp={tab:k=>showTab(k),sim:o=>{Object.assign(SIM,o);simUI();simChanged()},simState:()=>({disp:Object.assign({},SIM.disp),model:simModel(),done:[...SIM.done],n:SIM.P.length}),simSettle:()=>{for(let i=0;i<400;i++)simStep(.05)},
+  build:(n,dbl)=>{B.n=n;B.dbl=Object.assign({},dbl||{});B.edited=true;buildUpd()},buildInfo:()=>Object.assign(faInfo(B.n,B.dbl),{done:[...B.done]}),cycle:p=>cycleBond(p),
+  calcTypes:()=>CTYPES.map(c=>c[0]).filter(c=>c!=="mix"),calcSet:t=>{TR.type=t;$("#calcType").value=t;calcNew()},calcProb:()=>({ans:TR.p.ans,tol:TR.p.tol,unit:TR.p.unit,dp:TR.p.dp,kind:TR.p.kind,str:ansStr(TR.p).replace(/[^\d.\-]/g,"")}),
+  gen:t=>{const q=genOne(t);const good=q.exact?String(q.ans):nf(q.ans,q.dp).replace(/,/g,"");const bad=String(q.exact?q.ans+1:Math.round(q.ans*1.6+3));return {ans:q.ans,good,j1:judge(q,good),j1u:judge(q,good+(q.unit==="%"?"%":" "+q.unit)),j2:judge(q,bad),slips:q.slips.map(s=>judge(q,String(Math.round(s[0]*100)/100)).ok),lines:q.lines.length,hints:q.hints.length,html:q.html}},
+  sortGo:i=>sLoad(i),sortN:()=>SROUNDS.length,sortShow:()=>$("#sShow").click(),sortState:()=>({placed:Object.keys(SG.placed).length,n:SROUNDS[SG.r].cards.length,mist:SG.mist}),lifeGo:i=>{LS.i=i;lifeUI()},lifeN:()=>LIFE.length};
+readColors();simUI();simPresetUI();simInit();simChanged();simRead();chalUI($("#simChal"),SIM_CH,SIM.done);presetUI();buildUpd();calcNew();updCalcMeter();sLoad(0);lifeUI();fitAll();requestAnimationFrame(frame);
+
+})();
+</script>
+</body>
+</html>

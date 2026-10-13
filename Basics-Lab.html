@@ -1,0 +1,1339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nutrition Basics Lab</title>
+<meta name="description" content="Nutrition basics lab: a meal builder simulator with a live kilocalorie total, macronutrient pie with AMDR bands, food-group meter, key micronutrients against the DRIs and a nutrient density score; a randomized label-reading and kilocalorie practice trainer with animated worked solutions; a sorting game for nutrient classes, energy, DRI terms and study types; and real-life scenarios.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="nutr-kit.js"></script>
+<style>
+:root{
+  --ground:#E3E7EA;--panel:#F7F9FA;--panel-2:#EDF1F3;--sunk:#D5DBDF;
+  --ink:#10161A;--ink-soft:#57666F;--ink-faint:#566570;--rule:#C4CDD3;--rule-soft:#D9E0E4;
+  --accent:#7A5A00;--accent-ink:#5E4500;--accent-wash:#F5ECD2;
+  --warn:#A36A10;--warn-wash:#F6ECD6;--bad:#A9372F;--bad-wash:#F7DFDC;--good:#2F6F4F;--good-wash:#DEEDE4;--on-accent:#fff;--warn-ink:#7A4E08;
+  --act1:#B8561A;--act2:#2F7FC1;--act3:#B07A10;--act4:#2E8A7A;--act5:#7B5CC9;--act6:#3E9B4F;--act7:#A04E8C;--act8:#5E7183;
+  --gold:#C9A227;--gold-wash:#F6EFD3;--gold-ink:#7A6000;
+  --ecf:#EEF1F6;--grid:#D5DAE6;--paper:#FFFDF7;
+  --carb:#E08A1E;--prot:#C0455A;--fat:#E3BD2A;--alc:#8A939A;--fiber:#3E9B4F;--water:#3F8FD0;--vit:#7B5CC9;--min:#5E7183;
+  --carb-ink:#8A4F00;--prot-ink:#9B2C40;--fat-ink:#6E5800;--alc-ink:#4E575E;--fiber-ink:#2A6B37;--water-ink:#1D5C93;--vit-ink:#5B3FA8;--min-ink:#45576A;
+  --fg-fruit:#D0453A;--fg-veg:#3E9B4F;--fg-grain:#C27A2A;--fg-prot:#8A5CC0;--fg-dairy:#3F8FD0;
+  --plate:#FFFFFF;--plate-rim:#B9C2C9;--table:#E9E1D3;--skin1:#E8C2A0;--skin2:#B98462;--skin3:#7A5038;--skin4:#F0D2B8;--hair:#3D3029;--shirt1:#4F7FA8;--shirt2:#A0577A;--shirt3:#5E8A4A;--shirt4:#8C6BB0;
+  --flame:#E8862A;--flame-in:#F6D04D;--heat:#C8452B;--cold:#2F7FC1;--metal:#9AA6AF;--glass:#E3EDF2;--glass-edge:#7F99A6;--waterfill:#CFE5F1;
+  --gut:#E8A9A0;--gut-edge:#A8504A;--cell:#F3E3D3;--cell-edge:#B98A6A;--mito:#E7A55A;--blood:#C8453F;--bone:#EDE6D6;--label-bg:#FFFFFF;--label-ink:#000000;
+  --sugar:#F4F4EF;--sugar-edge:#9AA2A8;--paperbag:#D8B98A;--cereal1:#D9A441;--cereal2:#8FB5D9;--berry:#5B4FA8;--leaf:#4E9A3A;--bread:#D5A15E;--rice:#F2EEE2;--bean:#8A4A3A;--egg:#F6E6A8;--milk:#F2F5F7;--nut:#B07A44;--fish:#E99A7A;--cheese:#F2C94C;--orange:#F29A2E;--apple:#D9473C;--banana:#F2D24C;--carrot:#E8792A;--broc:#3E8A3A;--tomato:#D8402F;--pasta:#E9C77B;--oat:#D9C29A;--soda:#7A4A2A;--cake:#E9B8C8;--chip:#E8C25A;
+  --corr:#C8452B;--conf:#7B5CC9;--rand1:#2F7FC1;--rand2:#B8561A;
+  --shadow:0 1px 2px rgba(16,22,26,.08),0 6px 18px -8px rgba(16,22,26,.18);
+  --r:6px;--sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;--serif:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0E1519;--panel:#172026;--panel-2:#1D282F;--sunk:#0A1014;
+  --ink:#E8EEF1;--ink-soft:#A3B2BA;--ink-faint:#8D9EA7;--rule:#2C3A42;--rule-soft:#24313A;
+  --accent:#F2C95C;--accent-ink:#F5D684;--accent-wash:#33290F;
+  --warn:#E0B04E;--warn-wash:#352A12;--bad:#E07067;--bad-wash:#3B1E1B;--good:#6BC293;--good-wash:#17301F;--on-accent:#0B1A20;--warn-ink:#E8BE62;
+  --act1:#F0985A;--act2:#5AA9E6;--act3:#E8BE5A;--act4:#5CC4B0;--act5:#A98BEF;--act6:#6CCB7C;--act7:#D186C0;--act8:#A9B7C2;
+  --gold:#E0BE48;--gold-wash:#352E14;--gold-ink:#E0BE48;
+  --ecf:#131A22;--grid:#26303D;--paper:#1E262B;
+  --carb:#F2A24A;--prot:#EE7A8C;--fat:#F2D857;--alc:#A9B3BA;--fiber:#6CCB7C;--water:#6FB3EC;--vit:#A98BEF;--min:#9AAEC0;
+  --carb-ink:#F5B66A;--prot-ink:#F49AA8;--fat-ink:#F2DC72;--alc-ink:#C3CBD0;--fiber-ink:#8AD898;--water-ink:#8CC6F2;--vit-ink:#BFA6F4;--min-ink:#B5C5D3;
+  --fg-fruit:#EE6E62;--fg-veg:#6CCB7C;--fg-grain:#E0A055;--fg-prot:#B18BE6;--fg-dairy:#6FB3EC;
+  --plate:#2A343B;--plate-rim:#5E6B75;--table:#2A2620;--skin1:#C99A78;--skin2:#9A6A4C;--skin3:#6A4632;--skin4:#D8B596;--hair:#1E1814;--shirt1:#5A8FBF;--shirt2:#B9698F;--shirt3:#6E9E58;--shirt4:#9C7FC4;
+  --flame:#F2A93B;--flame-in:#F8DA6A;--heat:#F07A5E;--cold:#5AA9E6;--metal:#5E6B75;--glass:#1E2C34;--glass-edge:#7F99A6;--waterfill:#1F3A4A;
+  --gut:#7A4A46;--gut-edge:#E0A39C;--cell:#3A2E26;--cell-edge:#C9A07E;--mito:#B87A3A;--blood:#E0605A;--bone:#5A554A;--label-bg:#FFFFFF;--label-ink:#000000;
+  --sugar:#D8DCD8;--sugar-edge:#8D9EA7;--paperbag:#8A7350;--cereal1:#B88A30;--cereal2:#4F7A9E;--berry:#8A7FD8;--leaf:#6EB85A;--bread:#B88545;--rice:#D8D2C2;--bean:#A86A5A;--egg:#E0CF8A;--milk:#D8DEE2;--nut:#C08A54;--fish:#E0907A;--cheese:#E0B83C;--orange:#F0A040;--apple:#E0605A;--banana:#E8CC50;--carrot:#E88A40;--broc:#5EA85A;--tomato:#E0584A;--pasta:#D8B86B;--oat:#C8B28A;--soda:#9A6A4A;--cake:#C898A8;--chip:#D8B24A;
+  --corr:#F07A5E;--conf:#A98BEF;--rand1:#5AA9E6;--rand2:#F0985A;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px -10px rgba(0,0,0,.6);
+}}
+:root[data-theme="dark"]{
+  --ground:#0E1519;--panel:#172026;--panel-2:#1D282F;--sunk:#0A1014;
+  --ink:#E8EEF1;--ink-soft:#A3B2BA;--ink-faint:#8D9EA7;--rule:#2C3A42;--rule-soft:#24313A;
+  --accent:#F2C95C;--accent-ink:#F5D684;--accent-wash:#33290F;
+  --warn:#E0B04E;--warn-wash:#352A12;--bad:#E07067;--bad-wash:#3B1E1B;--good:#6BC293;--good-wash:#17301F;--on-accent:#0B1A20;--warn-ink:#E8BE62;
+  --act1:#F0985A;--act2:#5AA9E6;--act3:#E8BE5A;--act4:#5CC4B0;--act5:#A98BEF;--act6:#6CCB7C;--act7:#D186C0;--act8:#A9B7C2;
+  --gold:#E0BE48;--gold-wash:#352E14;--gold-ink:#E0BE48;
+  --ecf:#131A22;--grid:#26303D;--paper:#1E262B;
+  --carb:#F2A24A;--prot:#EE7A8C;--fat:#F2D857;--alc:#A9B3BA;--fiber:#6CCB7C;--water:#6FB3EC;--vit:#A98BEF;--min:#9AAEC0;
+  --carb-ink:#F5B66A;--prot-ink:#F49AA8;--fat-ink:#F2DC72;--alc-ink:#C3CBD0;--fiber-ink:#8AD898;--water-ink:#8CC6F2;--vit-ink:#BFA6F4;--min-ink:#B5C5D3;
+  --fg-fruit:#EE6E62;--fg-veg:#6CCB7C;--fg-grain:#E0A055;--fg-prot:#B18BE6;--fg-dairy:#6FB3EC;
+  --plate:#2A343B;--plate-rim:#5E6B75;--table:#2A2620;--skin1:#C99A78;--skin2:#9A6A4C;--skin3:#6A4632;--skin4:#D8B596;--hair:#1E1814;--shirt1:#5A8FBF;--shirt2:#B9698F;--shirt3:#6E9E58;--shirt4:#9C7FC4;
+  --flame:#F2A93B;--flame-in:#F8DA6A;--heat:#F07A5E;--cold:#5AA9E6;--metal:#5E6B75;--glass:#1E2C34;--glass-edge:#7F99A6;--waterfill:#1F3A4A;
+  --gut:#7A4A46;--gut-edge:#E0A39C;--cell:#3A2E26;--cell-edge:#C9A07E;--mito:#B87A3A;--blood:#E0605A;--bone:#5A554A;--label-bg:#FFFFFF;--label-ink:#000000;
+  --sugar:#D8DCD8;--sugar-edge:#8D9EA7;--paperbag:#8A7350;--cereal1:#B88A30;--cereal2:#4F7A9E;--berry:#8A7FD8;--leaf:#6EB85A;--bread:#B88545;--rice:#D8D2C2;--bean:#A86A5A;--egg:#E0CF8A;--milk:#D8DEE2;--nut:#C08A54;--fish:#E0907A;--cheese:#E0B83C;--orange:#F0A040;--apple:#E0605A;--banana:#E8CC50;--carrot:#E88A40;--broc:#5EA85A;--tomato:#E0584A;--pasta:#D8B86B;--oat:#C8B28A;--soda:#9A6A4A;--cake:#C898A8;--chip:#D8B24A;
+  --corr:#F07A5E;--conf:#A98BEF;--rand1:#5AA9E6;--rand2:#F0985A;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button{font:inherit;color:inherit}
+a{color:var(--accent)}
+.topbar{background:var(--panel);border-bottom:1px solid var(--rule)}
+.topbar-in{max-width:1180px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;gap:16px;justify-content:space-between;flex-wrap:wrap}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+h1{font-family:var(--serif);font-weight:600;font-size:26px;margin:2px 0 0;line-height:1.2}
+.sub{margin:2px 0 0;color:var(--ink-soft);font-size:15px}
+.wrap{max-width:1180px;margin:0 auto;padding:16px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tab{background:var(--panel);border:1px solid var(--rule);border-radius:var(--r);padding:9px 14px;cursor:pointer;font-weight:500;font-size:15px}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.tbtn{background:var(--panel-2);border:1px solid var(--rule);border-radius:var(--r);padding:8px 13px;cursor:pointer;font-size:14.5px}
+.tbtn:hover{border-color:var(--accent)}
+.tbtn:disabled{opacity:.45;cursor:default}
+.tbtn[aria-pressed="true"]{background:var(--accent-wash);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn{background:var(--accent);color:var(--on-accent);border:0;border-radius:var(--r);padding:10px 18px;font-weight:600;cursor:pointer;font-size:15px}
+.btn:disabled{opacity:.45;cursor:default}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:var(--r);box-shadow:var(--shadow);padding:16px 18px;min-width:0}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.grid,.grid2{grid-template-columns:1fr}}
+.stage{padding:10px}
+.canvas-holder{width:100%;border-radius:4px;overflow:hidden;border:1px solid var(--rule-soft);background:var(--ecf)}
+canvas{display:block;width:100%;touch-action:manipulation}
+.stagebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 4px 2px;font-size:14px;color:var(--ink-soft)}
+.caption{flex:1 1 220px;font-size:14px;color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;padding:8px 4px 2px;font-size:13px;color:var(--ink-soft)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.2)}
+.legend i.s{border-radius:2px}
+.legend i.ln{width:20px;height:0;border-radius:0;border:0;border-top:3px solid}
+.legend i.t{width:0;height:0;border-radius:0;border:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:11px solid;background:none!important}
+.rounds{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.round{border:1.5px solid var(--rule);background:var(--panel-2);border-radius:99px;padding:6px 13px;cursor:pointer;font-size:14px}
+.round[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-wash);color:var(--accent-ink);font-weight:600}
+.round .ok{color:var(--gold-ink);margin-left:4px}
+.mode{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--ink-soft)}
+.mode input{accent-color:var(--accent);width:18px;height:18px}
+.lvl-n{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.lvl-t{font-family:var(--serif);font-size:22px;font-weight:600;margin:4px 0 8px;line-height:1.25}
+.goal{background:var(--accent-wash);border-left:4px solid var(--accent);border-radius:4px;padding:10px 12px;margin:0 0 10px;font-size:15px}
+.goal b.h{display:block;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent-ink);margin-bottom:2px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.msg{margin:10px 0 0;padding:10px 12px;border-radius:var(--r);font-size:15px;display:none}
+.msg.show{display:block}
+.msg.good{background:var(--good-wash);color:var(--ink);border:1px solid var(--good)}
+.msg.warn{background:var(--warn-wash);color:var(--ink);border:1px solid var(--warn)}
+.msg.info{background:var(--panel-2);color:var(--ink);border:1px solid var(--rule)}
+.stars{font-size:22px;letter-spacing:2px;color:var(--gold-ink)}
+.side h3{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin:14px 0 6px}
+.side p,.side li{font-size:14.5px}
+.side ul{padding-left:18px;margin:6px 0}
+.small{font-size:13px;color:var(--ink-soft)}
+.typebtns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.typebtn{background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--r);padding:9px 0;cursor:pointer;font-family:var(--mono);font-weight:600;font-size:15px}
+.typebtn:hover{border-color:var(--accent)}
+.typebtn.right{border-color:var(--good);background:var(--good-wash)}
+.typebtn.wrong{border-color:var(--warn);background:var(--warn-wash)}
+.typebtn:disabled{cursor:default}
+.prog{height:8px;background:var(--sunk);border-radius:99px;overflow:hidden;margin:6px 0 10px}
+.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.timer{font-family:var(--mono);font-size:18px;font-weight:600}
+/* bags */
+.bags{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0 4px}
+.bag{position:relative;background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--r);padding:6px 4px 4px;cursor:grab;touch-action:none;user-select:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--mono);font-weight:700;font-size:14px}
+.bag svg{width:34px;height:44px;display:block}
+.bag.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-wash)}
+.bag.ok{border-color:var(--good);background:var(--good-wash)}
+.bag.no{border-color:var(--warn);background:var(--warn-wash)}
+.bag .mk{position:absolute;top:3px;right:5px;font-size:13px}
+.bag.ghost{position:fixed;z-index:50;pointer-events:none;opacity:.9;box-shadow:0 10px 24px -8px rgba(0,0,0,.4)}
+.droptarget{outline:3px dashed var(--accent);outline-offset:-3px}
+.abbox{background:var(--panel-2);border:1px solid var(--rule);border-radius:var(--r);padding:10px 12px;font-size:14.5px;margin-top:10px}
+/* sim */
+.ctl{display:flex;flex-direction:column;gap:4px;margin:8px 0}
+.ctl label{font-size:14.5px;font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.ctl output{font-family:var(--mono);font-weight:600;color:var(--accent-ink)}
+.ctl input[type=range]{accent-color:var(--accent);width:100%}
+.ticks{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-faint);font-family:var(--mono)}
+.readouts{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:6px}
+.readouts th{text-align:left;font-weight:500;color:var(--ink-soft);padding:5px 6px 5px 0;border-top:1px solid var(--rule-soft)}
+.srhead th,.srhead td,.readouts caption.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;padding:0;border:0}
+.readouts td{padding:5px 0;border-top:1px solid var(--rule-soft);font-family:var(--mono);font-size:13.5px;text-align:right;white-space:nowrap}
+.chal{list-style:none;padding:0;margin:6px 0}
+.chal li{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-top:1px solid var(--rule-soft);font-size:14px}
+.chal .ck{flex:0 0 22px;height:22px;border-radius:50%;border:1.5px solid var(--rule);display:grid;place-items:center;font-size:13px;font-family:var(--mono)}
+.chal li.done .ck{background:var(--good);border-color:var(--good);color:var(--on-accent)}
+.status{font-size:14.5px;padding:8px 10px;border-radius:var(--r);margin-top:8px;border:1px solid var(--rule);background:var(--panel-2)}
+.status.warn{background:var(--warn-wash);border-color:var(--warn)}
+.status.bad{background:var(--bad-wash);border-color:var(--bad)}
+.status.good{background:var(--good-wash);border-color:var(--good)}
+/* sequencer */
+ol.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.item{display:flex;align-items:center;gap:10px;background:var(--panel);border:1.5px solid var(--rule);border-left:6px solid var(--act4);border-radius:var(--r);padding:7px 8px 7px 10px;touch-action:none;user-select:none;cursor:grab;transition:background .15s,border-color .15s}
+.item.drag{box-shadow:0 10px 24px -8px rgba(0,0,0,.4);cursor:grabbing;border-color:var(--accent);z-index:2;position:relative}
+.item .pos{font-family:var(--mono);font-size:13px;color:var(--ink-faint);width:20px;text-align:right;flex:0 0 auto}
+.item .grip{color:var(--ink-faint);font-size:18px;line-height:1;flex:0 0 auto}
+.item .txt{flex:1;font-size:15px;line-height:1.35}
+.item .mv{display:flex;flex-direction:column;gap:2px}
+.mv button{width:30px;height:24px;border:1px solid var(--rule);background:var(--panel-2);border-radius:4px;cursor:pointer;font-size:12px;padding:0;line-height:1}
+.mv button:hover{border-color:var(--accent)}
+.item.right{background:var(--good-wash);border-color:var(--good)}
+.item.off{background:var(--warn-wash);border-color:var(--warn)}
+.item.hinted{box-shadow:0 0 0 3px var(--gold)}
+.sc-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sc-n{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em}
+.sc-title{font-family:var(--serif);font-size:22px;font-weight:600;margin:2px 0 6px}
+.qlab{font-weight:600;margin:12px 0 8px}
+.opts{display:grid;grid-template-columns:1fr;gap:7px}
+.opt{text-align:left;background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--r);padding:9px 12px;cursor:pointer;font-size:14.5px;line-height:1.35}
+.opt:hover{border-color:var(--accent)}
+.opt.right{border-color:var(--good);background:var(--good-wash)}
+.opt.wrong{border-color:var(--warn);background:var(--warn-wash)}
+.fb{margin:8px 0 0;font-size:14.5px;padding:8px 10px;border-radius:4px;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--good-wash);border-left:4px solid var(--good)}
+.fb.no{background:var(--warn-wash);border-left:4px solid var(--warn)}
+.explain{margin-top:14px;padding:12px 14px;background:var(--accent-wash);border-left:4px solid var(--accent);border-radius:4px;display:none}
+.explain.show{display:block}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--rule);display:grid;place-items:center;font-family:var(--mono);font-size:12.5px;background:var(--panel-2);cursor:pointer;padding:0}
+.chip.cur{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+.chip.done{border-color:var(--good);background:var(--good-wash);color:var(--good)}
+.chip.done.cur{background:var(--accent);color:var(--on-accent)}
+.calm{font-size:13px;color:var(--ink-faint);margin:8px 0 0}
+.subtabs{display:flex;gap:6px;margin:0 0 12px;flex-wrap:wrap}
+footer{max-width:1180px;margin:0 auto;padding:6px 16px 28px;font-size:13px;color:var(--ink-faint)}
+footer a{color:var(--ink-soft)}
+kbd{font-family:var(--mono);font-size:12.5px;border:1px solid var(--rule);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--panel-2)}
+sub,sup{line-height:0}
+[hidden]{display:none!important}
+/* heart lab */
+.sbank{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin-top:10px}
+.sbtn{background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--r);padding:7px 9px;cursor:pointer;font-size:14px;text-align:left;line-height:1.25}
+.sbtn:hover{border-color:var(--accent)}
+.sbtn.done{border-color:var(--good);background:var(--good-wash)}
+.sbtn.no{border-color:var(--warn);background:var(--warn-wash)}
+.sbtn.hint{box-shadow:0 0 0 3px var(--gold)}
+.paint{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.paint button{display:inline-flex;align-items:center;gap:8px}
+.paint i{width:16px;height:16px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.25)}
+.rhythms{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}
+.rhythms .tbtn{text-align:left;font-size:14px;line-height:1.25}
+.mopts{display:grid;grid-template-columns:1fr;gap:6px;margin:8px 0}
+.slwrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 4px 0}
+.slwrap input[type=range]{flex:1 1 260px;accent-color:var(--accent)}
+.slwrap output{font-family:var(--mono);font-weight:600;min-width:72px}
+.qcard{margin-top:12px;border:1px solid var(--rule);border-radius:var(--r);padding:12px 14px;background:var(--panel-2)}
+.qcard h3{margin-top:0}
+.scen{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 4px}
+.big{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1.1}
+select{font:inherit;background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:var(--r);padding:4px 6px}
+/* genetics case lab */
+.gtgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.gtgrid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.gbtn{font-family:var(--mono);font-weight:600;font-size:15px;padding:8px 4px;text-align:center}
+.gbtn sup{font-size:10.5px;line-height:0}
+.modes{display:grid;grid-template-columns:1fr;gap:6px}
+.modes .tbtn{text-align:left;line-height:1.3}
+.modes .tbtn small{display:block;font-size:12.5px;color:var(--ink-soft);font-weight:500}
+.modes .tbtn[aria-pressed="true"] small{color:var(--accent-ink)}
+.kidbtns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:8px 0}
+.kidbtns .btn{padding:10px 6px;font-size:14.5px}
+.readouts td.l{font-family:var(--sans);text-align:left;white-space:normal}
+.readouts thead th{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.04em;border-top:0}
+.case{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.case{grid-template-columns:1fr}}
+.casechips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.casechip{border:1.5px solid var(--rule);background:var(--panel-2);border-radius:99px;padding:6px 12px;cursor:pointer;font-size:14px}
+.casechip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-wash);color:var(--accent-ink);font-weight:600}
+.casechip .ok{color:var(--good);margin-left:4px;font-weight:700}
+.story{font-size:15.5px;margin:0 0 8px}
+.qblock{border-top:1px solid var(--rule-soft);padding-top:8px;margin-top:10px}
+.hintbox{margin:8px 0 0;padding:8px 10px;border-radius:4px;background:var(--gold-wash);border-left:4px solid var(--gold);font-size:14.5px}
+.meter{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--ink-soft);margin-bottom:6px}
+.meter b{color:var(--ink);font-family:var(--mono)}
+/* sort game */
+.pool{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;padding:10px;border:1.5px dashed var(--rule);border-radius:var(--r);background:var(--panel-2);margin:8px 0 12px}
+.scard{background:var(--panel);border:1.5px solid var(--rule);border-left:5px solid var(--accent);border-radius:var(--r);padding:8px 10px;cursor:grab;font-size:14.5px;line-height:1.3;text-align:left;touch-action:none;user-select:none;max-width:100%}
+.scard:hover{border-color:var(--accent)}
+.scard[aria-pressed="true"]{box-shadow:0 0 0 3px var(--accent);border-color:var(--accent)}
+.scard.ghost{position:fixed;z-index:60;pointer-events:none;opacity:.92;box-shadow:0 10px 24px -8px rgba(0,0,0,.45)}
+.scard.placed{cursor:default;border-left-color:var(--good);background:var(--good-wash);font-size:13.5px;padding:6px 8px}
+.scard.hinted{box-shadow:0 0 0 3px var(--gold)}
+.bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.bin{border:1.5px solid var(--rule);border-radius:var(--r);background:var(--panel);padding:8px;display:flex;flex-direction:column;gap:6px;min-height:150px}
+.bin.over{outline:3px dashed var(--accent);outline-offset:-3px}
+.bin.hintbin{box-shadow:0 0 0 3px var(--gold)}
+.binhead{display:flex;align-items:center;gap:8px;width:100%;background:var(--panel-2);border:1px solid var(--rule);border-radius:var(--r);padding:6px;cursor:pointer;font-weight:600;font-size:14.5px;text-align:left;line-height:1.25}
+.binhead:hover{border-color:var(--accent)}
+.binhead svg{width:56px;height:46px;flex:0 0 auto}
+.binitems{display:flex;flex-direction:column;gap:5px}
+.sortbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 8px}
+.sorthead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+h2.sec{font-family:var(--serif);font-size:21px;margin:2px 0 6px;font-weight:600}
+.sim-note{font-size:13.5px;color:var(--ink-soft);margin:6px 0 0}
+.readouts td{padding-left:10px}
+.diskgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.diskgrid .tbtn{text-align:left;font-size:13.5px;line-height:1.25;padding:7px 8px}
+.diskgrid .tbtn b{font-family:var(--mono);display:inline-block;min-width:34px}
+.readouts.chart td{text-align:center;padding-left:4px}
+.readouts.chart th,.readouts.chart td{font-size:13px}
+.readouts thead th{color:var(--ink-soft)}
+.scen .tbtn{font-family:var(--mono);font-size:13.5px}
+.seg3 .tbtn.right,.scen .tbtn.right{border-color:var(--good);background:var(--good-wash)}
+.seg3 .tbtn.wrong,.scen .tbtn.wrong{border-color:var(--warn);background:var(--warn-wash)}
+.ok-ic{color:var(--good);font-weight:700}
+.no-ic{color:var(--warn-ink);font-weight:700}
+.methods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.methods .tbtn{text-align:left;line-height:1.25;font-size:14px}
+.seg3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.seg3 .tbtn,.seg4 .tbtn{font-size:13.5px;line-height:1.2;padding:8px 6px}
+.seg4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.verdict{font-weight:700}
+.drugbtns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.drugbtns .tbtn{font-size:13.5px;line-height:1.25;padding:7px 8px;text-align:left}
+.drugbtns .tbtn small{display:block;font-family:var(--mono);font-size:12px;color:var(--ink-soft);font-weight:500}
+.drugbtns .tbtn[aria-pressed="true"] small{color:var(--accent-ink)}
+.alerts{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.alert{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:var(--r);border:1px solid var(--rule);border-left-width:5px;background:var(--panel-2);font-size:14.5px}
+.alert b{white-space:nowrap}
+.alert .ic{flex:0 0 auto;font-family:var(--mono);font-weight:700;font-size:12px;padding:1px 6px;border-radius:4px;border:1.5px solid currentColor}
+.alert.bad{border-color:var(--bad);background:var(--bad-wash)}.alert.bad .ic{color:var(--bad)}
+.alert.warn{border-color:var(--warn);background:var(--warn-wash)}.alert.warn .ic{color:var(--warn-ink)}
+.alert.good{border-color:var(--good);background:var(--good-wash)}.alert.good .ic{color:var(--good)}
+.alert.info{border-color:var(--accent);background:var(--accent-wash)}.alert.info .ic{color:var(--accent-ink)}
+.readouts td.hi{color:var(--bad);font-weight:700}.readouts td.lo{color:var(--accent-ink);font-weight:700}.readouts td.ok{color:var(--good);font-weight:600}
+.bins{grid-template-columns:repeat(auto-fit,minmax(185px,1fr))}.binhead span{min-width:0;overflow-wrap:break-word}
+.practice-banner{background:var(--gold-wash);border-left:4px solid var(--gold);border-radius:4px;padding:8px 12px;margin:0 0 12px;font-size:14.5px;color:var(--ink)}
+.practice-tag{display:inline-block;background:var(--gold-wash);border:1.5px solid var(--gold);color:var(--ink);border-radius:6px;padding:4px 8px;font-size:13px;font-weight:600;line-height:1.3}
+.lab-sel{display:block;font-weight:600;font-size:14.5px;margin:12px 0 4px}
+#calcType{width:100%;padding:7px 8px;font-size:15px}
+.probcard{margin:12px 0 8px;padding:12px 14px;border:1px solid var(--rule);border-left:5px solid var(--accent);border-radius:var(--r);background:var(--panel-2);font-size:15.5px;line-height:1.5}
+.probcard .pt{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);display:block;margin-bottom:4px}
+.probcard .rd{display:block;font-size:13.5px;color:var(--ink-soft);margin-top:6px}
+.ansrow{display:flex;flex-direction:column;gap:4px;margin:8px 0}
+.ans-l{font-weight:600;font-size:14.5px}
+.ansbox{display:flex;align-items:center;gap:8px}
+.ansbox input{font:600 18px var(--mono);width:150px;padding:7px 9px;border:1.5px solid var(--rule);border-radius:var(--r);background:var(--panel);color:var(--ink)}
+.ansbox input:focus{outline:3px solid var(--accent);outline-offset:1px}
+.unit{font-family:var(--mono);font-weight:600;font-size:15px;color:var(--ink-soft)}
+.streak{margin-top:10px}
+.seg2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.seg4b{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.seg2 .tbtn,.seg4b .tbtn{font-size:13.5px;line-height:1.25;padding:8px 6px}
+.marfields{display:grid;grid-template-columns:1fr;gap:6px}
+.mf{display:grid;grid-template-columns:118px 1fr;gap:10px;align-items:baseline;text-align:left;background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--r);padding:8px 10px;cursor:pointer;font-size:14.5px;line-height:1.35}
+.mf:hover{border-color:var(--accent)}
+.mf .k{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft)}
+.mf.right{border-color:var(--good);background:var(--good-wash)}
+.mf.wrong{border-color:var(--warn);background:var(--warn-wash)}
+.mf.hinted{box-shadow:0 0 0 3px var(--gold)}
+.antis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.antis .tbtn{text-align:left;font-size:14px;line-height:1.25;padding:8px 9px}
+.antis .tbtn.right{border-color:var(--good);background:var(--good-wash)}
+.antis .tbtn.wrong{border-color:var(--warn);background:var(--warn-wash)}
+.antis .tbtn.hinted{box-shadow:0 0 0 3px var(--gold)}
+@media (max-width:420px){.mf{grid-template-columns:1fr;gap:2px}.antis{grid-template-columns:1fr}}
+.case.wide{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+@media (max-width:900px){.case.wide{grid-template-columns:1fr}}
+.ctl input[type=range]:disabled{opacity:.45}
+.modes3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.modes3 .tbtn{text-align:left;font-size:13.5px;line-height:1.25;padding:7px 8px}
+.modes3 .tbtn small{display:block;font-size:12px;color:var(--ink-soft);font-weight:500}
+.modes3 .tbtn[aria-pressed="true"] small{color:var(--accent-ink)}
+.gsel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.gsel .tbtn{font-size:13.5px;padding:7px 4px;line-height:1.25}
+.gsel .tbtn small{display:block;font-family:var(--mono);font-size:11.5px;color:var(--ink-soft)}
+.gsel .tbtn[aria-pressed="true"] small{color:var(--accent-ink)}
+.lifeq .opts{margin-top:6px}
+.hgrid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.hgrid{grid-template-columns:1fr}}
+.target{border:2px solid var(--act6);border-radius:var(--r);padding:10px 12px;background:var(--panel-2);margin-bottom:10px}
+.target .k{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);display:block}
+.eqn{font-family:var(--mono);font-size:15.5px;font-weight:600;overflow-wrap:anywhere}
+.hzone{border:2px dashed var(--rule);border-radius:var(--r);padding:8px;min-height:90px;display:flex;flex-direction:column;gap:8px}
+.hzone.over{border-color:var(--accent);background:var(--accent-wash)}
+.hzone h3{margin:0;font-size:13px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft)}
+.hzone .empty{font-size:13.5px;color:var(--ink-soft);margin:0}
+.hcard{background:var(--panel);border:1.5px solid var(--rule);border-left:6px solid var(--exo);border-radius:var(--r);padding:8px 10px;touch-action:none}
+.hcard.pos{border-left-color:var(--endo)}
+.hcard.hinted{box-shadow:0 0 0 3px var(--gold)}
+.hcard.drag{opacity:.9;box-shadow:var(--shadow);position:relative;z-index:20}
+.hcard .top{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
+.hcard .grip{cursor:grab;font-family:var(--mono);font-size:13px;color:var(--ink-soft);border:1px dashed var(--rule);border-radius:4px;padding:2px 6px;background:var(--panel-2)}
+.hcard .dh{font-family:var(--mono);font-weight:700;font-size:14.5px}
+.hcard .dh.neg{color:var(--bad)}.hcard .dh.posv{color:var(--endo-ink)}
+.hcard .ctrls{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center}
+.hcard .ctrls .tbtn{padding:5px 9px;font-size:13.5px}
+.hcard .mult{font-family:var(--mono);font-weight:700;min-width:44px;text-align:center}
+.sumbox{border:1.5px solid var(--rule);border-radius:var(--r);padding:10px 12px;background:var(--panel-2);margin-top:10px}
+.sumbox .eqn s{color:var(--bad)}
+.sumbox .tot{font-family:var(--mono);font-weight:700;font-size:16px;margin-top:4px}
+.dhpos{color:var(--endo-ink)}.dhneg{color:var(--bad)}
+.hintline{font-size:14.5px;margin:4px 0}
+.palette{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:300px;overflow-y:auto;padding:2px;margin:6px 0}
+.fbtn{display:flex;gap:7px;align-items:flex-start;text-align:left;background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--r);padding:6px 7px;cursor:grab;font-size:13.5px;line-height:1.25;touch-action:none;user-select:none}
+.fbtn:hover{border-color:var(--accent)}
+.fbtn i{width:10px;height:10px;border-radius:50%;flex:0 0 auto;margin-top:4px;border:1px solid rgba(0,0,0,.25)}
+.fbtn small{display:block;font-size:11.5px;color:var(--ink-soft)}
+.fbtn.ghost{position:fixed;z-index:60;pointer-events:none;opacity:.92;box-shadow:0 10px 24px -8px rgba(0,0,0,.45)}
+.platelist{list-style:none;margin:6px 0;padding:0;display:flex;flex-direction:column;gap:5px}
+.platelist li{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;border-top:1px solid var(--rule-soft);padding-top:5px;font-size:14px}
+.platelist .pi{display:inline-flex;align-items:center;gap:6px;min-width:0}
+.platelist .pi i{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+.platelist .pb{display:flex;gap:4px}
+.tbtn.mini{padding:3px 8px;font-size:13px}
+#buildGroup{width:100%;padding:6px 8px;font-size:14.5px}
+.mopts .opt[aria-pressed="true"]{border-color:var(--accent)}
+.droptarget{outline:3px dashed var(--accent);outline-offset:-3px}
+@media (max-width:420px){.palette{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+  <div>
+    <div class="kicker">Nutrition &middot; Module 1 &middot; Nutrition basics and healthy eating patterns</div>
+    <h1>Nutrition Basics Lab</h1>
+    <p class="sub">Build a plate and watch the kilocalories, macronutrient balance, food groups and key nutrients respond; practise label and kilocalorie math with animated worked solutions; sort the big ideas; and try them in real-life situations. Nothing here is graded.</p>
+  </div>
+  <button class="tbtn" id="themeBtn" type="button">Light / dark</button>
+</div></header>
+<div class="wrap">
+  <div class="tabs" role="tablist" aria-label="Lab parts">
+    <button class="tab" role="tab" aria-selected="true" aria-controls="tab-build" data-tab="build" id="tabbtn-build" type="button">Part 1 &middot; Meal Builder</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="tab-calc" data-tab="calc" id="tabbtn-calc" type="button" tabindex="-1">Part 2 &middot; Label and kcal Trainer</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="tab-sort" data-tab="sort" id="tabbtn-sort" type="button" tabindex="-1">Part 3 &middot; Sort It Out</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="tab-life" data-tab="life" id="tabbtn-life" type="button" tabindex="-1">Part 4 &middot; Nutrition in Real Life</button>
+  </div>
+
+  <!-- PART 1 -->
+  <section id="tab-build" role="tabpanel" aria-labelledby="tabbtn-build">
+    <h2 class="gk-sr">Part 1: Meal Builder</h2>
+    <div class="grid">
+      <div class="card stage">
+        <div class="canvas-holder" id="buildHolder"><canvas id="cvBuild" role="img" aria-label="Meal builder."></canvas></div>
+        <div class="stagebar"><span class="caption" id="buildCap"></span></div>
+        <div class="legend">
+          <span><i style="background:var(--carb)"></i>Carbohydrate</span><span><i style="background:var(--fat)"></i>Fat</span><span><i style="background:var(--prot)"></i>Protein</span>
+          <span><i class="s" style="background:var(--good)"></i>AMDR range</span>
+          <span><i class="s" style="background:var(--fg-veg)"></i>Vegetables</span><span><i class="s" style="background:var(--fg-fruit)"></i>Fruits</span><span><i class="s" style="background:var(--fg-grain)"></i>Grains</span><span><i class="s" style="background:var(--fg-prot)"></i>Protein foods</span><span><i class="s" style="background:var(--fg-dairy)"></i>Dairy</span>
+        </div>
+        <table class="readouts" id="buildRead"><caption class="gk-sr">Meal totals</caption><thead class="srhead"><tr><th scope="col">Measure</th><th scope="col">Value</th></tr></thead><tbody></tbody></table>
+        <p class="sim-note">Food values are rounded averages for typical portions. Food-group targets follow a 2,000-kcal reference pattern; nutrient targets are adult DRIs for ages 19 to 30. One meal is drawn against one-third of a day. The nutrient density score is a simplified teaching index: the average share of six key nutrients (capped at 100% each) divided by the share of 2,000 kcal. Everything here is a rough population estimate for learning, not a personal plan.</p>
+      </div>
+      <aside class="card side" aria-label="Meal builder controls">
+        <h3 id="ref-h">Reference adult (DRIs, ages 19 to 30)</h3>
+        <div class="seg2" id="buildRef" role="group" aria-labelledby="ref-h"></div>
+        <h3 id="pal-h">Add foods</h3>
+        <p class="small">Drag a food onto the plate, or tap it (Enter or Space with the keyboard) to add one portion.</p>
+        <label class="lab-sel" for="buildGroup">Show</label>
+        <select id="buildGroup"></select>
+        <div class="palette" id="buildPal" role="group" aria-labelledby="pal-h"></div>
+        <h3 id="plate-h">On your plate</h3>
+        <ul class="platelist" id="buildList" aria-labelledby="plate-h"></ul>
+        <div class="bar"><button class="tbtn" type="button" id="buildSample">Sample lunch</button><button class="tbtn" type="button" id="buildSnack">Snack plate</button><button class="tbtn" type="button" id="buildClear">Clear plate</button></div>
+        <div class="status" id="buildStatus" role="status"></div>
+        <h3>Challenges</h3>
+        <ul class="chal" id="buildChal"></ul>
+      </aside>
+    </div>
+  </section>
+
+  <!-- PART 2 -->
+  <section id="tab-calc" role="tabpanel" aria-labelledby="tabbtn-calc" hidden>
+    <h2 class="gk-sr">Part 2: Label and kcal Trainer</h2>
+    <div class="grid">
+      <div class="card stage">
+        <div class="canvas-holder"><canvas id="cvCalc" role="img" aria-label="Practice problem picture."></canvas></div>
+        <div class="stagebar"><span class="caption" id="calcCap"></span></div>
+        <p class="sim-note">Labels and foods are randomly generated for practice and follow current label conventions (Daily Values for a 2,000-kcal reference). The worked solution shows units cancelling (struck through in red) and each step built line by line.</p>
+      </div>
+      <aside class="card side" aria-label="Trainer controls">
+        <label class="lab-sel" for="calcType">Problem type</label>
+        <select id="calcType"></select>
+        <div class="probcard" id="calcProb" aria-live="polite"></div>
+        <div id="calcNumWrap" class="ansrow">
+          <label for="calcAns" class="ans-l">Your answer</label>
+          <div class="ansbox"><input type="text" id="calcAns" inputmode="decimal" autocomplete="off" spellcheck="false"><span id="calcUnit" class="unit"></span></div>
+        </div>
+        <div id="calcChoices" class="mopts" role="group" aria-label="Answer choices" hidden></div>
+        <div class="bar">
+          <button class="btn" id="calcCheck" type="button">Check</button>
+          <button class="tbtn" id="calcHint" type="button">Hint</button>
+          <button class="tbtn" id="calcSol" type="button">Show worked solution</button>
+          <button class="tbtn" id="calcNew" type="button">New problem</button>
+        </div>
+        <div class="msg" id="calcMsg" role="status"></div>
+        <div class="hintbox" id="calcHintBox" role="status" hidden></div>
+        <div class="meter streak"><span>Streak <b id="calcStreak">0</b></span><span>Best <b id="calcBest">0</b></span><span>Solved <b id="calcSolved">0</b></span></div>
+        <p class="small">Type a number (no units needed). The hint ladder has three steps. The streak counts answers right on the first check without opening the solution.</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- PART 3 -->
+  <section id="tab-sort" role="tabpanel" aria-labelledby="tabbtn-sort" hidden>
+    <h2 class="gk-sr">Part 3: Sort It Out</h2>
+    <div class="rounds" id="sRounds" role="group" aria-label="Rounds"></div>
+    <div class="card">
+      <div class="sorthead">
+        <div><div class="lvl-n" id="sN"></div><h2 class="sec" id="sTitle"></h2></div>
+        <div class="sortbar">
+          <label class="mode"><input type="checkbox" id="sRelaxed" checked> Relaxed mode (no timer)</label>
+          <span class="timer" id="sTimer" hidden>0:00</span>
+          <span class="stars" id="sStars" role="img" aria-label="Stars appear when the round is done"></span>
+        </div>
+      </div>
+      <p class="goal"><b class="h">Your job</b><span id="sGoal"></span></p>
+      <p class="small">Drag a card onto a box, or tap a card and then tap the box's name. Cards are buttons, so Tab and Enter work too.</p>
+      <div class="pool" id="sPool" aria-label="Cards to sort"></div>
+      <div class="bins" id="sBins"></div>
+      <div class="bar">
+        <button class="tbtn" id="sHint" type="button">Hint</button>
+        <button class="tbtn" id="sShow" type="button">Show answer</button>
+        <button class="tbtn" id="sShuffle" type="button">Start round over</button>
+        <button class="btn" id="sNext" type="button">Next round &rarr;</button>
+      </div>
+      <div class="msg" id="sMsg" role="status"></div>
+      <p class="small" id="sBest"></p>
+    </div>
+  </section>
+
+  <!-- PART 4 -->
+  <section id="tab-life" role="tabpanel" aria-labelledby="tabbtn-life" hidden>
+    <h2 class="gk-sr">Part 4: Nutrition in Real Life</h2>
+    <div class="casechips" id="lifeChips" role="group" aria-label="Choose a scenario"></div>
+    <div class="case wide">
+      <div class="card stage">
+        <div class="canvas-holder"><canvas id="cvLife" role="img" aria-label="Scenario picture."></canvas></div>
+        <div class="stagebar"><span class="caption" id="lifeCap"></span></div>
+        <p class="sim-note">Fictional people and generic foods. Teaching examples with rounded values, not personal medical or diet advice.</p>
+      </div>
+      <div class="card">
+        <div class="sc-n" id="lifeN"></div>
+        <h2 class="sc-title" id="lifeTitle"></h2>
+        <p class="story" id="lifeStory"></p>
+        <div id="lifeQs"></div>
+        <div class="bar" style="margin-top:12px">
+          <button class="tbtn" id="lifePrev" type="button">&larr; Previous</button>
+          <button class="btn" id="lifeNext" type="button">Next scenario &rarr;</button>
+        </div>
+        <p class="calm">Wrong picks are fine here. Each one tells you why.</p>
+      </div>
+    </div>
+  </section>
+</div>
+<footer>Dr. Akash Garg &middot; Nutrition Study Tools &middot; Drawings are simplified and not to scale. For learning only, not personal medical or diet advice. CC BY-NC-SA 4.0<br>Learn the ideas first in the <a href="Basics-Walkthrough.html">Nutrition Basics Walkthrough</a>. Values are rounded teaching values based on the Dietary Reference Intakes and current Nutrition Facts label rules.</footer>
+<script>
+(function(){
+"use strict";
+const KEYS=["ground", "panel", "panel-2", "sunk", "ink", "ink-soft", "ink-faint", "rule", "rule-soft", "accent", "accent-ink", "accent-wash", "warn", "warn-wash", "bad", "bad-wash", "good", "good-wash", "on-accent", "warn-ink", "act1", "act2", "act3", "act4", "act5", "act6", "act7", "act8", "gold", "gold-wash", "gold-ink", "ecf", "grid", "paper", "carb", "prot", "fat", "alc", "fiber", "water", "vit", "min", "carb-ink", "prot-ink", "fat-ink", "alc-ink", "fiber-ink", "water-ink", "vit-ink", "min-ink", "fg-fruit", "fg-veg", "fg-grain", "fg-prot", "fg-dairy", "plate", "plate-rim", "table", "skin1", "skin2", "skin3", "skin4", "hair", "shirt1", "shirt2", "shirt3", "shirt4", "flame", "flame-in", "heat", "cold", "metal", "glass", "glass-edge", "waterfill", "gut", "gut-edge", "cell", "cell-edge", "mito", "blood", "bone", "label-bg", "label-ink", "sugar", "sugar-edge", "paperbag", "cereal1", "cereal2", "berry", "leaf", "bread", "rice", "bean", "egg", "milk", "nut", "fish", "cheese", "orange", "apple", "banana", "carrot", "broc", "tomato", "pasta", "oat", "soda", "cake", "chip", "corr", "conf", "rand1", "rand2"];
+/* ================= drawing kit (shared by both pages) ================= */
+let ctx=null;
+const C={};
+function readColors(){const s=getComputedStyle(document.documentElement);KEYS.forEach(k=>C[k]=s.getPropertyValue("--"+k).trim())}
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const seg=(p,a,b)=>clamp((p-a)/(b-a),0,1);
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const smooth=x=>{x=clamp(x,0,1);return x*x*(3-2*x)};
+const lerp=(a,b,t)=>a+(b-a)*t;
+const TAU=Math.PI*2;
+const gauss=(t,m,s)=>Math.exp(-((t-m)*(t-m))/(2*s*s));
+const FONT='"IBM Plex Sans",system-ui,sans-serif',MONO='"IBM Plex Mono",ui-monospace,monospace';
+function hx(c){let h=(c||"#888").trim();if(h[0]!=="#"){const m=h.match(/\d+/g);return m&&m.length>=3?[+m[0],+m[1],+m[2]]:[136,136,136]}h=h.slice(1);if(h.length===3)h=h.split("").map(x=>x+x).join("");const n=parseInt(h,16);return [n>>16&255,n>>8&255,n&255]}
+function isDark(){return hx(C.ground)[0]<60}
+function onFill(){return isDark()?"#0E1519":"#fff"}
+function P(T,L){return ((T%L)+L)%L/L}
+function mix(a,b,t){const A=hx(a),B=hx(b);t=clamp(t,0,1);return "rgb("+A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(",")+")"}
+function hexA(c,a){const A=hx(c);return `rgba(${A[0]},${A[1]},${A[2]},${clamp(a,0,1)})`}
+function rr(x,y,w,h,r){r=Math.max(0,Math.min(r,w/2,h/2));ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function circ(x,y,r,fill,stroke,lw){ctx.beginPath();ctx.arc(x,y,Math.max(0,r),0,TAU);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1.5;ctx.stroke()}}
+function ell(x,y,rx,ry,rot,fill,stroke,lw){ctx.beginPath();ctx.ellipse(x,y,Math.max(0,rx),Math.max(0,ry),rot||0,0,TAU);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1.5;ctx.stroke()}}
+function glow(x,y,r,col,a){if(r<=0)return;const A=hx(col);const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,`rgba(${A},${clamp(a==null?1:a,0,1)})`);g.addColorStop(1,`rgba(${A},0)`);ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill()}
+function label(x,y,t,o){o=o||{};if(o.a!=null){if(o.a<=0)return 0;ctx.save();ctx.globalAlpha*=clamp(o.a,0,1);const w=label(x,y,t,Object.assign({},o,{a:null}));ctx.restore();return w}const size=o.size||13;ctx.font=`${o.weight||500} ${size}px ${o.mono?MONO:FONT}`;
+  ctx.textAlign=o.align||"center";ctx.textBaseline="middle";
+  const w=ctx.measureText(t).width;let x0=x;if(ctx.textAlign==="center")x0=x-w/2;if(ctx.textAlign==="right")x0=x-w;
+  const a0=ctx.globalAlpha;
+  if(o.pill!==false){ctx.globalAlpha=a0*(o.bga==null?.9:o.bga);ctx.fillStyle=o.bg||C.panel;rr(x0-5,y-size*.75,w+10,size*1.5,4);ctx.fill();ctx.globalAlpha=a0;
+    if(o.border){ctx.strokeStyle=o.border;ctx.lineWidth=1.5;ctx.stroke()}}
+  ctx.fillStyle=o.color||C.ink;ctx.fillText(t,x,y+.5);return w}
+function txt(x,y,t,o){o=o||{};ctx.font=`${o.weight||500} ${o.size||12}px ${o.mono?MONO:FONT}`;ctx.textAlign=o.align||"left";ctx.textBaseline="middle";ctx.fillStyle=o.color||C.ink;ctx.fillText(t,x,y)}
+function line(x1,y1,x2,y2,col,lw,dash){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=col;ctx.lineWidth=lw||1.2;ctx.setLineDash(dash||[]);ctx.stroke();ctx.setLineDash([])}
+function arrow(x1,y1,x2,y2,col,lw,dash){line(x1,y1,x2,y2,col,lw||2,dash);const a=Math.atan2(y2-y1,x2-x1),h=7+(lw||2);ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-h*Math.cos(a-.45),y2-h*Math.sin(a-.45));ctx.lineTo(x2-h*Math.cos(a+.45),y2-h*Math.sin(a+.45));ctx.closePath();ctx.fillStyle=col;ctx.fill()}
+function chipText(x,y,t,col,fg){ctx.font=`600 11.5px ${MONO}`;ctx.textAlign="center";ctx.textBaseline="middle";const w=ctx.measureText(t).width;
+  ctx.fillStyle=col;rr(x-w/2-6,y-9.5,w+12,19,9.5);ctx.fill();ctx.fillStyle=fg||onFill();ctx.fillText(t,x,y+.5);return w+12}
+function chipL(x,y,t,col,fg){ctx.font=`600 11.5px ${MONO}`;const w=ctx.measureText(t).width;return chipText(x+w/2+6,y,t,col,fg)}
+function badge(x,y,n,col,r){r=r||10;circ(x,y,r,col||C.ink,C.panel,1.5);ctx.font=`700 ${r>10?13:11.5}px ${MONO}`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle=onFill();ctx.fillText(String(n),x,y+.5)}
+function rnd(i){const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)}
+function along(P_,p){let L=0;const ls=[];for(let i=0;i<P_.length-1;i++){const l=Math.hypot(P_[i+1][0]-P_[i][0],P_[i+1][1]-P_[i][1]);ls.push(l);L+=l}
+  let d=clamp(p,0,1)*L;for(let i=0;i<ls.length;i++){if(d<=ls[i]||i===ls.length-1){const f=ls[i]?Math.min(1,d/ls[i]):0;return [lerp(P_[i][0],P_[i+1][0],f),lerp(P_[i][1],P_[i+1][1],f)]}d-=ls[i]}return P_[P_.length-1]}
+function poly(pts,col,lw,dash){ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.strokeStyle=col;ctx.lineWidth=lw||1.5;ctx.setLineDash(dash||[]);ctx.lineJoin="round";ctx.lineCap="round";ctx.stroke();ctx.setLineDash([]);ctx.lineCap="butt"}
+function panelBox(x,y,w,h,o){o=o||{};rr(x,y,w,h,o.r||8);ctx.fillStyle=o.fill||hexA(C.panel,.85);ctx.fill();ctx.strokeStyle=o.stroke||C.rule;ctx.lineWidth=o.lw||1.2;ctx.stroke()}
+function wrapText(t,x,y,w,lh,o){o=o||{};ctx.font=`${o.weight||500} ${o.size||12}px ${o.mono?MONO:FONT}`;ctx.textAlign=o.align||"left";ctx.textBaseline="middle";ctx.fillStyle=o.color||C.ink;
+  const words=t.split(" ");let ln="";let yy=y;words.forEach(wd=>{const test=ln?ln+" "+wd:wd;if(ctx.measureText(test).width>w&&ln){ctx.fillText(ln,x,yy);ln=wd;yy+=lh}else ln=test});if(ln)ctx.fillText(ln,x,yy);return yy}
+function blobPath(x,y,r,seed,t,amp){amp=amp==null?.06:amp;ctx.beginPath();const N=44;for(let i=0;i<=N;i++){const a=i/N*TAU;const rad=r*(1+amp*Math.sin(a*3+seed+(t||0)*1.7)+amp*.7*Math.sin(a*5+seed*2.3-(t||0)*1.1));const X=x+Math.cos(a)*rad,Y=y+Math.sin(a)*rad;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)}ctx.closePath()}
+function withA(a,fn){ctx.save();ctx.globalAlpha*=clamp(a==null?1:a,0,1);fn();ctx.restore()}
+function title(x,y,t,col,align){txt(x,y,t.toUpperCase().replace(/Μ/g,"µ").replace(/µM/g,"µm"),{size:12,mono:true,weight:700,color:col||C["ink-soft"],align:align||"left"})}
+function lead(px,py,lx,ly,t,o){o=o||{};const a=o.a==null?1:o.a;if(a<=0)return;ctx.save();ctx.globalAlpha*=a;line(px,py,lx,ly,o.lc||C["ink-soft"],1.2);circ(px,py,2.6,o.lc||C["ink-soft"]);
+  label(lx,ly,t,{size:o.size||12.5,weight:o.weight||600,align:o.align||(lx<px?"right":"left"),border:o.border,color:o.color});ctx.restore()}
+function pulseRing(x,y,r,col,p){ctx.save();ctx.globalAlpha*=(1-p);ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(x,y,r*(.4+p),0,TAU);ctx.stroke();ctx.restore()}
+function plotFn(fn,t0,t1,x,y,w,h,v0,v1,col,lw,dash,upto){ctx.beginPath();const N=Math.max(40,Math.round(w));let started=false;for(let i=0;i<=N;i++){const t=lerp(t0,t1,i/N);if(upto!=null&&t>upto)break;const v=fn(t);const X=x+w*i/N,Y=y+h-(clamp(v,v0,v1)-v0)/(v1-v0)*h;started?ctx.lineTo(X,Y):(ctx.moveTo(X,Y),started=true)}
+  ctx.strokeStyle=col;ctx.lineWidth=lw||2;ctx.setLineDash(dash||[]);ctx.lineJoin="round";ctx.stroke();ctx.setLineDash([])}
+function bg(col){ctx.fillStyle=col||C.ecf;ctx.fillRect(0,0,4000,4000)}
+/* ================= core helpers (from the shared kit) ================= */
+function lumOf(c){const A=hx(c).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*A[0]+.7152*A[1]+.0722*A[2]}
+function inkOn(c){return lumOf(c)>.3?"#10161A":"#fff"}
+function fillStroke(f,s,lw){if(f){ctx.fillStyle=f;ctx.fill()}if(s){ctx.strokeStyle=s;ctx.lineWidth=lw||1.4;ctx.stroke()}}
+function checkMark(x,y,s,col){poly([[x-s,y],[x-s*.3,y+s*.7],[x+s,y-s*.7]],col||C.good,3)}
+function crossMark(x,y,s,col){line(x-s,y-s,x+s,y+s,col||C.bad,3);line(x+s,y-s,x-s,y+s,col||C.bad,3)}
+function fmtNum(v,dp){if(dp==null)dp=2;const r=Math.round(v*Math.pow(10,dp))/Math.pow(10,dp);let s=String(r);if(Math.abs(r)>=1000){const p=s.split(".");p[0]=p[0].replace(/\B(?=(\d{3})+(?!\d))/g,",");s=p.join(".")}return s}
+/* format with n significant figures, never in e-notation for normal sizes */
+function sig(v,n){if(!isFinite(v))return "?";if(v===0)return (0).toFixed(Math.max(0,n-1));const e=Math.floor(Math.log10(Math.abs(v)));const dp=n-1-e;
+  if(dp>=0){return (Math.round(v*Math.pow(10,dp))/Math.pow(10,dp)).toFixed(dp)}
+  const f=Math.pow(10,-dp);const r=Math.round(v/f)*f;return String(r)}
+/* count significant figures in a typed string; returns {n, amb} (amb = trailing zeros without a decimal point) */
+function sigCount(str){let s=String(str).trim().replace(/^[+-]/,"").replace(/,/g,"");let ex="";const m=s.match(/^([0-9.]+)[eE]([+-]?\d+)$/);if(m)s=m[1];
+  if(!/^\d*\.?\d*$/.test(s)||s===""||s===".")return {n:0,amb:false};
+  const hasDot=s.indexOf(".")>=0;let d=s.replace(".","");d=d.replace(/^0+/,"");if(d==="")return {n:1,amb:false};
+  if(hasDot)return {n:d.length,amb:false};
+  const t=d.replace(/0+$/,"");return {n:t.length,amb:t.length!==d.length,max:d.length}}
+function graph(g){const X=v=>g.x+(v-g.x0)/(g.x1-g.x0)*g.w,Y=v=>g.y+g.h-(v-g.y0)/(g.y1-g.y0)*g.h;g.X=X;g.Y=Y;
+  rr(g.x,g.y,g.w,g.h,2);ctx.fillStyle=hexA(C.panel,.7);ctx.fill();
+  if(g.xt)g.xt.forEach(t=>{if(g.grid!==false)line(X(t),g.y,X(t),g.y+g.h,C.grid,1);txt(X(t),g.y+g.h+11,g.xf?g.xf(t):String(t),{size:10.5,align:"center",mono:true,color:C["ink-soft"]})});
+  if(g.yt)g.yt.forEach(t=>{if(g.grid!==false)line(g.x,Y(t),g.x+g.w,Y(t),C.grid,1);txt(g.x-5,Y(t),g.yf?g.yf(t):String(t),{size:10.5,align:"right",mono:true,color:C["ink-soft"]})});
+  line(g.x,g.y,g.x,g.y+g.h,C["ink-soft"],1.6);line(g.x,g.y+g.h,g.x+g.w,g.y+g.h,C["ink-soft"],1.6);
+  if(g.xl)txt(g.x+g.w,g.y+g.h+(g.xt?26:12),g.xl,{size:11.5,weight:600,align:"right",color:C["ink-soft"]});
+  if(g.yl)txt(g.x-(g.ylx||0),g.y-10,g.yl,{size:11.5,weight:600,align:"left",color:C["ink-soft"]});
+  if(g.title)title(g.x,g.y-24,g.title,g.tcol);return g}
+function curve(g,fn,a,b,col,lw,dash,o){o=o||{};ctx.save();ctx.beginPath();ctx.rect(g.x,g.y-2,g.w+2,g.h+4);ctx.clip();ctx.beginPath();const N=120;let st=false;
+  for(let i=0;i<=N;i++){const v=lerp(a,b,i/N);const w=fn(v);if(!isFinite(w)){st=false;continue}const X=g.X(v),Y=g.Y(w);st?ctx.lineTo(X,Y):(ctx.moveTo(X,Y),st=true)}
+  ctx.strokeStyle=col;ctx.lineWidth=lw||2.4;ctx.setLineDash(dash||[]);ctx.lineJoin="round";ctx.stroke();ctx.setLineDash([]);ctx.restore()}
+function gdot(g,a,b,col,lab,o){o=o||{};const X=g.X(a),Y=g.Y(b);if(X<g.x-1||X>g.x+g.w+1||Y<g.y-1||Y>g.y+g.h+1)return;if(o.guides){line(X,Y,X,g.y+g.h,hexA(col,.6),1.2,[3,3]);line(g.x,Y,X,Y,hexA(col,.6),1.2,[3,3])}
+  circ(X,Y,o.r||6,col,C.panel,2);if(lab)label(X+(o.dx||0),Y+(o.dy==null?-16:o.dy),lab,{size:o.size||11.5,weight:700,mono:true,border:col,align:o.align})}
+/* ---------- equation / dimensional analysis chain ----------
+   items: [{n:[str,[units]], d:[str,[units]]|null}], res:[str,[units]], p: 0..1 progress */
+function F(n,nu,d,du){return {n:[String(n),nu==null?[]:Array.isArray(nu)?nu:[nu]],d:d==null?null:[String(d),du==null?[]:Array.isArray(du)?du:[du]]}}
+function chainLayout(items,fs){ctx.font=`600 ${fs}px ${MONO}`;return items.map(it=>{const nt=(it.n[0]+" "+it.n[1].join("·")).trim();const dt=it.d?(it.d[0]+" "+it.d[1].join("·")).trim():"";return Math.max(ctx.measureText(nt).width,ctx.measureText(dt).width)+8})}
+function chainWidth(items,res,o){o=o||{};const fs=o.size||15;const gap=o.gap||20;const ws=chainLayout(items,fs);let X=ws.reduce((a,b)=>a+b,0)+gap*(items.length-1);if(res){ctx.font=`700 ${fs+2}px ${MONO}`;X+=gap+12+ctx.measureText(res[0]+" "+res[1].join("·")).width}return X}
+function chain(x,y,items,res,p,o){o=o||{};const fs=o.size||15;const gap=o.gap||20;const ws=chainLayout(items,fs);
+  const ns=[],ds=[];items.forEach((it,i)=>{it.n[1].forEach((u,k)=>ns.push({i,k,u,used:false}));if(it.d)it.d[1].forEach((u,k)=>ds.push({i,k,u,used:false}))});
+  const pairs=[];ds.forEach(d=>{const m=ns.find(n=>!n.used&&n.u.replace(/s$/,"")===d.u.replace(/s$/,""));if(m){m.used=true;d.used=true;pairs.push([m,d])}});
+  const pos={};let X=x;const nI=items.length;const pIn=o.pIn||.42,pSt=o.pSt||.78;
+  items.forEach((it,i)=>{const a=clamp((p*nI/pIn)-i,0,1);if(a<=0){X+=ws[i]+gap;return}ctx.save();ctx.globalAlpha*=a;const w=ws[i];const cx=X+w/2;const dy=(1-a)*-10;
+    const part=(val,units,yy,isN)=>{ctx.font=`600 ${fs}px ${MONO}`;const full=(val+" "+units.join("·")).trim();let px=cx-ctx.measureText(full).width/2;ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillStyle=o.ncol||C.ink;ctx.fillText(val,px,yy+dy);px+=ctx.measureText(val+" ").width;
+      units.forEach((u,k)=>{const uw=ctx.measureText(u).width;pos[(isN?"n":"d")+i+"_"+k]=[px,yy,uw];ctx.fillStyle=o.ucol||C["accent-ink"];ctx.fillText(u,px,yy+dy);px+=uw;if(k<units.length-1){ctx.fillStyle=C.ink;ctx.fillText("·",px,yy+dy);px+=ctx.measureText("·").width}})};
+    if(it.d){part(it.n[0],it.n[1],y-fs*.95,true);line(X,y,X+w,y,C.ink,1.6);part(it.d[0],it.d[1],y+fs*1.0,false)}else part(it.n[0],it.n[1],y,true);
+    if(i<nI-1)txt(X+w+gap/2,y,"×",{size:fs+2,weight:700,align:"center",color:C["ink-soft"]});ctx.restore();X+=w+gap});
+  X-=gap;const sp=clamp((p-pIn)/(pSt-pIn),0,1);
+  pairs.forEach((pr,j)=>{const f=clamp(sp*pairs.length-j,0,1);if(f<=0)return;[pr[0],pr[1]].forEach((q,qi)=>{const ps=pos[(qi===0?"n":"d")+q.i+"_"+q.k];if(!ps)return;line(ps[0]-2,ps[1]+6,ps[0]-2+(ps[2]+4)*f,ps[1]-6,C.bad,2.4)})});
+  const rf=clamp((p-pSt-.04)/.1,0,1);
+  if(res){txt(X+gap/2,y,"=",{size:fs+3,weight:700,align:"center",color:C["ink-soft"]});X+=gap+4;
+    if(rf>0)withA(rf,()=>{const t=res[0]+" "+res[1].join("·");ctx.font=`700 ${fs+2}px ${MONO}`;const w=ctx.measureText(t).width;rr(X-4,y-15,w+12,30,6);ctx.fillStyle=C["good-wash"];ctx.fill();ctx.strokeStyle=C.good;ctx.lineWidth=1.8;ctx.stroke();txt(X+2,y,t,{size:fs+2,weight:700,mono:true})});}
+  return pairs.length}
+/* worked example card that animates over a loop of `per` seconds
+   w = {q:"problem", given:[...], conv:[...] (K reminders etc), items, res, ans:"...", sf:"note", miss:"mistake note"} */
+function worked(x,y,w,h,W_,T,o){o=o||{};const per=o.per||16;const t=P(T,per)*per;panelBox(x,y,w,h,{fill:hexA(C.paper,.96)});
+  title(x+12,y+16,o.title||"Worked example",C["accent-ink"]);let yy=y+38;
+  const sz=o.size||12.5;
+  if(o.split){const sw=o.split;let ly=wrapText(W_.q,x+12,yy,sw-20,sz+4,{size:sz,weight:600})+sz+6;
+    (W_.given||[]).forEach((g,i)=>{const a=seg(t,.8+i*.5,1.2+i*.5);if(a>0)withA(a,()=>txt(x+14,ly,g,{size:sz-.5,mono:true,color:C.ink}));ly+=sz+6});
+    const t0=1.2+(W_.given||[]).length*.5;
+    (W_.conv||[]).forEach((g,i)=>{const a=seg(t,t0+i*.8,t0+.5+i*.8);if(a>0)withA(a,()=>label(x+14,ly+2,g,{size:sz-.5,weight:700,mono:true,align:"left",border:C.gold,bg:C["gold-wash"]}));ly+=sz+13});
+    line(x+sw,y+28,x+sw,y+h-10,C["rule-soft"],1.2);
+    const t1=t0+(W_.conv||[]).length*.8+.4;const cp=clamp((t-t1)/(per*.45),0,1);const fs=o.cfs||14;const rx=x+sw+14,rw=w-sw-24;
+    let cy=y+(o.cy||52)+fs;(W_.rows||[[W_.items,W_.res]]).forEach((rw_,ri,arr)=>{const p_=clamp(cp*arr.length-ri,0,1);if(p_>0)chain(rx,cy,rw_[0],rw_[1],p_,{size:fs});cy+=fs*2+(o.rowGap||22)});
+    let yy2=cy-fs+4;const t2=t1+per*.45+.3;
+    if(W_.sf){const a=seg(t,t2,t2+.6);if(a>0)withA(a,()=>wrapText(W_.sf,rx,yy2,rw,sz+3,{size:sz-.5,color:C.good,weight:600}));yy2+=(o.sfH||sz+10)}
+    if(W_.miss){const a=seg(t,t2+1.2,t2+1.8);if(a>0)withA(a,()=>{rr(rx-4,yy2-10,rw+8,o.missH||38,5);ctx.fillStyle=C["warn-wash"];ctx.fill();ctx.strokeStyle=C.warn;ctx.lineWidth=1.2;ctx.stroke();wrapText("Common mistake: "+W_.miss,rx+4,yy2+3,rw-8,sz+3,{size:sz-1,color:C.ink})})}
+    return t}
+  yy=wrapText(W_.q,x+12,yy,w-24,sz+4,{size:sz,weight:600})+sz+6;
+  (W_.given||[]).forEach((g,i)=>{const a=seg(t,.8+i*.5,1.2+i*.5);if(a>0)withA(a,()=>txt(x+14,yy,g,{size:sz-.5,mono:true,color:C.ink}));yy+=sz+6});
+  const t0=1.2+(W_.given||[]).length*.5;
+  (W_.conv||[]).forEach((g,i)=>{const a=seg(t,t0+i*.8,t0+.5+i*.8);if(a>0)withA(a,()=>{const ww=label(x+14,yy,g,{size:sz-.5,weight:700,mono:true,align:"left",border:C.gold,bg:C["gold-wash"]})});yy+=sz+12});
+  const t1=t0+(W_.conv||[]).length*.8+.4;const cp=clamp((t-t1)/(per*.45),0,1);
+  const fs=o.cfs||14;const cw=chainWidth(W_.items,W_.res,{size:fs});let cy=yy+fs+12;if(W_.items&&cp>0){const cx=o.center?x+Math.max(12,(w-cw)/2):x+14;chain(cx,cy,W_.items,W_.res,cp,{size:fs})}
+  yy=cy+fs*2+8;const t2=t1+per*.45+.3;
+  if(W_.sf){const a=seg(t,t2,t2+.6);if(a>0)withA(a,()=>wrapText(W_.sf,x+14,yy,w-28,sz+4,{size:sz-.5,color:C.good,weight:600}));yy+=sz+10}
+  if(W_.miss){const a=seg(t,t2+1.2,t2+1.8);if(a>0)withA(a,()=>{rr(x+10,yy-10,w-20,o.missH||38,5);ctx.fillStyle=C["warn-wash"];ctx.fill();ctx.strokeStyle=C.warn;ctx.lineWidth=1.2;ctx.stroke();wrapText("Common mistake: "+W_.miss,x+18,yy+3,w-36,sz+3,{size:sz-1,color:C.ink})})}
+  return t}
+/* curved arrow */
+function carrow(x1,y1,cx,cy,x2,y2,col,lw){ctx.beginPath();ctx.moveTo(x1,y1);ctx.quadraticCurveTo(cx,cy,x2,y2);ctx.strokeStyle=col;ctx.lineWidth=lw||2;ctx.stroke();const a=Math.atan2(y2-cy,x2-cx),h=8;ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-h*Math.cos(a-.45),y2-h*Math.sin(a-.45));ctx.lineTo(x2-h*Math.cos(a+.45),y2-h*Math.sin(a+.45));ctx.closePath();ctx.fillStyle=col;ctx.fill()}
+/* ================= nutrition drawing kit ================= */
+let SC={};let SYS={};
+const NUT={carb:{n:"Carbohydrate",k:4,col:"carb",ink:"carb-ink"},fat:{n:"Fat (lipid)",k:9,col:"fat",ink:"fat-ink"},prot:{n:"Protein",k:4,col:"prot",ink:"prot-ink"},
+  alc:{n:"Alcohol",k:7,col:"alc",ink:"alc-ink"},fiber:{n:"Fiber",k:0,col:"fiber",ink:"fiber-ink"},water:{n:"Water",k:0,col:"water",ink:"water-ink"},
+  vit:{n:"Vitamins",k:0,col:"vit",ink:"vit-ink"},min:{n:"Minerals",k:0,col:"min",ink:"min-ink"}};
+/* level tags: plate / body / molecule / symbolic / label */
+function levelTag(x,y,k){const m={plate:["ON THE PLATE",C.act1],body:["IN THE BODY",C.act2],mol:["MOLECULE VIEW",C.act5],sym:["THE MATH",C.accent],label:["THE LABEL",C.act8],data:["THE DATA",C.act4],pop:["THE POPULATION",C.act4]}[k];
+  ctx.save();ctx.font=`700 10.5px ${MONO}`;const w=ctx.measureText(m[0]).width+12;rr(x,y-8,w,16,8);ctx.fillStyle=hexA(m[1],.16);ctx.fill();ctx.strokeStyle=m[1];ctx.lineWidth=1;ctx.stroke();
+  ctx.fillStyle=C.ink;ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(m[0],x+6,y+.5);ctx.restore();return w}
+/* ---------- molecules (simplified icons) ---------- */
+function hexRing(x,y,s,col,rot){ctx.beginPath();for(let i=0;i<6;i++){const a=(rot||0)+i*TAU/6+Math.PI/6;const X=x+Math.cos(a)*s,Y=y+Math.sin(a)*s;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)}ctx.closePath();ctx.fillStyle=hexA(col,.35);ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=2;ctx.stroke()}
+function mGlucose(x,y,s,o){o=o||{};hexRing(x,y,s,o.col||C.carb,o.rot);if(o.dot!==false)circ(x+s*.95,y-s*.55,s*.22,o.col||C.carb)}
+function mStarch(x,y,s,n,o){o=o||{};for(let i=0;i<n;i++){const xx=x+i*s*1.85;if(i)line(xx-s*1.05,y,xx-s*.8,y,o.col||C.carb,2);hexRing(xx,y+(i%2?s*.15:0),s,o.col||C.carb,o.rot)}}
+function zig(x,y,len,col,wob,T){ctx.beginPath();const n=8;for(let i=0;i<=n;i++){const X=x+len*i/n,Y=y+(i%2?-4:4)+(wob?Math.sin((T||0)*4+i)*wob:0);i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)}ctx.strokeStyle=col;ctx.lineWidth=2.4;ctx.lineJoin="round";ctx.stroke()}
+function mTri(x,y,s,o){o=o||{};const col=o.col||C.fat;rr(x-s*.25,y-s*.9,s*.5,s*1.8,4);ctx.fillStyle=hexA(col,.5);ctx.fill();ctx.strokeStyle=mix(col,C.ink,.4);ctx.lineWidth=1.5;ctx.stroke();
+  [-.6,0,.6].forEach((k,i)=>{if(o.tails!=null&&i>=o.tails)return;zig(x+s*.25,y+k*s,s*1.6,col,o.wob,(o.T||0)+i)})}
+function mFatty(x,y,s,o){o=o||{};circ(x,y,s*.25,o.col||C.fat);zig(x+s*.2,y,s*1.6,o.col||C.fat,o.wob,o.T)}
+function mAmino(x,y,s,col,o){o=o||{};circ(x,y,s,col||C.prot,hexA(C.ink,.45),1.2);if(o.lab)txt(x,y,o.lab,{size:Math.max(9,s*.9),weight:700,align:"center",color:inkOn(col||C.prot),mono:true})}
+function mProtein(x,y,s,n,T,o){o=o||{};const pts=[];for(let i=0;i<n;i++){const a=i*.9+(T||0)*.4;const r=s*(1.2+.5*Math.sin(i*1.7));pts.push([x+Math.cos(a)*r*(o.flat?2.2:1)+(o.flat?i*s*.9-n*s*.45:0),y+Math.sin(a)*r*(o.flat?.25:1)])}
+  poly(pts,hexA(C.prot,.7),2);pts.forEach((p,i)=>mAmino(p[0],p[1],s*.42,i%3===0?C.prot:mix(C.prot,i%3===1?"#ffffff":"#000000",.25)))}
+function mVit(x,y,s,o){o=o||{};const col=o.col||C.vit;ctx.save();ctx.translate(x,y);ctx.rotate(o.rot||0);ctx.beginPath();for(let i=0;i<5;i++){const a=i*TAU/5-Math.PI/2;const X=Math.cos(a)*s,Y=Math.sin(a)*s;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)}ctx.closePath();ctx.fillStyle=hexA(col,.35);ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=2;ctx.stroke();
+  line(s*.8,-s*.3,s*1.6,-s*.8,col,2);ctx.restore();if(o.lab)txt(x,y+.5,o.lab,{size:Math.max(9,s*.8),weight:700,align:"center",mono:true})}
+function mMin(x,y,s,sym,o){o=o||{};const col=o.col||C.min;circ(x,y,s,col,hexA(C.ink,.4),1.2);if(sym)txt(x,y+.5,sym,{size:Math.max(9,s*.85),weight:700,align:"center",color:inkOn(col),mono:true})}
+function mWater(x,y,s,rot,o){o=o||{};ctx.save();ctx.translate(x,y);ctx.rotate(rot||0);circ(-s*.75,s*.55,s*.48,o.h||"#F2F4F5",hexA(C.ink,.35),1);circ(s*.75,s*.55,s*.48,o.h||"#F2F4F5",hexA(C.ink,.35),1);circ(0,0,s*.75,o.col||C.water,hexA(C.ink,.35),1);ctx.restore()}
+function mAlc(x,y,s){circ(x-s*.5,y,s*.5,C.alc,hexA(C.ink,.4),1);circ(x+s*.4,y-s*.2,s*.45,C.alc,hexA(C.ink,.4),1);circ(x+s*.95,y+s*.25,s*.35,C.water,hexA(C.ink,.4),1)}
+function mFiber(x,y,s,n,T){for(let i=0;i<n;i++){const xx=x+i*s*1.7;hexRing(xx,y+Math.sin((T||0)*2+i)*2,s*.8,C.fiber,.4);if(i)line(xx-s*1.1,y,xx-s*.7,y,C.fiber,2)}}
+function nutIcon(k,x,y,s,T){if(k==="carb")mGlucose(x,y,s*.75);else if(k==="fat")mTri(x-s*.5,y,s*.7,{T});else if(k==="prot")mProtein(x,y,s*.35,6,T);else if(k==="vit")mVit(x,y,s*.7);else if(k==="min")mMin(x,y,s*.7,"Ca");else if(k==="water")mWater(x,y,s*.8,T?Math.sin(T)*.3:0);else if(k==="alc")mAlc(x,y,s*.7);else if(k==="fiber")mFiber(x-s*.8,y,s*.6,2,T)}
+/* ---------- foods (generic, simplified) ---------- */
+function shine(x,y,r){ctx.save();ctx.globalAlpha*=.35;ell(x,y,r*.35,r*.18,-.6,"#ffffff");ctx.restore()}
+function food(kind,x,y,s,o){o=o||{};ctx.save();if(o.a!=null)ctx.globalAlpha*=clamp(o.a,0,1);ctx.translate(x,y);if(o.rot)ctx.rotate(o.rot);const E=hexA(C.ink,.55);
+  switch(kind){
+  case "apple":circ(0,s*.08,s*.9,C.apple,E,1.4);shine(-s*.35,-s*.2,s);line(0,-s*.7,s*.1,-s*1.1,C.bean,2.5);ell(s*.35,-s*.9,s*.3,s*.14,-.5,C.leaf);break;
+  case "orange":circ(0,0,s*.9,C.orange,E,1.4);for(let i=0;i<10;i++)circ(Math.cos(i*2.4)*s*.5,Math.sin(i*2.4)*s*.5,1.2,hexA(C.ink,.25));shine(-s*.35,-s*.3,s);break;
+  case "banana":ctx.beginPath();ctx.arc(0,-s*.6,s*1.1,.35,Math.PI-.35);ctx.arc(0,-s*1.05,s*1.05,Math.PI-.45,.45,true);ctx.closePath();fillStroke(C.banana,E,1.4);break;
+  case "berries":[[-.45,.2],[.4,.25],[0,-.35],[-.1,.55],[.55,-.3],[-.6,-.35]].forEach(p=>{circ(p[0]*s,p[1]*s,s*.36,C.berry,E,1);circ(p[0]*s-s*.1,p[1]*s-s*.1,s*.08,hexA("#fff",.5))});break;
+  case "broccoli":rr(-s*.18,0,s*.36,s*.85,3);fillStroke(mix(C.broc,"#fff",.3),E,1.2);[[-.45,-.15],[.45,-.15],[0,-.5],[-.2,.05],[.2,.05]].forEach(p=>circ(p[0]*s,p[1]*s,s*.42,C.broc,E,1));break;
+  case "carrot":ctx.beginPath();ctx.moveTo(-s*.3,-s*.6);ctx.lineTo(s*.3,-s*.6);ctx.lineTo(0,s*1);ctx.closePath();fillStroke(C.carrot,E,1.3);for(let i=0;i<3;i++)line(-s*.15,-s*.3+i*s*.3,s*.08,-s*.28+i*s*.3,hexA(C.ink,.35),1);[-.2,0,.2].forEach(k=>line(0,-s*.6,k*s,-s*1.05,C.leaf,2.5));break;
+  case "salad":ell(0,s*.2,s,s*.55,0,mix(C.plate,C.ink,.06),E,1.3);[[-.5,-.05,C.leaf],[.1,-.2,mix(C.leaf,"#fff",.3)],[.5,0,C.leaf],[-.15,.1,C.tomato],[.35,.12,C.carrot]].forEach(p=>ell(p[0]*s,p[1]*s,s*.32,s*.2,p[0],p[2],E,1));break;
+  case "tomato":circ(0,0,s*.85,C.tomato,E,1.3);shine(-s*.3,-s*.25,s);[0,1,2,3,4].forEach(i=>{const a=i*TAU/5;line(0,-s*.7,Math.cos(a)*s*.3,-s*.7+Math.sin(a)*s*.15,C.leaf,2)});break;
+  case "bread":ctx.beginPath();ctx.moveTo(-s*.85,s*.8);ctx.lineTo(-s*.85,-s*.2);ctx.arc(-s*.35,-s*.25,s*.5,Math.PI,-.3);ctx.arc(s*.35,-s*.25,s*.5,-Math.PI+.3,0);ctx.lineTo(s*.85,s*.8);ctx.closePath();fillStroke(C.bread,E,1.4);rr(-s*.65,-s*.15,s*1.3,s*.85,4);ctx.fillStyle=mix(C.bread,"#fff",.55);ctx.fill();break;
+  case "rice":ctx.beginPath();ctx.arc(0,0,s,0,Math.PI);ctx.closePath();fillStroke(C.cereal2,E,1.4);ell(0,0,s,s*.3,0,C.rice,E,1);for(let i=0;i<9;i++)ell(-s*.7+i*s*.17,-s*.05+(i%2)*4-4,3,1.6,i,hexA(C.ink,.25));break;
+  case "pasta":ctx.beginPath();ctx.arc(0,0,s,0,Math.PI);ctx.closePath();fillStroke(mix(C.plate,C.ink,.1),E,1.4);for(let i=0;i<5;i++){ctx.beginPath();ctx.ellipse(0,-s*.05,s*(.8-i*.12),s*.28,0,Math.PI,TAU);ctx.strokeStyle=C.pasta;ctx.lineWidth=3;ctx.stroke()}circ(0,-s*.15,s*.18,C.tomato);break;
+  case "oats":ctx.beginPath();ctx.arc(0,0,s,0,Math.PI);ctx.closePath();fillStroke(C.cereal2,E,1.4);ell(0,0,s,s*.3,0,C.oat,E,1);circ(-s*.3,-s*.08,s*.14,C.berry);circ(s*.1,-s*.12,s*.14,C.berry);circ(s*.4,-s*.05,s*.12,C.banana);break;
+  case "cereal":rr(-s*.65,-s*1.05,s*1.3,s*2.05,4);fillStroke(o.col||C.cereal1,E,1.4);rr(-s*.45,-s*.65,s*.9,s*.5,3);ctx.fillStyle=hexA("#fff",.75);ctx.fill();ell(0,s*.45,s*.4,s*.22,0,hexA("#fff",.6));if(o.tag)fitTxt(0,-s*.4,o.tag,s*1.1,{size:Math.max(10,s*.32),weight:700,align:"center",color:"#10161A"});break;
+  case "chicken":ell(0,0,s*.95,s*.62,-.2,mix(C.bread,"#fff",.25),E,1.4);for(let i=0;i<3;i++)line(-s*.5+i*s*.4,-s*.35,-s*.3+i*s*.4,s*.35,hexA(C.bean,.6),2);break;
+  case "fish":ctx.beginPath();ctx.ellipse(0,0,s*.85,s*.45,0,0,TAU);fillStroke(C.fish,E,1.4);ctx.beginPath();ctx.moveTo(s*.75,0);ctx.lineTo(s*1.15,-s*.4);ctx.lineTo(s*1.15,s*.4);ctx.closePath();fillStroke(C.fish,E,1.2);circ(-s*.5,-s*.08,s*.08,C.ink);break;
+  case "beans":ctx.beginPath();ctx.arc(0,0,s,0,Math.PI);ctx.closePath();fillStroke(C.cereal2,E,1.4);for(let i=0;i<8;i++)ell(-s*.65+(i%4)*s*.42,-s*.05-(i>3?s*.2:0)+s*.12,s*.2,s*.13,i,C.bean,E,.8);break;
+  case "egg":ell(0,0,s*.9,s*.7,0,"#ffffff",E,1.3);circ(s*.05,0,s*.36,C.egg,E,1);break;
+  case "nuts":for(let i=0;i<7;i++){const a=i*2.3;ell(Math.cos(a)*s*.45,Math.sin(a)*s*.35,s*.32,s*.22,a,C.nut,E,1)}break;
+  case "milk":ctx.beginPath();ctx.moveTo(-s*.55,-s*.9);ctx.lineTo(s*.55,-s*.9);ctx.lineTo(s*.45,s*.9);ctx.lineTo(-s*.45,s*.9);ctx.closePath();fillStroke(hexA(C.glass,.8),C["glass-edge"],1.4);ctx.beginPath();ctx.moveTo(-s*.5,-s*.55);ctx.lineTo(s*.5,-s*.55);ctx.lineTo(s*.45,s*.88);ctx.lineTo(-s*.45,s*.88);ctx.closePath();ctx.fillStyle=C.milk;ctx.fill();ctx.strokeStyle=hexA(C.ink,.3);ctx.lineWidth=1;ctx.stroke();break;
+  case "yogurt":ctx.beginPath();ctx.moveTo(-s*.7,-s*.5);ctx.lineTo(s*.7,-s*.5);ctx.lineTo(s*.5,s*.75);ctx.lineTo(-s*.5,s*.75);ctx.closePath();fillStroke(C.cereal2,E,1.4);ell(0,-s*.5,s*.7,s*.2,0,C.milk,E,1);circ(-s*.2,-s*.55,s*.13,C.berry);circ(s*.2,-s*.52,s*.13,C.berry);break;
+  case "cheese":ctx.beginPath();ctx.moveTo(-s*.9,s*.5);ctx.lineTo(s*.9,s*.5);ctx.lineTo(s*.9,-s*.1);ctx.lineTo(-s*.9,-s*.55);ctx.closePath();fillStroke(C.cheese,E,1.3);circ(-s*.2,s*.15,s*.12,mix(C.cheese,"#000",.15));circ(s*.4,s*.25,s*.09,mix(C.cheese,"#000",.15));break;
+  case "cake":rr(-s*.9,-s*.4,s*1.8,s*.9,s*.35);fillStroke(C.bread,E,1.4);ctx.beginPath();ctx.moveTo(-s*.75,0);for(let i=0;i<=6;i++)ctx.lineTo(-s*.75+i*s*.25,(i%2?-s*.08:s*.08));ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.stroke();break;
+  case "chips":ctx.beginPath();ctx.moveTo(-s*.7,-s*.95);ctx.lineTo(s*.7,-s*.95);ctx.lineTo(s*.8,s*.95);ctx.lineTo(-s*.8,s*.95);ctx.closePath();fillStroke(C.chip,E,1.4);ell(0,s*.15,s*.35,s*.25,.3,mix(C.chip,"#fff",.45),E,1);break;
+  case "soda":rr(-s*.5,-s*.95,s,s*1.9,s*.2);fillStroke(C.soda,E,1.4);rr(-s*.5,-s*.3,s,s*.5,0);ctx.fillStyle=hexA("#fff",.55);ctx.fill();break;
+  case "juice":ctx.beginPath();ctx.moveTo(-s*.55,-s*.9);ctx.lineTo(s*.55,-s*.9);ctx.lineTo(s*.45,s*.9);ctx.lineTo(-s*.45,s*.9);ctx.closePath();fillStroke(hexA(C.glass,.8),C["glass-edge"],1.4);ctx.beginPath();ctx.moveTo(-s*.5,-s*.5);ctx.lineTo(s*.5,-s*.5);ctx.lineTo(s*.45,s*.88);ctx.lineTo(-s*.45,s*.88);ctx.closePath();ctx.fillStyle=C.orange;ctx.fill();break;
+  case "waterglass":ctx.beginPath();ctx.moveTo(-s*.55,-s*.9);ctx.lineTo(s*.55,-s*.9);ctx.lineTo(s*.45,s*.9);ctx.lineTo(-s*.45,s*.9);ctx.closePath();fillStroke(hexA(C.glass,.8),C["glass-edge"],1.4);ctx.beginPath();ctx.moveTo(-s*.5,-s*.45);ctx.lineTo(s*.5,-s*.45);ctx.lineTo(s*.45,s*.88);ctx.lineTo(-s*.45,s*.88);ctx.closePath();ctx.fillStyle=hexA(C.water,.4);ctx.fill();break;
+  case "oil":rr(-s*.35,-s*.4,s*.7,s*1.3,s*.15);fillStroke(hexA(C.fat,.75),E,1.3);rr(-s*.14,-s*.85,s*.28,s*.45,2);fillStroke(hexA(C.fat,.75),E,1.1);break;
+  case "potato":ell(0,0,s*.95,s*.65,.2,C.bread,E,1.3);circ(-s*.3,-s*.1,1.6,hexA(C.ink,.4));circ(s*.3,s*.15,1.6,hexA(C.ink,.4));break;
+  case "tortilla":ell(0,0,s*1,s*.45,0,C.pasta,E,1.3);circ(-s*.3,0,2,hexA(C.bean,.5));circ(s*.35,-s*.1,2,hexA(C.bean,.5));break;
+  case "soup":ctx.beginPath();ctx.arc(0,0,s,0,Math.PI);ctx.closePath();fillStroke(C.cereal2,E,1.4);ell(0,0,s,s*.3,0,C.carrot,E,1);circ(-s*.4,-s*.05,s*.12,C.broc);circ(s*.1,-s*.08,s*.12,C.tomato);circ(s*.45,-s*.02,s*.1,C.broc);break;
+  case "tofu":rr(-s*.7,-s*.5,s*1.4,s,4);fillStroke(C.milk,E,1.3);line(-s*.7,0,s*.7,0,hexA(C.ink,.2),1);break;
+  default:circ(0,0,s*.8,C.metal,E,1)}
+  ctx.restore()}
+/* ---------- plate (half fruits and vegetables, grains, protein, dairy on the side) ---------- */
+const FG={fruit:{n:"Fruits",col:"fg-fruit"},veg:{n:"Vegetables",col:"fg-veg"},grain:{n:"Grains",col:"fg-grain"},prot:{n:"Protein foods",col:"fg-prot"},dairy:{n:"Dairy",col:"fg-dairy"}};
+function plateBase(x,y,r){ell(x+4,y+8,r*1.02,r*.98*.62+r*.02,0,hexA(C.ink,.12));ell(x,y,r,r*.62,0,C.plate,C["plate-rim"],2.2);ell(x,y,r*.8,r*.8*.62,0,null,hexA(C["plate-rim"],.7),1.2)}
+/* top-down plate (circle) with four quarters filling; f = {fruit,veg,grain,prot} 0..1 */
+function plateTop(x,y,r,f,o){o=o||{};circ(x+3,y+5,r+4,hexA(C.ink,.12));circ(x,y,r+4,C.plate,C["plate-rim"],2.2);circ(x,y,r*.86,null,hexA(C["plate-rim"],.6),1.2);
+  const VF=Math.PI*.5+Math.PI*100/180;const Q=[["veg",Math.PI*.5,VF],["fruit",VF,Math.PI*1.5+0.0001],["grain",-Math.PI*.5,0],["prot",0,Math.PI*.5]];
+  const qs=o.quarters||Q;qs.forEach(q=>{const v=clamp(f[q[0]]||0,0,1);if(v<=0)return;ctx.beginPath();ctx.moveTo(x,y);ctx.arc(x,y,r*.84*Math.sqrt(v),q[1],q[2]);ctx.closePath();ctx.fillStyle=hexA(C[FG[q[0]].col],.8);ctx.fill();ctx.strokeStyle=C.plate;ctx.lineWidth=2;ctx.stroke()});
+  if(o.lines!==false){[[Math.PI*.5],[VF],[-Math.PI*.5],[0]].forEach(a=>line(x,y,x+Math.cos(a[0])*r*.84,y+Math.sin(a[0])*r*.84,hexA(C["plate-rim"],.7),1.2,[4,3]))}
+  if(o.dairy!=null){const dx=x+r+o.dairyDx||x+r+42,dy=y-r*.7;circ(dx,dy,r*.26+2,C.plate,C["plate-rim"],2);ctx.save();ctx.beginPath();ctx.arc(dx,dy,r*.26,0,TAU);ctx.clip();const v=clamp(o.dairy,0,1);ctx.fillStyle=hexA(C["fg-dairy"],.8);ctx.fillRect(dx-r*.3,dy+r*.26-v*r*.52,r*.6,v*r*.52);ctx.restore()}}
+/* ---------- people (simple, neutral, varied) ---------- */
+const SKINS=["skin1","skin2","skin3","skin4"],SHIRTS=["shirt1","shirt2","shirt3","shirt4"];
+function person(x,y,s,o){o=o||{};const sk=C[SKINS[(o.skin||0)%4]],sh=o.col||C[SHIRTS[(o.shirt||0)%4]];const bw=(o.w||1);ctx.save();if(o.a!=null)ctx.globalAlpha*=clamp(o.a,0,1);
+  rr(x-s*.42*bw,y-s*1.2,s*.84*bw,s*1.25,s*.32);fillStroke(sh,hexA(C.ink,.4),1.2);
+  rr(x-s*.3*bw,y-s*.02,s*.24*bw,s*.9,s*.1);fillStroke(mix(sh,C.ink,.35),null);rr(x+s*.06*bw,y-s*.02,s*.24*bw,s*.9,s*.1);fillStroke(mix(sh,C.ink,.35),null);
+  circ(x,y-s*1.55,s*.36,sk,hexA(C.ink,.4),1.2);
+  if(o.hair!==false){ctx.beginPath();ctx.arc(x,y-s*1.6,s*.37,Math.PI*1.05,Math.PI*1.95);ctx.fillStyle=C.hair;ctx.fill()}
+  if(o.mood){circ(x-s*.12,y-s*1.56,1.6,C.ink);circ(x+s*.12,y-s*1.56,1.6,C.ink);ctx.beginPath();ctx.arc(x,y-s*1.48,s*.12,.2,Math.PI-.2);ctx.strokeStyle=C.ink;ctx.lineWidth=1.3;ctx.stroke()}
+  ctx.restore()}
+/* body outline with organs (front view) */
+function bodySil(x,y,s,o){o=o||{};const sk=o.col||hexA(C.skin1,.45);ctx.save();
+  ctx.beginPath();ctx.arc(x,y-s*1.62,s*.3,0,TAU);ctx.moveTo(x-s*.55,y-s*1.22);ctx.quadraticCurveTo(x-s*.62,y-s*1.25,x-s*.66,y-s*1.05);ctx.lineTo(x-s*.78,y-s*.2);ctx.lineTo(x-s*.62,y-s*.18);ctx.lineTo(x-s*.5,y-s*.85);ctx.lineTo(x-s*.46,y);ctx.lineTo(x-s*.42,y+s*1.1);ctx.lineTo(x-s*.12,y+s*1.1);ctx.lineTo(x,y+s*.15);ctx.lineTo(x+s*.12,y+s*1.1);ctx.lineTo(x+s*.42,y+s*1.1);ctx.lineTo(x+s*.46,y);ctx.lineTo(x+s*.5,y-s*.85);ctx.lineTo(x+s*.62,y-s*.18);ctx.lineTo(x+s*.78,y-s*.2);ctx.lineTo(x+s*.66,y-s*1.05);ctx.quadraticCurveTo(x+s*.62,y-s*1.25,x+s*.55,y-s*1.22);ctx.closePath();
+  ctx.fillStyle=sk;ctx.fill();ctx.strokeStyle=C["skin2"];ctx.lineWidth=1.8;ctx.stroke();ctx.restore();
+  if(o.organs){const g=o.hl||{};
+    ell(x-s*.06,y-s*.62,s*.16,s*.1,-.4,hexA(C.gut,g.stomach?1:.7),C["gut-edge"],g.stomach?2.4:1.2);
+    ell(x+s*.14,y-s*.74,s*.22,s*.12,.2,hexA(mix(C.gut,C.bean,.5),g.liver?1:.6),C["gut-edge"],g.liver?2.4:1);
+    ctx.beginPath();for(let i=0;i<=40;i++){const t=i/40;const X=x+Math.sin(t*TAU*3)*s*.2,Y=y-s*.48+t*s*.38;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)}ctx.strokeStyle=hexA(C["gut-edge"],g.gut?1:.6);ctx.lineWidth=g.gut?5:3.5;ctx.stroke();
+    circ(x-s*.08,y-s*1.0,s*.1,hexA(C.blood,g.heart?1:.65),null);
+    if(g.muscle){ell(x-s*.62,y-s*.75,s*.08,s*.2,.15,hexA(C.prot,.6),C.prot,1.4);ell(x+s*.62,y-s*.75,s*.08,s*.2,-.15,hexA(C.prot,.6),C.prot,1.4)}
+    if(g.bone){line(x-s*.27,y+s*.15,x-s*.27,y+s*1.0,C.bone,5);line(x+s*.27,y+s*.15,x+s*.27,y+s*1.0,C.bone,5);line(x-s*.27,y+s*.15,x-s*.27,y+s*1.0,hexA(C.ink,.3),1);line(x+s*.27,y+s*.15,x+s*.27,y+s*1.0,hexA(C.ink,.3),1)}
+    if(g.brain){circ(x,y-s*1.66,s*.18,hexA(C.cake,.9),C.prot,1.2)}}}
+/* a cell with mitochondria */
+function cellDraw(x,y,r,T,o){o=o||{};blobPath(x,y,r,o.seed||1,T*.4,.04);fillStroke(hexA(C.cell,.85),C["cell-edge"],2.2);circ(x-r*.25,y-r*.15,r*.24,hexA(C.vit,.2),hexA(C.vit,.6),1.2);
+  (o.mito||[[.35,.25,.3],[-.1,.45,-.4],[.4,-.35,.8]]).forEach(m=>{ell(x+m[0]*r,y+m[1]*r,r*.2,r*.1,m[2],C.mito,mix(C.mito,"#000",.35),1.2);ctx.beginPath();for(let i=0;i<=6;i++){const t=i/6;const X=x+m[0]*r+Math.cos(m[2])*(t-.5)*r*.32,Y=y+m[1]*r+Math.sin(m[2])*(t-.5)*r*.32+(i%2?2:-2);i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)}ctx.strokeStyle=mix(C.mito,"#000",.35);ctx.lineWidth=1;ctx.stroke()})}
+/* energy spark (ATP-like) */
+function spark(x,y,s,col,p){if(p<=0||p>=1)return;ctx.save();ctx.globalAlpha*=Math.sin(p*Math.PI);ctx.translate(x,y-p*20);ctx.beginPath();for(let i=0;i<8;i++){const a=i*TAU/8;const r=i%2?s*.4:s;ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}ctx.closePath();ctx.fillStyle=col||C.flame;ctx.fill();ctx.restore()}
+function flame(x,y,s,T,a){if(a!=null&&a<=0)return;ctx.save();if(a!=null)ctx.globalAlpha*=clamp(a,0,1);const w=Math.sin(T*13)*.08+Math.sin(T*7.3)*.06;
+  ctx.beginPath();ctx.moveTo(x-s*.5,y);ctx.quadraticCurveTo(x-s*.6,y-s*.8,x+s*w,y-s*1.6);ctx.quadraticCurveTo(x+s*.6,y-s*.8,x+s*.5,y);ctx.closePath();ctx.fillStyle=C.flame;ctx.fill();
+  ctx.beginPath();ctx.moveTo(x-s*.25,y);ctx.quadraticCurveTo(x-s*.3,y-s*.5,x+s*w*.6,y-s*.95);ctx.quadraticCurveTo(x+s*.3,y-s*.5,x+s*.25,y);ctx.closePath();ctx.fillStyle=C["flame-in"];ctx.fill();ctx.restore()}
+function sugarCube(x,y,s,o){o=o||{};ctx.save();if(o.a!=null)ctx.globalAlpha*=clamp(o.a,0,1);rr(x-s/2,y-s/2,s,s,2);fillStroke(C.sugar,C["sugar-edge"],1.2);line(x-s/2+3,y-s/2+3,x+s/2-3,y-s/2+3,hexA("#ffffff",.8),1.2);ctx.restore()}
+/* ---------- pie chart ---------- */
+function pie(x,y,r,parts,o){o=o||{};const tot=parts.reduce((a,p)=>a+Math.max(0,p[0]),0)||1;let a0=-Math.PI/2;const out=[];
+  if(tot<=0||!parts.some(p=>p[0]>0)){circ(x,y,r,hexA(C.sunk,.8),C.rule,1.2);return out}
+  parts.forEach(p=>{const f=Math.max(0,p[0])/tot;const a1=a0+f*TAU*(o.p==null?1:o.p);if(f>0){ctx.beginPath();ctx.moveTo(x,y);ctx.arc(x,y,r,a0,a1);ctx.closePath();ctx.fillStyle=p[1];ctx.fill();ctx.strokeStyle=C.panel;ctx.lineWidth=2;ctx.stroke()}
+    out.push({f,mid:(a0+a1)/2,lab:p[2]});a0=a1});
+  if(o.hole){circ(x,y,r*o.hole,C.panel)}
+  if(o.labels!==false)out.forEach(q=>{if(q.f<.04||!q.lab)return;const rx=x+Math.cos(q.mid)*r*(o.lr||.66),ry=y+Math.sin(q.mid)*r*(o.lr||.66);label(rx,ry,q.lab,{size:o.fs||12,weight:700,mono:true,bga:.85})});return out}
+/* AMDR bars: pc = {carb,fat,prot} percent of kcal */
+const AMDR={carb:[45,65],fat:[20,35],prot:[10,35]};
+function amdrBars(x,y,w,pc,o){o=o||{};const rows=[["carb","Carbohydrate"],["fat","Fat"],["prot","Protein"]];const max=o.max||80;const X=v=>x+clamp(v,0,max)/max*w;const rh=o.rh||34;
+  rows.forEach((r,i)=>{const yy=y+i*rh;const b=AMDR[r[0]];txt(x,yy-9,r[1]+" (AMDR "+b[0]+"–"+b[1]+"%)",{size:11.5,weight:700,color:C[NUT[r[0]].ink]});
+    rr(x,yy,w,12,6);ctx.fillStyle=hexA(C.sunk,.85);ctx.fill();rr(X(b[0]),yy-2,X(b[1])-X(b[0]),16,4);ctx.fillStyle=hexA(C.good,.22);ctx.fill();ctx.strokeStyle=C.good;ctx.lineWidth=1.4;ctx.setLineDash([4,3]);ctx.stroke();ctx.setLineDash([]);
+    const v=pc[r[0]];if(v!=null&&isFinite(v)){const mx=X(v);rr(x,yy+2,Math.max(0,mx-x),8,4);ctx.fillStyle=C[NUT[r[0]].col];ctx.fill();circ(mx,yy+6,7,C[NUT[r[0]].col],C.ink,1.4);
+      const inB=v>=b[0]&&v<=b[1];txt(Math.min(x+w+6,x+w+6),yy+6,Math.round(v)+"% "+(inB?"✓ in range":v<b[0]?"below":"above"),{size:11.5,weight:700,mono:true,color:inB?C.good:C["warn-ink"]})}});
+  if(o.ticks!==false)[0,20,40,60,80].filter(t=>t<=max).forEach(t=>txt(X(t),y+rows.length*rh-4,t+"%",{size:10.5,mono:true,align:"center",color:C["ink-soft"]}))}
+/* ---------- Nutrition Facts label ---------- */
+const DV={fat:78,sat:20,chol:300,sod:2300,carb:275,fiber:28,added:50,prot:50,vitD:20,ca:1300,fe:18,k:4700};
+function pctDV(k,v){return Math.round(v/DV[k]*100)}
+/* L: {name, servPer, servSize, kcal, fat, sat, trans, chol, sod, carb, fiber, sugars, added, prot, vitD, ca, fe, k} */
+function factsLabel(x,y,w,L,o){o=o||{};const s=w/250;const LB=C["label-bg"],LI=C["label-ink"];const rows={};let yy=y;const pad=8*s;
+  const H=o.h||factsHeight(L,s);ctx.save();rr(x,y,w,H,3);ctx.fillStyle=LB;ctx.fill();ctx.strokeStyle=LI;ctx.lineWidth=1.6;ctx.stroke();
+  const T=(t,xx,y_,sz,wt,al)=>{ctx.font=`${wt||400} ${sz*s}px "Helvetica Neue",Arial,${FONT}`;ctx.textAlign=al||"left";ctx.textBaseline="alphabetic";ctx.fillStyle=LI;ctx.fillText(t,xx,y_)};
+  const rule=(h)=>{ctx.fillStyle=LI;ctx.fillRect(x+pad,yy,w-2*pad,h*s);yy+=h*s};
+  yy+=24*s;T("Nutrition Facts",x+pad,yy,22,800);yy+=6*s;rule(1);yy+=14*s;T((L.servPer!=null?L.servPer:"")+(L.servPer===1?" serving":" servings")+" per container",x+pad,yy,10.5,400);rows.servPer=[yy-10*s,14*s];yy+=16*s;
+  T("Serving size",x+pad,yy,12,800);T(L.servSize,x+w-pad,yy,12,800,"right");rows.serv=[yy-12*s,16*s];yy+=6*s;rule(7);
+  yy+=12*s;T("Amount per serving",x+pad,yy,9.5,700);yy+=22*s;T("Calories",x+pad,yy,20,800);T(String(L.kcal),x+w-pad,yy,26,800,"right");rows.kcal=[yy-24*s,28*s];yy+=5*s;rule(4);
+  yy+=12*s;T("% Daily Value*",x+w-pad,yy,9.5,700,"right");yy+=4*s;
+  const R=(key,name,val,unit,bold,indent,dvk)=>{rule(.8);yy+=12*s;const xx=x+pad+(indent||0)*s;ctx.font=`${bold?800:400} ${11*s}px "Helvetica Neue",Arial,${FONT}`;ctx.textAlign="left";ctx.fillStyle=LI;ctx.textBaseline="alphabetic";
+    if(bold){ctx.fillText(name,xx,yy);const nw=ctx.measureText(name+" ").width;T(val+unit,xx+nw,yy,11,400)}else T(name+" "+val+unit,xx,yy,11,400);
+    if(dvk)T(pctDV(dvk,typeof val==="number"?val:parseFloat(val))+"%",x+w-pad,yy,11,800,"right");rows[key]=[yy-11*s,15*s];yy+=3*s};
+  R("fat","Total Fat",L.fat,"g",1,0,"fat");R("sat","Saturated Fat",L.sat,"g",0,12,"sat");R("trans","Trans Fat",L.trans||0,"g",0,12,null);R("chol","Cholesterol",L.chol,"mg",1,0,"chol");R("sod","Sodium",L.sod,"mg",1,0,"sod");
+  R("carb","Total Carbohydrate",L.carb,"g",1,0,"carb");R("fiber","Dietary Fiber",L.fiber,"g",0,12,"fiber");R("sugars","Total Sugars",L.sugars,"g",0,12,null);
+  rule(.8);yy+=12*s;T("Includes "+L.added+"g Added Sugars",x+pad+24*s,yy,11,400);T(pctDV("added",L.added)+"%",x+w-pad,yy,11,800,"right");rows.added=[yy-11*s,15*s];yy+=3*s;
+  R("prot","Protein",L.prot,"g",1,0,null);yy+=0;rule(7);
+  const M=(key,name,val,unit,dvk)=>{yy+=12*s;T(name+" "+val+unit,x+pad,yy,11,400);T(pctDV(dvk,val)+"%",x+w-pad,yy,11,400,"right");rows[key]=[yy-11*s,15*s];yy+=3*s;rule(.8)};
+  M("vitD","Vitamin D",L.vitD,"mcg","vitD");M("ca","Calcium",L.ca,"mg","ca");M("fe","Iron",L.fe,"mg","fe");M("k","Potassium",L.k,"mg","k");yy-=.8*s;rule(3.5);
+  yy+=10*s;ctx.font=`400 ${8.2*s}px "Helvetica Neue",Arial,${FONT}`;ctx.fillStyle=LI;ctx.textAlign="left";ctx.textBaseline="alphabetic";
+  const foot="* The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2,000 calories a day is used for general nutrition advice.";
+  const words=foot.split(" ");let ln="";words.forEach(wd=>{const t=ln?ln+" "+wd:wd;if(ctx.measureText(t).width>w-2*pad-4){ctx.fillText(ln,x+pad,yy);yy+=10*s;ln=wd}else ln=t});if(ln){ctx.fillText(ln,x+pad,yy);yy+=10*s}rows.foot=[yy-30*s,30*s];
+  ctx.restore();
+  if(o.hi){(Array.isArray(o.hi)?o.hi:[o.hi]).forEach((k,i)=>{const r=rows[k];if(!r)return;const a=o.ha==null?1:o.ha;withA(a,()=>{rr(x+3,r[0]-1,w-6,r[1]+2,3);ctx.strokeStyle=o.hcol||C.accent;ctx.lineWidth=3;ctx.stroke();ctx.fillStyle=hexA(o.hcol||C.gold,.18);ctx.fill()})})}
+  return {rows,h:yy-y+6*s}}
+function factsHeight(L,s){return 470*s}
+/* rounded kcal as on a label */
+function labelKcal(v){return v<5?0:v<=50?Math.round(v/5)*5:Math.round(v/10)*10}
+/* ---------- small helpers ---------- */
+function bar(x,y,w,h,f,col,o){o=o||{};rr(x,y,w,h,Math.min(4,h/2));ctx.fillStyle=hexA(C.sunk,.85);ctx.fill();if(f>0){rr(x,y,w*clamp(f,0,1),h,Math.min(4,h/2));ctx.fillStyle=col;ctx.fill()}if(o.over&&f>1){txt(x+w+4,y+h/2,"+",{size:12,weight:700,color:C.bad})}}
+function vbar(x,y,w,h,f,col){rr(x,y,w,h,3);ctx.fillStyle=hexA(C.sunk,.85);ctx.fill();if(f>0){const hh=h*clamp(f,0,1);rr(x,y+h-hh,w,hh,3);ctx.fillStyle=col;ctx.fill()}}
+function cardBox(x,y,w,h,col,on){rr(x,y,w,h,8);ctx.fillStyle=on?hexA(col,.16):hexA(C.panel,.88);ctx.fill();ctx.strokeStyle=on?col:C.rule;ctx.lineWidth=on?2.4:1.2;ctx.stroke()}
+function tick(x,y,s,col){poly([[x-s,y],[x-s*.3,y+s*.7],[x+s,y-s*.7]],col||C.good,3)}
+function fmtK(v){return Math.round(v).toLocaleString("en-US")}
+function heatWave(x1,y1,x2,y2,col,T,lw,a){if(a!=null&&a<=0)return;ctx.save();if(a!=null)ctx.globalAlpha*=clamp(a,0,1);const L=Math.hypot(x2-x1,y2-y1),ang=Math.atan2(y2-y1,x2-x1);ctx.translate(x1,y1);ctx.rotate(ang);
+  ctx.beginPath();for(let i=0;i<=40;i++){const t=i/40;const X=t*L,Y=Math.sin(t*TAU*2.5-T*6)*5;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)}ctx.strokeStyle=col;ctx.lineWidth=lw||2;ctx.stroke();
+  ctx.beginPath();ctx.moveTo(L,0);ctx.lineTo(L-8,-5);ctx.lineTo(L-8,5);ctx.closePath();ctx.fillStyle=col;ctx.fill();ctx.restore()}
+function thermo(x,y,h,f,o){o=o||{};const col=o.col||C.heat;rr(x-7,y-h,14,h,7);fillStroke(C.paper,C["ink-soft"],1.6);circ(x,y+6,12,col,C["ink-soft"],1.6);rr(x-3.5,y-h*clamp(f,0,1)+4,7,h*clamp(f,0,1),3.5);ctx.fillStyle=col;ctx.fill()}
+/* a speech bubble */
+function bubble(x,y,w,h,t,o){o=o||{};rr(x,y,w,h,10);fillStroke(o.fill||C.panel,o.stroke||C.rule,1.6);ctx.beginPath();const tx=o.tx==null?x+24:o.tx;ctx.moveTo(tx,y+h);ctx.lineTo(tx+10,y+h);ctx.lineTo(tx-4,y+h+14);ctx.closePath();ctx.fillStyle=o.fill||C.panel;ctx.fill();ctx.strokeStyle=o.stroke||C.rule;ctx.stroke();
+  rr(tx-1,y+h-3,13,5,0);ctx.fillStyle=o.fill||C.panel;ctx.fill();wrapText(t,x+10,y+16,w-20,o.lh||16,{size:o.size||12.5,weight:o.weight||500})}
+/* headline card */
+function headline(x,y,w,h,t,o){o=o||{};rr(x,y,w,h,6);fillStroke(C.paper,o.border||C.rule,1.6);rr(x,y,w,20,6);ctx.fillStyle=hexA(C.ink,.08);ctx.fill();txt(x+10,y+10,o.src||"NEWS FEED",{size:10.5,weight:700,mono:true,color:C["ink-soft"]});wrapText(t,x+10,y+36,w-20,o.lh||18,{size:o.size||14,weight:700})}
+/* ---------- gears ---------- */
+function gear(x,y,r,n,rot,col){ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.beginPath();for(let i=0;i<n*2;i++){const a=i*Math.PI/n;const rr_=i%2?r*.78:r;ctx.lineTo(Math.cos(a-.12)*rr_,Math.sin(a-.12)*rr_);ctx.lineTo(Math.cos(a+.12)*rr_,Math.sin(a+.12)*rr_)}ctx.closePath();ctx.fillStyle=hexA(col,.5);ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=1.6;ctx.stroke();circ(0,0,r*.28,C.panel,col,1.6);ctx.restore()}
+/* count wrapped lines */
+function wrapCount(t,w,size,weight){ctx.font=`${weight||500} ${size}px ${FONT}`;let n=1,ln="";t.split(" ").forEach(wd=>{const test=ln?ln+" "+wd:wd;if(ctx.measureText(test).width>w&&ln){n++;ln=wd}else ln=test});return n}
+/* fit one line of text into a width (shrinks font) */
+function fitTxt(x,y,t,maxW,o){o=o||{};let sz=o.size||13;ctx.font=`${o.weight||600} ${sz}px ${o.mono?MONO:FONT}`;const w=ctx.measureText(t).width;if(w>maxW)sz=Math.max(9.5,sz*maxW/w);txt(x,y,t,Object.assign({},o,{size:sz}))}
+/* worked example panel: rows = [{c:[items,res]} | {l:"text"} | {ans:"text"}], animates over `per` seconds */
+function wk(x,y,w,h,W_,T,o){o=o||{};const per=o.per||16;const t=P(T,per)*per;panelBox(x,y,w,h,{fill:hexA(C.paper,.96)});title(x+12,y+16,o.title||"Worked example",C["accent-ink"]);
+  const sw=o.split||0;const sz=o.size||12.5;
+  if(sw){let ly=wrapText(W_.q,x+12,y+38,sw-22,sz+4,{size:sz,weight:600})+sz+8;(W_.given||[]).forEach((g,i)=>{const a=seg(t,.6+i*.4,1+i*.4);if(a>0)withA(a,()=>wrapText(g,x+14,ly,sw-26,sz+3,{size:sz-.5,mono:true,weight:500}));ly+=wrapCount(g,sw-26,sz-.5)*(sz+3)+6});line(x+sw,y+28,x+sw,y+h-10,C["rule-soft"],1.2)}
+  const rx=x+sw+14,rw=w-sw-28;let cy=y+(o.cy||30);const fs=o.cfs||14;const t0=o.t0||1.2;const dt=o.dt||1.8;
+  W_.rows.forEach((r,i)=>{const p_=clamp((t-t0-i*dt)/(dt*.85),0,1);
+    if(r.c){cy+=fs+6;if(p_>0){const cw=chainWidth(r.c[0],r.c[1],{size:fs});const sc=Math.min(1,rw/cw);ctx.save();ctx.translate(rx,cy);ctx.scale(sc,sc);chain(0,0,r.c[0],r.c[1],p_,{size:fs});ctx.restore()}cy+=fs+(o.rowGap||16)}
+    else if(r.l){cy+=12;if(p_>0)withA(p_,()=>fitTxt(rx,cy,r.l,rw,{size:o.lfs||13.5,weight:600,mono:true}));cy+=(o.lh||16)}
+    else if(r.ans){cy+=16;if(p_>0)withA(p_,()=>{ctx.font=`700 15px ${MONO}`;const tw=Math.min(rw,ctx.measureText(r.ans).width);rr(rx-4,cy-14,tw+14,28,6);ctx.fillStyle=C["good-wash"];ctx.fill();ctx.strokeStyle=C.good;ctx.lineWidth=1.8;ctx.stroke();fitTxt(rx+3,cy,r.ans,rw-6,{size:15,weight:700,mono:true})});cy+=18}});
+  if(W_.miss){const tm=t0+W_.rows.length*dt+.4;const a=seg(t,tm,tm+.6);if(a>0){const mw=o.missFull?w-24:rw+8;const mx=o.missFull?x+12:rx-4;const n=wrapCount("Common mistake: "+W_.miss,mw-16,sz-1);const mh=n*(sz+2)+10;
+    withA(a,()=>{rr(mx,y+h-mh-8,mw,mh,5);ctx.fillStyle=C["warn-wash"];ctx.fill();ctx.strokeStyle=C.warn;ctx.lineWidth=1.2;ctx.stroke();wrapText("Common mistake: "+W_.miss,mx+8,y+h-mh-8+5+(sz)/2+1,mw-16,sz+2,{size:sz-1})})}}
+  return t}
+/* ---------------- lab helpers ---------------- */
+const $=s=>document.querySelector(s);
+function makeStage(id,W,H){const cv=document.getElementById(id);const st={cv,ctx:cv.getContext("2d"),W,H,K:1};
+  st.fit=()=>{const w=cv.parentElement.clientWidth;if(!w)return;const dpr=window.devicePixelRatio||1;cv.style.height=(w*H/W)+"px";cv.width=Math.round(w*dpr);cv.height=Math.round(w*H/W*dpr);st.K=cv.width/W};return st}
+function use(st){ctx=st.ctx;ctx.setTransform(st.K,0,0,st.K,0,0);ctx.clearRect(0,0,st.W,st.H);ctx.globalAlpha=1;bg(C.ecf)}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function fmt(s){s=Math.round(s);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+const store={get:k=>{try{return localStorage.getItem("nutr-basics-lab-"+k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem("thermo-lab-"+k,v)}catch(e){}}};
+function segBtns(el,items,cur,onPick){el.innerHTML="";items.forEach(it=>{const b=document.createElement("button");b.type="button";b.className="tbtn";b.innerHTML=it[1];b.setAttribute("aria-pressed",String(it[0]===cur()));b.onclick=()=>{onPick(it[0]);el.querySelectorAll("button").forEach((x,i)=>x.setAttribute("aria-pressed",String(items[i][0]===cur())))};el.appendChild(b)})}
+function chalUI(el,list,done){el.innerHTML=list.map((c,i)=>`<li class="${done.has(i)?"done":""}"><span class="ck" aria-hidden="true">${done.has(i)?"✓":i+1}</span><span>${c}${done.has(i)?'<span class="gk-sr"> (done)</span>':""}</span></li>`).join("")}
+let DT=0;
+/* ================= PART 1: meal builder ================= */
+/* per portion: id, name, portion, icon, group, group amount (cup or oz-eq), kcal, carb, fat, prot, fiber, added sugars, sat fat (g), sodium, calcium, iron, vitamin C (mg), potassium (mg) */
+const FOODS=[
+ ["brice","Brown rice","1 cup cooked","rice","grain",2,218,46,1.6,4.5,3.5,0,.3,2,20,.8,0,154],
+ ["wwbread","Whole wheat bread","2 slices","bread","grain",2,160,28,2,8,4,3,.4,280,60,1.8,0,200],
+ ["pasta","Pasta","1 cup cooked","pasta","grain",2,200,42,1.2,7,2.5,0,.2,1,10,1.8,0,63],
+ ["oats","Oatmeal","1 cup cooked","oats","grain",2,166,28,3.6,6,4,0,.6,9,21,2.1,0,164],
+ ["tort","Corn tortillas","2 small","tortilla","grain",2,104,21,1.4,2.8,3,0,.2,22,46,.6,0,90],
+ ["broc","Broccoli","1 cup cooked","broccoli","veg",1,55,11,.6,3.7,5,0,.1,64,62,1,101,457],
+ ["salad","Salad greens and tomato","2 cups","salad","veg",1,25,5,.3,2,2.5,0,0,30,60,1.5,25,450],
+ ["carrot","Carrot sticks","1 cup","carrot","veg",1,52,12,.3,1.2,3.6,0,0,88,42,.4,7,410],
+ ["potato","Baked potato with skin","1 medium","potato","veg",1,160,37,.2,4.3,3.8,0,.1,17,26,1.9,17,926],
+ ["apple","Apple","1 medium","apple","fruit",1,95,25,.3,.5,4.4,0,0,2,11,.2,8,195],
+ ["banana","Banana","1 medium","banana","fruit",1,105,27,.4,1.3,3.1,0,.1,1,6,.3,10,422],
+ ["orange","Orange","1 medium","orange","fruit",1,62,15,.2,1.2,3.1,0,0,0,52,.1,70,237],
+ ["berries","Strawberries","1 cup","berries","fruit",1,49,12,.5,1,3,0,0,2,24,.6,89,233],
+ ["ojuice","100% orange juice","1 cup","juice","fruit",1,112,26,.5,1.7,.5,0,.1,2,27,.5,124,496],
+ ["beans","Black beans","½ cup","beans","prot",2,114,20,.5,7.6,7.5,0,.1,1,23,1.8,0,305],
+ ["chicken","Grilled chicken","3 oz","chicken","prot",3,140,0,3,26,0,0,.9,63,13,.9,0,220],
+ ["salmon","Baked salmon","3 oz","fish","prot",3,175,0,10.5,19,0,0,2,52,13,.3,0,380],
+ ["eggs","Eggs","2 large","egg","prot",2,143,.7,9.5,12.6,0,0,3.1,142,56,1.8,0,138],
+ ["tofu","Firm tofu (calcium-set)","½ cup","tofu","prot",2,180,3.5,11,20,2.9,0,1.6,15,430,3.4,0,300],
+ ["almonds","Almonds","1 oz","nuts","prot",2,164,6,14,6,3.5,0,1.1,0,76,1,0,208],
+ ["milk","Low-fat milk","1 cup","milk","dairy",1,102,12,2.4,8,0,0,1.5,107,305,0,0,366],
+ ["yogurt","Plain low-fat yogurt","1 cup","yogurt","dairy",1,154,17,3.8,13,0,0,2.5,172,448,.2,2,573],
+ ["cheese","Cheddar cheese","1.5 oz","cheese","dairy",1,171,.5,14,10,0,0,8,260,300,.3,0,40],
+ ["soymilk","Fortified soy milk","1 cup","milk","dairy",1,80,4,4,7,1,0,.5,90,300,1,0,300],
+ ["oil","Olive oil","1 Tbsp","oil","other",0,119,0,13.5,0,0,0,1.9,0,0,.1,0,0],
+ ["soda","Regular soda","12 fl oz","soda","other",0,150,39,0,0,0,39,0,45,8,.1,0,4],
+ ["cake","Frosted snack cake","1 cake","cake","other",0,150,24,5.5,1,.5,14,2.5,130,10,.5,0,40],
+ ["chips","Potato chips","1 oz","chips","other",0,152,15,10,2,1.2,0,1.5,150,7,.5,5,350],
+ ["water","Water","1 cup","waterglass","other",0,0,0,0,0,0,0,0,0,0,0,0,0]];
+const FI={};FOODS.forEach((f,i)=>FI[f[0]]=i);
+const FGN={grain:"Grains",veg:"Vegetables",fruit:"Fruits",prot:"Protein foods",dairy:"Dairy",other:"Other foods and drinks"};
+const DAYPAT={veg:[2.5,"cups"],fruit:[2,"cups"],grain:[6,"oz-eq"],prot:[5.5,"oz-eq"],dairy:[3,"cups"]};
+const REFS={f:{n:"Female 19–30",prot:46,fiber:25,ca:1000,fe:18,vc:75,k:2600},m:{n:"Male 19–30",prot:56,fiber:38,ca:1000,fe:8,vc:90,k:3400}};
+const MNUT=[["prot","Protein","g","prot"],["fiber","Fiber","g","fiber"],["ca","Calcium","mg","min"],["fe","Iron","mg","blood"],["vc","Vitamin C","mg","vit"],["k","Potassium","mg","water"]];
+const BD={items:{},order:[],ref:"f",spawn:{},parts:[],acc:0,shown:{carb:0,fat:0,prot:0,kcal:0},done:new Set(),grp:"all",readT:0};
+const BCH=["Build a meal of 500 to 800 kcal with carbohydrate, fat and protein all inside their AMDRs.","Make half the plate fruits and vegetables: at least 0.8 cup of vegetables and 0.6 cup of fruit (about a third of a day).","Reach a third of the day's calcium (333 mg or more) in one meal.","Score a nutrient density of 1.5 or more in a meal of at least 400 kcal.","Use at least four food groups and keep added sugars under 10% of the meal's kcal."];
+function bdTotals(){const t={kcal:0,carb:0,fat:0,prot:0,fiber:0,added:0,sat:0,sod:0,ca:0,fe:0,vc:0,k:0,g:{grain:0,veg:0,fruit:0,prot:0,dairy:0}};
+  Object.keys(BD.items).forEach(id=>{const n=BD.items[id];const f=FOODS[FI[id]];t.kcal+=f[6]*n;t.carb+=f[7]*n;t.fat+=f[8]*n;t.prot+=f[9]*n;t.fiber+=f[10]*n;t.added+=f[11]*n;t.sat+=f[12]*n;t.sod+=f[13]*n;t.ca+=f[14]*n;t.fe+=f[15]*n;t.vc+=f[16]*n;t.k+=f[17]*n;if(t.g[f[4]]!=null)t.g[f[4]]+=f[5]*n});
+  const mk=t.carb*4+t.fat*9+t.prot*4;t.mk=mk;t.pc=mk>0?{carb:t.carb*4/mk*100,fat:t.fat*9/mk*100,prot:t.prot*4/mk*100}:{carb:0,fat:0,prot:0};
+  const R=REFS[BD.ref];t.share=MNUT.map(m=>t[m[0]]/R[m[0]]);const avg=t.share.reduce((a,b)=>a+Math.min(1,b),0)/t.share.length;t.nds=t.kcal>0?avg/(t.kcal/2000):0;
+  t.addPct=t.kcal>0?t.added*4/t.kcal*100:0;t.satPct=t.kcal>0?t.sat*9/t.kcal*100:0;t.ngroups=Object.keys(t.g).filter(k=>t.g[k]>0).length;return t}
+function bdAdd(id,n){n=n||1;const cur=BD.items[id]||0;const nv=Math.max(0,Math.min(6,cur+n));if(nv===0){delete BD.items[id];BD.order=BD.order.filter(x=>x!==id)}else{if(!cur)BD.order.push(id);BD.items[id]=nv;if(n>0)BD.spawn[id]=performance.now()}bdUI()}
+function bdSet(list){BD.items={};BD.order=[];list.forEach(p=>{BD.items[p[0]]=p[1];BD.order.push(p[0]);BD.spawn[p[0]]=performance.now()});bdUI()}
+function bdUI(){const t=bdTotals();
+  const ul=$("#buildList");ul.innerHTML=BD.order.length?"":'<li class="small">Nothing yet. Add foods from the list above.</li>';
+  BD.order.forEach(id=>{const f=FOODS[FI[id]];const n=BD.items[id];const li=document.createElement("li");
+    li.innerHTML=`<span class="pi"><i style="background:var(--${f[4]==="other"?"alc":FG[f[4]].col})"></i>${f[1]} <span class="small">× ${n} (${f[2]})</span></span><span class="pb"><button type="button" class="tbtn mini" aria-label="One less ${f[1]}">−</button><button type="button" class="tbtn mini" aria-label="One more ${f[1]}">+</button><button type="button" class="tbtn mini" aria-label="Remove ${f[1]}">Remove</button></span>`;
+    const b=li.querySelectorAll("button");b[0].onclick=()=>bdAdd(id,-1);b[1].onclick=()=>bdAdd(id,1);b[2].onclick=()=>bdAdd(id,-99);ul.appendChild(li)});
+  const r1=v=>(Math.round(v*10)/10).toString();
+  const rows=[["Kilocalories",fmtK(t.kcal)+" kcal ("+Math.round(t.kcal/20)+"% of 2,000)"],["Carbohydrate",r1(t.carb)+" g · "+Math.round(t.pc.carb)+"% of kcal"],["Fat",r1(t.fat)+" g · "+Math.round(t.pc.fat)+"% of kcal"],["Protein",r1(t.prot)+" g · "+Math.round(t.pc.prot)+"% of kcal"],
+    ["Fiber",r1(t.fiber)+" g"],["Added sugars",r1(t.added)+" g · "+Math.round(t.addPct)+"% of kcal"],["Saturated fat",r1(t.sat)+" g · "+Math.round(t.satPct)+"% of kcal"],["Sodium",fmtK(t.sod)+" mg"],["Nutrient density score",t.kcal>0?t.nds.toFixed(2):"–"]];
+  $("#buildRead tbody").innerHTML=rows.map(r=>`<tr><th scope="row">${r[0]}</th><td>${r[1]}</td></tr>`).join("");
+  /* challenges */
+  const inA=k=>t.pc[k]>=AMDR[k][0]&&t.pc[k]<=AMDR[k][1];
+  if(t.kcal>=500&&t.kcal<=800&&inA("carb")&&inA("fat")&&inA("prot"))BD.done.add(0);
+  if(t.g.veg>=.8&&t.g.fruit>=.6)BD.done.add(1);if(t.ca>=333)BD.done.add(2);if(t.nds>=1.5&&t.kcal>=400)BD.done.add(3);if(t.ngroups>=4&&t.addPct<10&&t.kcal>0)BD.done.add(4);
+  chalUI($("#buildChal"),BCH,BD.done);
+  const st=$("#buildStatus");const msgs=[];if(t.kcal===0)msgs.push(["","The plate is empty. Add a few foods to see the numbers move."]);else{
+    ["carb","fat","prot"].forEach(k=>{if(!inA(k))msgs.push(["warn",`${NUT[k].n.replace(" (lipid)","")} is ${Math.round(t.pc[k])}% of kcal, ${t.pc[k]<AMDR[k][0]?"below":"above"} its AMDR (${AMDR[k][0]}–${AMDR[k][1]}%). One meal can be outside a range; the day's pattern is what counts.`])});
+    if(t.addPct>=10)msgs.push(["warn",`Added sugars are ${Math.round(t.addPct)}% of this meal's kcal (the Guidelines suggest under 10% across the day).`]);
+    if(!msgs.length)msgs.push(["good","All three macronutrients are inside their AMDRs."])}
+  st.className="status "+(msgs[0][0]||"");st.textContent=msgs.map(m=>m[1]).join(" ");a11yKey=""}
+function bdPalette(){const g=BD.grp;const box=$("#buildPal");box.innerHTML="";FOODS.forEach(f=>{if(g!=="all"&&f[4]!==g)return;const b=document.createElement("button");b.type="button";b.className="fbtn";b.dataset.id=f[0];
+  b.innerHTML=`<i style="background:var(--${f[4]==="other"?"alc":FG[f[4]].col})" aria-hidden="true"></i><span><span class="gk-sr">Add </span>${f[1]}<small>${f[2]} · ${f[6]} kcal</small></span>`;
+  b.onclick=()=>{if(b.dataset.dragged){delete b.dataset.dragged;return}bdAdd(f[0],1);$("#buildStatus").textContent="Added "+f[1]+". "+$("#buildStatus").textContent};
+  b.addEventListener("pointerdown",e=>bdDragStart(e,b,f[0]));box.appendChild(b)})}
+let bdDrag=null;
+function bdDragStart(e,b,id){if(e.button>0)return;bdDrag={id,b,sx:e.clientX,sy:e.clientY,g:null,pid:e.pointerId};window.addEventListener("pointermove",bdDragMove);window.addEventListener("pointerup",bdDragEnd);window.addEventListener("pointercancel",bdDragEnd)}
+function bdDragMove(e){const d=bdDrag;if(!d||e.pointerId!==d.pid)return;if(!d.g){if(Math.hypot(e.clientX-d.sx,e.clientY-d.sy)<7)return;const g=d.b.cloneNode(true);g.classList.add("ghost");g.setAttribute("aria-hidden","true");g.tabIndex=-1;g.style.width=d.b.offsetWidth+"px";document.body.appendChild(g);d.g=g}
+  e.preventDefault();d.g.style.left=(e.clientX-20)+"px";d.g.style.top=(e.clientY-20)+"px";const r=$("#cvBuild").getBoundingClientRect();const over=e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;$("#buildHolder").classList.toggle("droptarget",over);d.over=over}
+function bdDragEnd(e){const d=bdDrag;if(!d)return;bdDrag=null;window.removeEventListener("pointermove",bdDragMove);window.removeEventListener("pointerup",bdDragEnd);window.removeEventListener("pointercancel",bdDragEnd);$("#buildHolder").classList.remove("droptarget");
+  if(!d.g)return;d.g.remove();d.b.dataset.dragged="1";if(d.over)bdAdd(d.id,1)}
+/* ---------- drawing ---------- */
+const PCX=190,PCY=196,PR=136;
+const SLOTS={veg:[[.72,.55],[.92,.62],[.6,.82],[.98,.3],[.8,.3]],fruit:[[1.3,.55],[1.38,.82],[1.22,.85]],grain:[[-.3,.55],[-.12,.72],[-.42,.8]],prot:[[.25,.55],[.1,.75],[.4,.78],[.2,.3]]};
+function bdItemPos(){const pos=[];const cnt={veg:0,fruit:0,grain:0,prot:0,dairy:0,other:0};
+  BD.order.forEach(id=>{const f=FOODS[FI[id]];const g=f[4];const k=cnt[g]++;let x,y,s=24;
+    if(SLOTS[g]){const sl=SLOTS[g][k%SLOTS[g].length];const a=sl[0]*Math.PI,r=PR*sl[1]*(k>=SLOTS[g].length?.6:1);x=PCX+Math.cos(a)*r;y=PCY+Math.sin(a)*r;s=["rice","pasta","oats","beans","salad"].includes(f[3])?30:22}
+    else if(g==="dairy"){x=352;y=70+k*62;s=22}else{x=52+k*58;y=366;s=20}
+    pos.push([id,x,y,s])});return pos}
+function drawBuild(now){use(S1);const T=now/1000;const t=bdTotals();const dt=DT;
+  /* smooth readouts */
+  const sh=BD.shown;const k_=1-Math.exp(-dt*5);["carb","fat","prot"].forEach(k=>sh[k]+= (t.pc[k]-sh[k])*k_);sh.kcal+=(t.kcal-sh.kcal)*k_;
+  panelBox(10,10,396,384);levelTag(22,26,"plate");
+  const f={veg:t.g.veg/(2.5/3),fruit:t.g.fruit/(2/3),grain:t.g.grain/2,prot:t.g.prot/(5.5/3)};
+  plateTop(PCX,PCY,PR,{veg:clamp(f.veg,0,1)*.55,fruit:clamp(f.fruit,0,1)*.55,grain:clamp(f.grain,0,1)*.55,prot:clamp(f.prot,0,1)*.55},{});
+  [["veg","Vegetables",.85,1.1],["fruit","Fruits",1.36,1.12],["grain","Grains",-.25,1.14],["prot","Protein",.25,1.14]].forEach(l=>{const a=l[2]*Math.PI;txt(PCX+Math.cos(a)*PR*l[3],PCY+Math.sin(a)*PR*l[3],l[1],{size:11.5,weight:700,align:"center",color:C[{veg:"fiber-ink",fruit:"prot-ink",grain:"carb-ink",prot:"vit-ink"}[l[0]]]})});
+  txt(352,40,"dairy",{size:11.5,weight:700,align:"center",color:C["water-ink"]});
+  const nowp=performance.now();
+  bdItemPos().forEach(p=>{const f_=FOODS[FI[p[0]]];const n=BD.items[p[0]];const age=(nowp-(BD.spawn[p[0]]||0))/1000;const pop=age<.5?1+.35*Math.sin(age/.5*Math.PI):1;const bob=Math.sin(T*2+p[1])*1.2;
+    food(f_[3],p[1],p[2]+bob,p[3]*pop);if(n>1)label(p[1]+p[3]*.9,p[2]-p[3]*.8,"×"+n,{size:11,weight:700,mono:true,border:C.accent})});
+  if(!BD.order.length)txt(PCX,PCY,"drag or tap foods to add them",{size:13,weight:600,align:"center",color:C["ink-soft"]});
+  /* body and particle stream */
+  bodySil(372,300,36,{organs:true,hl:{stomach:true}});
+  BD.acc+=dt*t.kcal/160;while(BD.acc>=1&&BD.parts.length<60){BD.acc-=1;const r=Math.random()*(t.mk||1);const kind=r<t.carb*4?"carb":r<t.carb*4+t.fat*9?"fat":"prot";BD.parts.push({k:kind,t:0,ox:(Math.random()-.5)*60,oy:(Math.random()-.5)*60})}
+  if(BD.acc>3)BD.acc=0;
+  BD.parts.forEach(p=>{p.t+=dt/1.6});BD.parts=BD.parts.filter(p=>p.t<1);
+  BD.parts.forEach(p=>{const e=p.t;const x0=PCX+p.ox,y0=PCY+p.oy,x1=370,y1=278;const mx=(x0+x1)/2+20,my=Math.min(y0,y1)-60;const x=(1-e)*(1-e)*x0+2*(1-e)*e*mx+e*e*x1,y=(1-e)*(1-e)*y0+2*(1-e)*e*my+e*e*y1;withA(e<.85?1:(1-e)/.15,()=>circ(x,y,4,C[p.k],hexA(C.ink,.35),.8))});
+  /* kcal + pie */
+  panelBox(414,10,376,214);levelTag(426,26,"sym");
+  txt(560,44,fmtK(sh.kcal)+" kcal",{size:24,weight:700,mono:true,align:"center"});txt(560,68,Math.round(sh.kcal/20)+"% of a 2,000-kcal day",{size:12,align:"center",color:C["ink-soft"]});
+  if(t.mk>0)pie(500,150,62,[[sh.carb,C.carb,Math.round(sh.carb)+"%"],[sh.fat,C.fat,Math.round(sh.fat)+"%"],[sh.prot,C.prot,Math.round(sh.prot)+"%"]],{fs:11.5});else{circ(500,150,62,hexA(C.sunk,.8),C.rule,1.2);txt(500,150,"no kcal yet",{size:12,align:"center",color:C["ink-soft"]})}
+  /* density gauge */
+  const gx=700,gy=150,gr=56;ctx.lineWidth=12;[[0,1,C.bad],[1,1.5,C.gold],[1.5,3,C.good]].forEach(z=>{ctx.beginPath();ctx.arc(gx,gy,gr,Math.PI+z[0]/3*Math.PI,Math.PI+z[1]/3*Math.PI);ctx.strokeStyle=hexA(z[2],.55);ctx.stroke()});
+  const nd=clamp(t.nds,0,3);const na=Math.PI+nd/3*Math.PI;line(gx,gy,gx+Math.cos(na)*(gr-4),gy+Math.sin(na)*(gr-4),C.ink,3);circ(gx,gy,5,C.ink);
+  txt(gx,gy+22,t.kcal>0?t.nds.toFixed(2):"–",{size:16,weight:700,mono:true,align:"center"});txt(gx,gy+42,"nutrient density",{size:11.5,weight:600,align:"center",color:C["ink-soft"]});txt(gx-gr,gy+10,"0",{size:10.5,mono:true,align:"center",color:C["ink-soft"]});txt(gx+gr,gy+10,"3+",{size:10.5,mono:true,align:"center",color:C["ink-soft"]});
+  /* AMDR bars */
+  panelBox(414,232,376,130);amdrBars(430,262,200,t.mk>0?sh:{carb:null,fat:null,prot:null},{rh:34,max:80,ticks:false});
+  /* food groups */
+  panelBox(10,402,396,148);title(22,418,"Food groups vs a 2,000-kcal day");
+  ["veg","fruit","grain","prot","dairy"].forEach((g,i)=>{const y=440+i*21;const tg=DAYPAT[g];txt(22,y,FG[g].n,{size:12,weight:600});bar(130,y-6,190,12,t.g[g]/tg[0],C[FG[g].col]);line(130+190/3,y-9,130+190/3,y+9,C.ink,1.5);
+    txt(326,y,(Math.round(t.g[g]*10)/10)+"/"+tg[0]+" "+tg[1],{size:11,weight:600,mono:true})});
+  txt(130+190/3,536,"⅓ of a day",{size:10.5,align:"center",color:C["ink-soft"]});
+  /* micronutrients */
+  panelBox(414,370,376,180);title(426,386,"Key nutrients vs DRI ("+REFS[BD.ref].n+")");
+  MNUT.forEach((m,i)=>{const y=408+i*22;const v=t[m[0]],R=REFS[BD.ref][m[0]];txt(426,y,m[1],{size:12,weight:600});bar(510,y-6,170,12,v/R,C[m[3]]);line(510+170/3,y-9,510+170/3,y+9,C.ink,1.5);txt(686,y,Math.round(v/R*100)+"% of "+R+" "+m[2],{size:11,weight:600,mono:true})});
+  txt(510+170/3,542,"⅓ of a day",{size:10.5,align:"center",color:C["ink-soft"]});
+}
+function buildA11y(){const t=bdTotals();const foods=BD.order.map(id=>BD.items[id]+" × "+FOODS[FI[id]][1]).join(", ")||"nothing";
+  const lab=`Meal builder: ${fmtK(t.kcal)} kcal; carbohydrate ${Math.round(t.pc.carb)}%, fat ${Math.round(t.pc.fat)}%, protein ${Math.round(t.pc.prot)}% of kcal; nutrient density ${t.kcal?t.nds.toFixed(2):"not available"}.`;
+  const R=REFS[BD.ref];const d=`The plate holds ${foods}. Coloured wedges on the plate grow as each food group fills: vegetables and fruits on the left half, grains top right, protein foods bottom right, dairy beside the plate. Coloured dots stream from the plate into a small body outline, amber for carbohydrate, gold for fat and rose for protein, in proportion to their kcal. The pie shows ${Math.round(t.pc.carb)}% carbohydrate, ${Math.round(t.pc.fat)}% fat and ${Math.round(t.pc.prot)}% protein, and the AMDR bars show whether each is inside its green band. Food groups: `+["veg","fruit","grain","prot","dairy"].map(g=>FG[g].n+" "+(Math.round(t.g[g]*10)/10)+" of "+DAYPAT[g][0]+" "+DAYPAT[g][1]).join(", ")+". Nutrients for a "+R.n+" reference: "+MNUT.map((m,i)=>m[1]+" "+Math.round(t.share[i]*100)+"%").join(", ")+".";
+  return [lab,d]}
+function bdInit(){segBtns($("#buildRef"),[["f","Female 19–30"],["m","Male 19–30"]],()=>BD.ref,v=>{BD.ref=v;bdUI()});
+  const sel=$("#buildGroup");sel.innerHTML=[["all","All foods"],["grain","Grains"],["veg","Vegetables"],["fruit","Fruits"],["prot","Protein foods"],["dairy","Dairy"],["other","Other foods and drinks"]].map(o=>`<option value="${o[0]}">${o[1]}</option>`).join("");
+  sel.onchange=()=>{BD.grp=sel.value;bdPalette()};bdPalette();
+  $("#buildSample").onclick=()=>bdSet([["brice",1],["broc",1],["salmon",1]]);
+  $("#buildSnack").onclick=()=>bdSet([["cake",1],["soda",1],["chips",1]]);$("#buildClear").onclick=()=>bdSet([]);
+  bdSet([["wwbread",1],["chicken",1],["salad",1],["apple",1],["milk",1]]);BD.done.clear();chalUI($("#buildChal"),BCH,BD.done)}
+/* ================= PART 2: label and kcal trainer ================= */
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const r1=v=>Math.round(v*10)/10;
+const KC={carb:4,fat:9,prot:4,alc:7};
+const FOODN=[["a granola bar","oats"],["a bowl of chili","beans"],["a turkey sandwich","bread"],["a fruit smoothie","juice"],["a yogurt parfait","yogurt"],["a bean burrito","tortilla"],["a slice of veggie pizza","bread"],["a tofu stir-fry","tofu"],["a pasta salad","pasta"],["a breakfast bowl","oats"]];
+const NUTL={sod:["Sodium","mg"],ca:["Calcium","mg"],fiber:["Dietary fiber","g"],sat:["Saturated fat","g"],fe:["Iron","mg"],k:["Potassium","mg"],vitD:["Vitamin D","mcg"],added:["Added sugars","g"],fat:["Total fat","g"],carb:["Total carbohydrate","g"]};
+const CTYPES=[["mix","All types, mixed"],["kcal","kcal from grams"],["pct","% of kcal from fat, carbohydrate or protein"],["dv","%DV from a label amount"],["interp","%DV: low, moderate or high?"],["serv","Servings eaten"],["units","Unit conversions (g, mg, mcg, IU)"],["dens","Nutrient density and energy density"],["amdr","Inside the AMDR?"]];
+/* random label that is internally consistent */
+function randLabel(o){o=o||{};const carb=o.carb!=null?o.carb:ri(5,45),fat=o.fat!=null?o.fat:pick([0.5,1,1.5,2,2.5,3,4,4.5,5,6,7,8,9,10,12,14]),prot=o.prot!=null?o.prot:ri(1,20);
+  const kcal=labelKcal(carb*4+fat*9+prot*4);const L={servPer:o.servPer||pick([1,2,2.5,3,4,6,8]),servSize:o.servSize||pick(["1 cup (240g)","2/3 cup (55g)","1/2 cup (120g)","1 bar (40g)","1 container (170g)"]),kcal,fat,sat:r1(Math.min(fat,fat*pick([.1,.2,.3,.5]))),trans:0,chol:pick([0,0,5,10,15,30]),
+    sod:o.sod!=null?o.sod:pick([35,65,95,140,180,230,280,320,410,460,520,580,690,780]),carb,fiber:o.fiber!=null?o.fiber:ri(0,Math.min(9,Math.floor(carb/3))),sugars:0,added:0,prot,vitD:pick([0,1,2,3,4]),ca:pick([0,20,40,65,100,130,195,260,325,390]),fe:pick([0,.4,.7,1,1.4,1.8,2.7,3.6,4.5]),k:pick([50,90,140,190,240,330,420,470,560])};
+  L.added=o.added!=null?o.added:Math.min(ri(0,14),Math.max(0,carb-L.fiber-1));L.sugars=Math.min(carb-L.fiber,L.added+ri(0,6));return L}
+const TR={type:"mix",p:null,hint:0,first:true,sol:false,solved:false,streak:0,best:0,count:0,solT:0,pick:null};
+const GEN={
+ kcal(){const f=pick(FOODN);const c=ri(5,60),fa=ri(1,28),p=ri(2,35),a=Math.random()<.2?pick([7,14,14,21]):0;const ans=c*4+fa*9+p*4+a*7;
+  const rows=[{c:[[F(c,["g"]),F("4",["kcal"],"1",["g"])],[String(c*4),["kcal"]]]},{c:[[F(fa,["g"]),F("9",["kcal"],"1",["g"])],[String(fa*9),["kcal"]]]},{c:[[F(p,["g"]),F("4",["kcal"],"1",["g"])],[String(p*4),["kcal"]]]}];
+  if(a)rows.push({c:[[F(a,["g"]),F("7",["kcal"],"1",["g"])],[String(a*7),["kcal"]]]});rows.push({ans:[c*4,fa*9,p*4].concat(a?[a*7]:[]).join(" + ")+" = "+ans+" kcal"});
+  return {title:"kcal from grams",html:`${f[0][0].toUpperCase()+f[0].slice(1)} has <b>${c} g carbohydrate</b>, <b>${fa} g fat</b> and <b>${p} g protein</b>${a?` plus <b>${a} g alcohol</b> (from a drink served with it)`:""}. How many kilocalories in total?`,ans,unit:"kcal",dp:0,tol:.5,
+   hints:["Multiply each nutrient's grams by its kcal per gram: carbohydrate 4, fat 9, protein 4"+(a?", alcohol 7":"")+".",`Carbohydrate ${c} × 4 = ${c*4}; fat ${fa} × 9 = ${fa*9}; protein ${p} × 4 = ${p*4}${a?`; alcohol ${a} × 7 = ${a*7}`:""}.`,"Add the kcal from each nutrient together."],
+   rows,miss:"using 4 kcal/g for fat, or adding the grams instead of the kcal.",slips:[[c*4+fa*4+p*4+a*7,"That used 4 kcal/g for fat. Fat gives 9 kcal per gram."],[c+fa+p+a,"That added the grams. Multiply each by its kcal per gram first."],[c*9+fa*4+p*4+a*7,"The 4 and 9 are swapped: carbohydrate is 4 kcal/g, fat is 9."],a?[c*4+fa*9+p*4,"Alcohol counts too: add "+a+" × 7 kcal."]:[NaN,""]],vis:{k:"kcal",g:{carb:c,fat:fa,prot:p,alc:a},icon:f[1]}}},
+ pct(){const c=ri(8,60),fa=ri(2,25),p=ri(3,35);const tot=c*4+fa*9+p*4;const which=pick(["fat","fat","carb","prot"]);const g={carb:c,fat:fa,prot:p}[which];const part=g*KC[which];const ans=part/tot*100;const nm={carb:"carbohydrate",fat:"fat",prot:"protein"}[which];
+  return {title:"% of kcal from "+nm,html:`A food has <b>${c} g carbohydrate</b>, <b>${fa} g fat</b> and <b>${p} g protein</b> (total <b>${tot} kcal</b> from these). What percent of its kcal comes from <b>${nm}</b>?`,ans,unit:"%",dp:0,tol:1.01,
+   hints:[`First turn the ${nm} grams into kcal: ${g} g × ${KC[which]} kcal/g.`,`${nm[0].toUpperCase()+nm.slice(1)} gives ${part} kcal. Total = ${tot} kcal.`,`% = ${part} ÷ ${tot} × 100.`],
+   rows:[{c:[[F(g,["g"]),F(KC[which],["kcal"],"1",["g"])],[String(part),["kcal"]]]},{c:[[F(part,["kcal"],tot,["kcal"]),F("100",["%"])],[String(Math.round(ans)),["%"]]]}],miss:"dividing grams by total grams gives "+Math.round(g/(c+fa+p)*100)+"%, which is not a share of kcal.",
+   slips:[[g/(c+fa+p)*100,"That divided grams by total grams. Convert to kcal first."],[g*4/tot*100,which==="fat"?"That used 4 kcal/g for fat; fat is 9.":""],[part,"That is the kcal from "+nm+", not the percent. Divide by the total and multiply by 100."],[part/tot,"Multiply by 100 to turn the fraction into a percent."]],vis:{k:"pct",g:{carb:c,fat:fa,prot:p},which}}},
+ dv(){const key=pick(["sod","ca","fiber","sat","fe","k","vitD","added"]);const L=randLabel();const amt={sod:pick([90,140,230,320,460,575,690,920]),ca:pick([65,130,195,260,390,520]),fiber:pick([1,2,3,4,5,6,7,8]),sat:pick([1,2,3,4,5,6]),fe:pick([.9,1.8,2.7,3.6,4.5,5.4]),k:pick([235,470,705,940]),vitD:pick([1,2,3,4,5,6]),added:pick([3,5,8,10,12,15,20])}[key];
+  if(key==="sat")L.fat=Math.max(L.fat,amt+1);if(key==="fiber"){L.carb=Math.max(L.carb,amt+6)}if(key==="added"){L.carb=Math.max(L.carb,amt+L.fiber+3);L.sugars=amt+ri(0,4)}L[key]=amt;L.kcal=labelKcal(L.carb*4+L.fat*9+L.prot*4);
+  const ans=amt/DV[key]*100;const nm=NUTL[key];
+  return {title:"%DV from a label amount",html:`The label shows <b>${nm[0]} ${amt} ${nm[1]}</b> per serving. The Daily Value for ${nm[0].toLowerCase()} is <b>${fmtK(DV[key])} ${nm[1]}</b>. What %DV should the label show? (The %DV is hidden on this label.)`,ans,unit:"%DV",dp:0,tol:1.01,
+   hints:["%DV = amount per serving ÷ Daily Value × 100.",`${amt} ÷ ${fmtK(DV[key])} = ${(amt/DV[key]).toFixed(3)}.`,"Multiply by 100 and round to a whole percent."],
+   rows:[{c:[[F(amt,[nm[1]],fmtK(DV[key]),[nm[1]]),F("100",["%"])],[String(Math.round(ans)),["%DV"]]]},{l:ans<=5?"5% or less: low":ans>=20?"20% or more: high":"between 5% and 20%: moderate"}],miss:"dividing the Daily Value by the amount, which turns the ratio upside down.",
+   slips:[[DV[key]/amt*100,"That divided the Daily Value by the amount. Put the amount on top."],[amt/DV[key],"Multiply by 100 to turn the fraction into a percent."]],vis:{k:"dv",L,key,hide:key}}},
+ interp(){const key=pick(["sod","ca","fiber","sat","fe","k","added"]);const pc=pick([2,3,4,5,8,10,12,15,18,20,22,25,30,35,40]);const L=randLabel();const amt=r1(DV[key]*pc/100);
+  if(key==="sat")L.fat=Math.max(L.fat,Math.ceil(amt)+1);if(key==="fiber")L.carb=Math.max(L.carb,Math.ceil(amt)+6);if(key==="added"){L.carb=Math.max(L.carb,Math.ceil(amt)+L.fiber+3);L.sugars=Math.ceil(amt)+2}L[key]=key==="sod"||key==="ca"||key==="k"?Math.round(amt):amt;L.kcal=labelKcal(L.carb*4+L.fat*9+L.prot*4);
+  const shown=pctDV(key,L[key]);const ans=shown<=5?0:shown>=20?2:1;const nm=NUTL[key][0];
+  return {title:"%DV: low, moderate or high?",html:`One serving of this food has <b>${shown}% DV</b> for <b>${nm.toLowerCase()}</b>. Using the 5/20 guide, how would you describe it?`,choices:["Low (5% DV or less)","Moderate (between 5% and 20%)","High (20% DV or more)"],ans,unit:"",
+   hints:["Use the 5/20 guide: 5% DV or less is low; 20% DV or more is high.",`The label shows ${shown}%.`,shown<=5?`${shown}% is at or below 5%.`:shown>=20?`${shown}% is at or above 20%.`:`${shown}% is above 5% and below 20%.`],
+   rows:[{l:`%DV for ${nm.toLowerCase()} = ${shown}%`},{l:"5% or less = low · 20% or more = high"},{ans:["Low","Moderate","High"][ans]+" in "+nm.toLowerCase()}],miss:"%DV is the share of a day's reference amount in one serving, not the share of calories.",vis:{k:"interp",L,key,shown}}},
+ serv(){const opts=[["1/2 cup",.5,"1½ cups",1.5],["2/3 cup",2/3,"2 cups",2],["3/4 cup",.75,"1½ cups",1.5],["1 cup",1,"2½ cups",2.5],["1/4 cup",.25,"1 cup",1],["1½ cups",1.5,"3 cups",3],["1 cup",1,"½ cup",.5],["1/3 cup",1/3,"1 cup",1],["1/2 cup",.5,"2 cups",2]];
+  const o=pick(opts);const nS=o[3]/o[1];const what=pick(["kcal","kcal","sod"]);const L=randLabel({servSize:o[0]+(o[0].includes("cup")?" ("+Math.round(o[1]*240)+"g)":"")});const per=what==="kcal"?L.kcal:L.sod;const ans=nS*per;
+  const pkg=Math.random()<.3;if(pkg){const sp=pick([2,2.5,3,4]);L.servPer=sp;const a2=sp*per;
+    return {title:"Servings eaten: whole package",html:`The label says <b>${sp} servings per container</b> and <b>${per} ${what==="kcal"?"kcal":"mg sodium"}</b> per serving. Someone eats the <b>whole container</b>. How many ${what==="kcal"?"kcal":"mg of sodium"} is that?`,ans:a2,unit:what==="kcal"?"kcal":"mg",dp:0,tol:.51,
+     hints:["Every number on the label is for ONE serving.",`The whole container is ${sp} servings.`,`${sp} × ${per}.`],rows:[{c:[[F(sp,["servings"]),F(per,[what==="kcal"?"kcal":"mg"],"1",["serving"])],[fmtK(a2),[what==="kcal"?"kcal":"mg"]]]}],miss:"reading the per-serving number as the whole package.",
+     slips:[[per,"That is one serving. The container holds "+sp+" servings."],[per/sp,"Multiply by the servings, do not divide."]],vis:{k:"serv",L,hi:["servPer",what==="kcal"?"kcal":"sod"],nS:sp,per,what}}}
+  return {title:"Servings eaten",html:`The serving size is <b>${o[0]}</b> with <b>${per} ${what==="kcal"?"kcal":"mg sodium"}</b> per serving. Someone eats <b>${o[2]}</b>. How many ${what==="kcal"?"kcal":"mg of sodium"} did they eat?`,ans,unit:what==="kcal"?"kcal":"mg",dp:0,tol:.51,
+   hints:["Servings eaten = amount eaten ÷ serving size.",`${o[2]} ÷ ${o[0]} = ${r1(nS)} servings.`,`${r1(nS)} × ${per}.`],
+   rows:[{l:`servings eaten = ${o[2]} ÷ ${o[0]} = ${r1(nS)}`},{c:[[F(r1(nS),["servings"]),F(per,[what==="kcal"?"kcal":"mg"],"1",["serving"])],[fmtK(ans),[what==="kcal"?"kcal":"mg"]]]}],miss:"treating each cup as one serving when the serving size is not 1 cup.",
+   slips:[[o[3]*per,"That treated each cup as a serving. Divide the amount eaten by the serving size first."],[per,"That is one serving. Scale by the servings eaten."],[per/nS,"Multiply by the servings eaten, do not divide."]],vis:{k:"serv",L,hi:["serv",what==="kcal"?"kcal":"sod"],nS,per,what}}},
+ units(){const kind=pick(["g-mg","mg-g","mg-mcg","mcg-mg","mcg-iu","iu-mcg"]);let v,ans,from,to,factor,html,hints,rows,slips;
+  const nn=pick([["vitamin C",""],["calcium",""],["iron",""],["vitamin B₁₂",""],["folate",""],["zinc",""]])[0];
+  if(kind==="g-mg"){v=pick([.09,.015,1.3,.4,2.3,.008,.75]);ans=v*1000;from="g";to="mg"}
+  if(kind==="mg-g"){v=pick([90,1300,2300,450,18,75,4700]);ans=v/1000;from="mg";to="g"}
+  if(kind==="mg-mcg"){v=pick([2.4,.4,1.5,.9,.055,3]);ans=v*1000;from="mg";to="mcg"}
+  if(kind==="mcg-mg"){v=pick([400,2.4,150,900,55,600]);ans=v/1000;from="mcg";to="mg"}
+  if(kind==="mcg-iu"){v=pick([15,20,10,5,25,100]);ans=v*40;from="mcg";to="IU"}
+  if(kind==="iu-mcg"){v=pick([600,800,400,1000,2000,4000]);ans=v/40;from="IU";to="mcg"}
+  const vd=kind.includes("iu");const big=ans>v;const fac=vd?40:1000;const what=vd?"vitamin D":nn;
+  const fmt_=x=>{const s=String(+x.toPrecision(6));return s};
+  return {title:"Unit conversion",html:`Convert <b>${fmt_(v)} ${from}</b> of ${what} to <b>${to}</b>.${vd?" For vitamin D, 1 mcg = 40 IU (International Units).":""}`,ans,unit:to,dp:null,tol:Math.abs(ans)*.005+1e-9,
+   hints:[vd?"1 mcg of vitamin D = 40 IU.":"1 g = 1,000 mg and 1 mg = 1,000 mcg.",big?`Going to ${to} gives a bigger number, so multiply.`:`Going to ${to} gives a smaller number, so divide.`,`${fmt_(v)} ${big?"×":"÷"} ${fmtK(fac)}.`],
+   rows:[{c:[[F(fmt_(v),[from]),big?F(fmtK(fac),[to],"1",[from]):F("1",[to],fmtK(fac),[from])],[fmt_(ans),[to]]]}],miss:big?"dividing instead of multiplying: a smaller unit needs a bigger number.":"multiplying instead of dividing: a bigger unit needs a smaller number.",
+   slips:[[big?v/fac:v*fac,big?"That divided. Going to a smaller unit makes the number bigger: multiply.":"That multiplied. Going to a bigger unit makes the number smaller: divide."],[big?v*100:v/100,"There are "+fmtK(fac)+", not 100, in each step."]],vis:{k:"units",from,to,v,ans,vd}}},
+ dens(){if(Math.random()<.5){const fd=pick([["an orange","orange",62,"vitamin C",70,"mg"],["a cup of milk","milk",102,"calcium",305,"mg"],["a cup of broccoli","broccoli",55,"vitamin C",101,"mg"],["a cup of yogurt","yogurt",154,"calcium",448,"mg"],["a cola","soda",150,"calcium",8,"mg"],["a banana","banana",105,"potassium",422,"mg"],["a baked potato","potato",160,"potassium",926,"mg"],["a cup of black beans","beans",228,"fiber",15,"g"],["an apple","apple",95,"fiber",4.4,"g"],["a snack cake","cake",150,"fiber",.5,"g"]]);
+    const ans=fd[4]/fd[2]*100;const dp=ans<10?1:0;
+    return {title:"Nutrient density: per 100 kcal",html:`${fd[0][0].toUpperCase()+fd[0].slice(1)} has <b>${fd[2]} kcal</b> and <b>${fd[4]} ${fd[5]} ${fd[3]}</b>. How much ${fd[3]} does it give per 100 kcal?`,ans,unit:fd[5]+" per 100 kcal",dp,tol:dp?.051:.51,
+     hints:["Per 100 kcal = nutrient ÷ kcal × 100 kcal.",`${fd[4]} ÷ ${fd[2]} = ${(fd[4]/fd[2]).toFixed(3)} ${fd[5]} per kcal.`,dp?"Multiply by 100 and round to 1 decimal place.":"Multiply by 100 and round to a whole number."],
+     rows:[{c:[[F(fd[4],[fd[5]],fd[2],["kcal"]),F("100",["kcal"])],[dp?ans.toFixed(1):String(Math.round(ans)),[fd[5]+" per 100 kcal"]]]}],miss:"dividing kcal by the nutrient, which flips the ratio.",
+     slips:[[fd[2]/fd[4]*100,"That divided kcal by the nutrient. Put the nutrient on top."],[fd[4]/fd[2],"Multiply by 100 to get the amount per 100 kcal."]],vis:{k:"dens",mode:"nd",icon:fd[1],kc:fd[2],amt:fd[4],u:fd[5],nm:fd[3]}}}
+  const fd=pick([["vegetable soup","soup",120,300],["pretzels","chips",190,50],["peanuts","nuts",165,28],["strawberries","berries",49,150],["cheddar cheese","cheese",171,42],["cooked oatmeal","oats",166,234],["a plain bagel","bread",270,98],["grapes","berries",104,150],["olive oil","oil",119,13.5],["baked potato","potato",160,173]]);
+  const ans=fd[2]/fd[3];
+  return {title:"Energy density: kcal per gram",html:`A portion of <b>${fd[0]}</b> weighs <b>${fd[3]} g</b> and has <b>${fd[2]} kcal</b>. What is its energy density? (1 decimal place)`,ans,unit:"kcal/g",dp:1,tol:.051,
+   hints:["Energy density = kcal ÷ grams of food.",`${fd[2]} ÷ ${fd[3]}.`,"Round to 1 decimal place. Under 0.6 is very low; over 4 is high."],
+   rows:[{c:[[F(fd[2],["kcal"],fd[3],["g"])],[ans.toFixed(1),["kcal/g"]]]},{l:ans<.6?"very low energy density":ans<1.5?"low energy density":ans<=4?"medium energy density":"high energy density"}],miss:"dividing grams by kcal gives the upside-down ratio.",
+   slips:[[fd[3]/fd[2],"That divided grams by kcal. Put kcal on top."],[fd[2]*fd[3],"Divide, do not multiply."]],vis:{k:"dens",mode:"ed",icon:fd[1],kc:fd[2],g:fd[3],nm:fd[0]}}},
+ amdr(){const kc=pick([1600,1800,2000,2200,2400,2600]);const which=pick(["carb","fat","prot"]);const nm={carb:"carbohydrate",fat:"fat",prot:"protein"}[which];const b=AMDR[which];
+  const zone=pick([0,1,1,2]);let pc;if(zone===0)pc=b[0]-ri(3,which==="prot"?6:8);else if(zone===2)pc=b[1]+ri(3,8);else pc=ri(b[0]+1,b[1]-1);pc=Math.max(3,pc);
+  const g=Math.round(kc*pc/100/KC[which]);const real=g*KC[which]/kc*100;const ans=real<b[0]?0:real>b[1]?2:1;
+  return {title:"Inside the AMDR?",html:`A <b>${fmtK(kc)}-kcal</b> day includes <b>${g} g ${nm}</b>. The AMDR for ${nm} is <b>${b[0]}–${b[1]}%</b> of kcal. Is this day below, inside or above the range?`,choices:["Below the AMDR","Inside the AMDR","Above the AMDR"],ans,unit:"",
+   hints:[`Turn grams into kcal: ${nm} has ${KC[which]} kcal/g.`,`${g} × ${KC[which]} = ${g*KC[which]} kcal.`,`${g*KC[which]} ÷ ${fmtK(kc)} × 100 = ${Math.round(real)}%. Compare with ${b[0]}–${b[1]}%.`],
+   rows:[{c:[[F(g,["g"]),F(KC[which],["kcal"],"1",["g"])],[fmtK(g*KC[which]),["kcal"]]]},{c:[[F(fmtK(g*KC[which]),["kcal"],fmtK(kc),["kcal"]),F("100",["%"])],[String(Math.round(real)),["%"]]]},{ans:["Below","Inside","Above"][ans]+" the "+b[0]+"–"+b[1]+"% range"}],miss:"comparing grams directly with the percent range.",vis:{k:"amdr",which,real}}}
+};
+const GKEYS=Object.keys(GEN);
+function genOne(k){let q=null;for(let i=0;i<40&&!q;i++){try{q=GEN[k]()}catch(e){console.error(e);q=null}if(q&&!q.choices&&!(isFinite(q.ans)&&q.ans>0))q=null}q.kind=k;return q}
+function fmtAns(p,v){if(p.choices)return p.choices[v];if(p.dp!=null)return v.toFixed(p.dp);return String(+v.toPrecision(4))}
+function normAns(s){return String(s).trim().replace(/,/g,"").replace(/[−–]/g,"-").replace(/\s*(per|\/)\s*100\s*kcal\s*$/i,"").replace(/\s*%\s*(dv)?$/i,"").replace(/\s*(kcal\/g|kcal|mcg|mg|g|iu|servings?)\s*$/i,"").replace(/\s+/g,"")}
+function parseAns(s){s=normAns(s);if(!/^[-+]?(\d+\.?\d*|\.\d+)$/.test(s))return null;return parseFloat(s)}
+function judge(p,str){if(p.choices){const v=+str;if(!(v>=0))return {ok:false,kind:"empty"};return v===p.ans?{ok:true}:{ok:false,kind:"choice"}}
+  const v=parseAns(str);if(v==null)return {ok:false,kind:"empty"};if(Math.abs(v-p.ans)<=p.tol)return {ok:true};
+  const sl=(p.slips||[]).find(s=>isFinite(s[0])&&s[1]&&Math.abs(v-s[0])<=Math.max(Math.abs(s[0])*.012,p.dp!=null?Math.pow(10,-p.dp)*.6:0));if(sl&&Math.abs(sl[0]-p.ans)>p.tol)return {ok:false,kind:"slip",msg:sl[1]};
+  if(Math.abs(v-p.ans)<=Math.abs(p.ans)*.06)return {ok:false,kind:"close"};return {ok:false,kind:"wrong"}}
+function calcMsg(cls,t){const m=$("#calcMsg");m.className="msg show "+cls;m.textContent=t}
+function ansTxt(p){return p.choices?p.choices[p.ans]:fmtAns(p,p.ans)+" "+p.unit}
+function calcNew(){const k=TR.type==="mix"?pick(GKEYS):TR.type;const q=genOne(k);TR.p=q;TR.hint=0;TR.first=true;TR.sol=false;TR.solved=false;TR.pick=null;
+  const rd=q.choices?"Pick one answer.":q.dp===0?"Give a whole number.":q.dp?"Give "+q.dp+" decimal place.":"Give the number (up to 4 significant figures is fine).";
+  $("#calcProb").innerHTML=`<span class="pt">${q.title}</span>${q.html}<span class="rd">${rd}</span>`;$("#calcUnit").textContent=q.unit;$("#calcAns").value="";
+  $("#calcNumWrap").hidden=!!q.choices;const cb=$("#calcChoices");cb.hidden=!q.choices;cb.innerHTML="";
+  if(q.choices)q.choices.forEach((c,i)=>{const b=document.createElement("button");b.type="button";b.className="opt";b.textContent=c;b.setAttribute("aria-pressed","false");b.onclick=()=>{TR.pick=i;cb.querySelectorAll(".opt").forEach((x,j)=>{x.setAttribute("aria-pressed",String(j===i));x.classList.remove("wrong","right")});calcCheck()};cb.appendChild(b)});
+  $("#calcMsg").className="msg";$("#calcHintBox").hidden=true;$("#calcCap").textContent=q.title+": the picture shows the problem and your answer; the worked solution appears below it.";a11yKey=""}
+function calcCheck(){const p=TR.p;const str=p.choices?(TR.pick==null?"":String(TR.pick)):$("#calcAns").value;const j=judge(p,str);
+  if(j.kind==="empty"){calcMsg("info",p.choices?"Pick one of the answers first.":"Type a number in the answer box first.");return}
+  if(p.choices){$("#calcChoices").querySelectorAll(".opt").forEach((x,i)=>{x.classList.toggle("right",j.ok&&i===TR.pick);x.classList.toggle("wrong",!j.ok&&i===TR.pick)})}
+  if(j.ok){const wasFirst=TR.first&&!TR.sol;if(!TR.solved){TR.count++;if(wasFirst){TR.streak++;if(TR.streak>TR.best){TR.best=TR.streak;store.set("best",TR.best)}}}TR.solved=true;calcMsg("good",`✓ Correct: ${ansTxt(p)}. Watch the worked solution build.`);showSol(false)}
+  else{TR.first=false;TR.streak=0;let msg="Not quite. ";if(j.kind==="slip")msg+=j.msg;else if(j.kind==="close")msg+="Very close. Check your rounding.";else if(j.kind==="choice")msg+=p.hints[2];else msg+="Check the setup. "+p.hints[0];calcMsg("warn",msg)}
+  updCalcMeter();a11yKey=""}
+function showSol(byBtn){if(byBtn&&!TR.solved){TR.streak=0;TR.first=false}TR.sol=true;TR.solT=performance.now();updCalcMeter();a11yKey=""}
+function updCalcMeter(){$("#calcStreak").textContent=TR.streak;$("#calcBest").textContent=TR.best;$("#calcSolved").textContent=TR.count}
+function calcInit(){const sel=$("#calcType");sel.innerHTML=CTYPES.map(c=>`<option value="${c[0]}">${c[1]}</option>`).join("");sel.onchange=()=>{TR.type=sel.value;calcNew()};
+  $("#calcCheck").onclick=calcCheck;$("#calcAns").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();calcCheck()}});
+  $("#calcHint").onclick=()=>{const p=TR.p;const b=$("#calcHintBox");if(TR.hint<p.hints.length)TR.hint++;b.hidden=false;b.innerHTML=p.hints.slice(0,TR.hint).map((h,i)=>`<div><b>Hint ${i+1}:</b> ${h}</div>`).join("")+(TR.hint>=p.hints.length?`<div class="small">That is the whole ladder. Try it, or press Show worked solution.</div>`:"")};
+  $("#calcSol").onclick=()=>{showSol(true);calcMsg("info",`Worked solution: ${ansTxt(TR.p)}. Watch each step, then try a new problem.`)};$("#calcNew").onclick=calcNew;
+  TR.best=+(store.get("best")||0)}
+/* ---------- trainer drawing ---------- */
+function tvTyped(){const v=parseAns($("#calcAns").value);return v==null||!isFinite(v)?null:v}
+function drawCalc(now){use(S2);const T=now/1000;const p=TR.p;const vs=p.vis;const tv=p.choices?null:tvTyped();const ok=TR.solved;
+  const hasLabel=!!vs.L;const lx=10,lw=hasLabel?230:0;
+  if(hasLabel){const hi=vs.hi||[vs.key];const FR=factsLabel(lx,10,lw,vs.L,{hi,ha:.6+.4*Math.sin(T*3)});
+    if(vs.k==="dv"){const row=FR.rows[vs.key];if(row){rr(lx+lw-60,row[0]-1,52,row[1]+2,2);ctx.fillStyle=C["label-bg"];ctx.fill();txt(lx+lw-12,row[0]+row[1]/2,"?%",{size:12,weight:800,align:"right",color:C.bad})}}}
+  const X0=hasLabel?250:10,W0=hasLabel?540:780;panelBox(X0,10,W0,262);if(ok){circ(X0+W0-20,30,13,C.good);tick(X0+W0-20,30,7,"#ffffff")}
+  const tvs=v=>v==null?"?":String(+(+v).toPrecision(5));
+  if(vs.k==="kcal"){const g=vs.g;food(vs.icon,X0+60,90,40);txt(X0+60,150,"the food",{size:12,weight:600,align:"center",color:C["ink-soft"]});
+    const ks=["carb","fat","prot"].concat(g.alc?["alc"]:[]);ks.forEach((k,i)=>{const y=44+i*50;rr(X0+130,y,70,28,5);fillStroke(hexA(C[k],.3),C[k],1.5);txt(X0+165,y+14,g[k]+" g",{size:13,weight:700,mono:true,align:"center"});txt(X0+222,y+14,"× "+KC[k],{size:13,weight:700,mono:true,align:"center",color:C[NUT[k].ink]});
+      const kc=g[k]*KC[k];const w=Math.min(200,kc*.6)*smooth(clamp(T*.6%3,0,1));rr(X0+250,y+4,w,20,3);ctx.fillStyle=C["flame-in"];ctx.fill();txt(X0+256+Math.min(200,kc*.6),y+14,TR.sol?kc+" kcal":"? kcal",{size:12.5,weight:700,mono:true})});
+    label(X0+W0/2,240,"your total: "+tvs(tv)+" kcal",{size:14,weight:700,mono:true,border:ok?C.good:C.accent})}
+  else if(vs.k==="pct"){const g=vs.g;const kc={carb:g.carb*4,fat:g.fat*9,prot:g.prot*4};pie(X0+120,130,90,["carb","fat","prot"].map(k=>[kc[k],k===vs.which?C[k]:hexA(C[k],.35),TR.sol?Math.round(kc[k]/(kc.carb+kc.fat+kc.prot)*100)+"%":(k===vs.which?"?":"")]),{fs:13});
+    txt(X0+120,240,"slices sized by kcal",{size:12,weight:600,align:"center",color:C["ink-soft"]});
+    const bx=X0+260,bw=W0-290;rr(bx,120,bw,18,4);ctx.fillStyle=hexA(C.sunk,.9);ctx.fill();[0,25,50,75,100].forEach(v=>{txt(bx+bw*v/100,152,v+"%",{size:11,mono:true,align:"center",color:C["ink-soft"]})});
+    if(tv!=null){const x=bx+bw*clamp(tv,0,100)/100;circ(x,129,9,C[vs.which],C.ink,1.5)}label(bx+bw/2,86,"your answer: "+tvs(tv)+"%",{size:14,weight:700,mono:true,border:ok?C.good:C.accent});
+    txt(bx,200,"Grams: carbohydrate "+g.carb+", fat "+g.fat+", protein "+g.prot,{size:12.5,weight:600})}
+  else if(vs.k==="dv"||vs.k==="interp"){const gx=X0+30,gw=W0-60,gy=120;const X=v=>gx+clamp(v,0,50)/50*gw;
+    rr(gx,gy,gw,20,4);ctx.fillStyle=hexA(C.sunk,.9);ctx.fill();rr(gx,gy,X(5)-gx,20,4);ctx.fillStyle=hexA(C.good,.45);ctx.fill();rr(X(20),gy,gx+gw-X(20),20,4);ctx.fillStyle=hexA(C.warn,.4);ctx.fill();
+    [0,5,10,20,30,40,50].forEach(v=>txt(X(v),gy+34,v+"%",{size:11,mono:true,align:"center",color:C["ink-soft"]}));txt(gx,gy-14,"5% or less: low",{size:12,weight:700,color:C.good});txt(X(20),gy-14,"20% or more: high",{size:12,weight:700,color:C["warn-ink"]});
+    const val=vs.k==="interp"?vs.shown:tv;if(val!=null){circ(X(val),gy+10,10,val<=5?C.good:val>=20?C.warn:C["ink-soft"],C.ink,1.5);label(X(val),gy+62,(vs.k==="interp"?"label: ":"your answer: ")+tvs(val)+"%",{size:13,weight:700,mono:true,border:ok?C.good:C.accent})}
+    txt(X0+W0/2,52,NUTL[vs.key][0]+" "+vs.L[vs.key]+" "+NUTL[vs.key][1]+" per serving · DV "+fmtK(DV[vs.key])+" "+NUTL[vs.key][1],{size:13,weight:700,align:"center"});
+    if(vs.k==="interp"&&TR.pick!=null)txt(X0+W0/2,240,"you picked: "+p.choices[TR.pick],{size:13,weight:700,align:"center",color:ok?C.good:C["warn-ink"]})}
+  else if(vs.k==="serv"){const n=vs.nS;const full=Math.floor(n+1e-9),frac=n-full;const cnt=Math.ceil(n-1e-9);for(let i=0;i<Math.min(cnt,6);i++){const x=X0+60+i*78,y=110;const f=i<full?1:frac;ctx.beginPath();ctx.arc(x,y,32,0,Math.PI);ctx.closePath();fillStroke(C.cereal2,hexA(C.ink,.5),1.4);
+      ctx.save();ctx.beginPath();ctx.arc(x,y,31,0,Math.PI);ctx.closePath();ctx.clip();ctx.fillStyle=C.bread;ctx.fillRect(x-32,y+32-30*f,64,30*f);ctx.restore();txt(x,y+48,f<1?r1(f)+" serving":"1 serving",{size:11.5,weight:600,align:"center"})}
+    txt(X0+W0/2,40,"servings eaten: "+r1(n),{size:14,weight:700,align:"center"});label(X0+W0/2,220,"your answer: "+tvs(tv)+" "+(vs.what==="kcal"?"kcal":"mg"),{size:14,weight:700,mono:true,border:ok?C.good:C.accent})}
+  else if(vs.k==="units"){const U=vs.vd?["IU","mcg"]:["g","mg","mcg"];const lab=vs.vd?["International Units","microgram"]:["gram","milligram","microgram"];const bw=110;const tot=U.length*bw+(U.length-1)*60;let x=X0+(W0-tot)/2;
+    U.forEach((u,i)=>{const on=u===vs.from||u===vs.to;rr(x,70,bw,56,8);fillStroke(on?C["accent-wash"]:C.panel,on?C.accent:C.rule,on?2.2:1.2);txt(x+bw/2,92,u,{size:16,weight:700,mono:true,align:"center"});txt(x+bw/2,112,lab[i],{size:11.5,align:"center",color:C["ink-soft"]});
+      if(i<U.length-1){arrow(x+bw+6,88,x+bw+54,88,C.good,2);txt(x+bw+30,76,vs.vd?"÷ 40":"× 1,000",{size:11.5,weight:700,align:"center",color:C.good});arrow(x+bw+54,112,x+bw+6,112,C.bad,2);txt(x+bw+30,128,vs.vd?"× 40":"÷ 1,000",{size:11.5,weight:700,align:"center",color:C.bad})}x+=bw+60});
+    txt(X0+W0/2,170,String(+vs.v.toPrecision(6))+" "+vs.from+" → ? "+vs.to,{size:15,weight:700,mono:true,align:"center"});label(X0+W0/2,222,"your answer: "+tvs(tv)+" "+vs.to,{size:14,weight:700,mono:true,border:ok?C.good:C.accent})}
+  else if(vs.k==="dens"){food(vs.icon,X0+80,110,46);if(vs.mode==="nd"){txt(X0+80,180,vs.kc+" kcal · "+vs.amt+" "+vs.u+" "+vs.nm,{size:12.5,weight:600,align:"center"});
+      const bx=X0+200,bw=W0-230;txt(bx,70,vs.nm+" per 100 kcal",{size:13,weight:700});bar(bx,90,bw,16,tv==null?0:clamp(tv/(p.ans*2),0,1),C.min);if(TR.sol){const x=bx+bw*.5;line(x,84,x,112,C.good,3);label(x,130,"answer "+fmtAns(p,p.ans),{size:12,weight:700,mono:true,border:C.good})}
+      label(bx+bw/2,200,"your answer: "+tvs(tv)+" "+vs.u+" per 100 kcal",{size:13,weight:700,mono:true,border:ok?C.good:C.accent})}
+    else{txt(X0+80,180,vs.g+" g · "+vs.kc+" kcal",{size:12.5,weight:600,align:"center"});const bx=X0+200,bw=W0-230;const Xd=v=>bx+clamp(v,0,9)/9*bw;
+      [[0,.6,C.fiber,"very low"],[.6,1.5,mix(C.fiber,C.gold,.4),"low"],[1.5,4,C.gold,"medium"],[4,9,C.carb,"high"]].forEach(z=>{rr(Xd(z[0]),100,Xd(z[1])-Xd(z[0]),16,0);ctx.fillStyle=hexA(z[2],.55);ctx.fill();txt((Xd(z[0])+Xd(z[1]))/2,132,z[3],{size:11.5,weight:600,align:"center"})});
+      [0,1,2,3,4,5,6,7,8,9].forEach(v=>txt(Xd(v),88,v,{size:10.5,mono:true,align:"center",color:C["ink-soft"]}));if(tv!=null)circ(Xd(tv),108,9,C.accent,C.ink,1.5);label(bx+bw/2,200,"your answer: "+tvs(tv)+" kcal/g",{size:13,weight:700,mono:true,border:ok?C.good:C.accent})}}
+  else if(vs.k==="amdr"){amdrBars(X0+30,80,W0-200,TR.sol?{carb:vs.which==="carb"?vs.real:null,fat:vs.which==="fat"?vs.real:null,prot:vs.which==="prot"?vs.real:null}:{carb:null,fat:null,prot:null},{rh:50,max:80});
+    if(TR.pick!=null)txt(X0+W0/2,240,"you picked: "+p.choices[TR.pick],{size:13,weight:700,align:"center",color:ok?C.good:C["warn-ink"]});txt(X0+30,50,"Green dashed band = AMDR. The marker appears with the worked solution.",{size:12,color:C["ink-soft"]})}
+  /* worked solution */
+  const WY=280,WX=X0,WW=W0;if(TR.sol){const el=(now-TR.solT)/1000;const per=Math.max(8,1.2+p.rows.length*1.8+3);wk(WX,WY,WW,310,{q:"",rows:p.rows,miss:p.miss},Math.min(el,per-.01),{per,cfs:14,dt:1.8,t0:.6,rowGap:18,cy:30,title:"Worked solution"})}
+  else{panelBox(WX,WY,WW,310,{fill:hexA(C.paper,.96)});title(WX+12,WY+18,"Worked solution",C["accent-ink"]);wrapText("The worked solution builds here after a correct answer, or when you press Show worked solution. Units cancel with a red strike-through; a common mistake is flagged at the end.",WX+14,WY+50,WW-28,18,{size:13,color:C["ink-soft"]})}}
+function calcA11y(){const p=TR.p;const v=p.choices?(TR.pick==null?"not chosen":p.choices[TR.pick]):($("#calcAns").value.trim()||"not entered");const lab=`Practice problem, ${p.title}. Your answer ${v}.${TR.solved?" Correct.":""}`;
+  const vk={kcal:"coloured boxes for the grams of carbohydrate, fat and protein, each multiplied by its kcal per gram into a yellow energy bar",pct:"a pie chart with slices sized by kcal, the asked nutrient in full colour, and a 0 to 100% bar with your answer",dv:"a Nutrition Facts label with the asked line highlighted and its %DV hidden, and a 0 to 50% gauge with a green low zone up to 5% and an amber high zone from 20%",interp:"a Nutrition Facts label with the line highlighted and a 0 to 50% gauge with low and high zones and the label's %DV marked",serv:"a Nutrition Facts label with the serving lines highlighted and bowls showing how many servings were eaten",units:"unit boxes joined by multiply and divide arrows, with the starting and target units highlighted",dens:"the food with either a per-100-kcal bar or an energy density scale from very low to high",amdr:"three AMDR bars with green dashed bands for carbohydrate, fat and protein"}[p.vis.k];
+  return [lab,`The picture shows ${vk}. ${TR.sol?"Below it, the worked solution builds step by step, with matching units struck through in red, ending with "+ansTxt(p)+" in a green box.":"The worked solution is hidden until you check a correct answer or ask for it."}`]}
+/* ================= PART 3: sorting game ================= */
+function binSVG(k){const sv=s=>`<svg viewBox="0 0 56 46" aria-hidden="true">${s}</svg>`;const hex=(x,y,r,c)=>{let p="";for(let i=0;i<6;i++){const a=i*Math.PI/3+Math.PI/6;p+=(i?"L":"M")+(x+Math.cos(a)*r).toFixed(1)+" "+(y+Math.sin(a)*r).toFixed(1)}return `<path d="${p}Z" fill="${c}" fill-opacity=".35" stroke="${c}" stroke-width="2"/>`};
+  const c=(x,y,r,f,t)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" stroke="var(--ink)" stroke-width="1"/>`+(t?`<text x="${x}" y="${y+3.5}" font-size="9" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-weight="700" fill="#fff">${t}</text>`:"");
+  const T_=(x,y,t,sz)=>`<text x="${x}" y="${y}" font-size="${sz||11}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-weight="700" fill="var(--ink)">${t}</text>`;
+  switch(k){
+  case "carb":return sv(hex(16,23,10,"var(--carb)")+hex(36,23,10,"var(--carb)"));
+  case "lipid":return sv('<rect x="8" y="8" width="8" height="30" rx="2" fill="var(--fat)" stroke="var(--fat-ink)"/>'+[12,23,34].map(y=>`<path d="M16 ${y} l6 -4 l6 4 l6 -4 l6 4 l6 -4" fill="none" stroke="var(--fat)" stroke-width="2.4"/>`).join(""));
+  case "prot":return sv([[10,30],[18,18],[30,14],[40,22],[46,34],[34,38],[22,36]].map((p,i)=>c(p[0],p[1],5,i%2?"var(--prot)":"var(--prot-ink)")).join(""));
+  case "vit":return sv('<path d="M28 8 L42 18 L37 35 L19 35 L14 18 Z" fill="var(--vit)" fill-opacity=".35" stroke="var(--vit)" stroke-width="2"/>'+T_(28,27,"C"));
+  case "min":return sv(c(16,23,10,"var(--min)","Ca")+c(40,23,10,"var(--min)","Fe"));
+  case "water":return sv('<circle cx="28" cy="20" r="10" fill="var(--water)"/><circle cx="16" cy="31" r="6" fill="#F2F4F5" stroke="var(--ink-soft)"/><circle cx="40" cy="31" r="6" fill="#F2F4F5" stroke="var(--ink-soft)"/>');
+  case "eN":return sv('<path d="M28 6 C38 18 40 26 34 36 C30 42 22 42 20 36 C16 28 22 22 28 6 Z" fill="var(--flame)"/><path d="M28 22 C32 28 32 34 28 38 C24 34 24 28 28 22 Z" fill="var(--flame-in)"/>');
+  case "eX":return sv('<path d="M28 6 C38 18 40 26 34 36 C30 42 22 42 20 36 C16 28 22 22 28 6 Z" fill="var(--alc)"/>'+T_(28,32,"7",12));
+  case "e0":return sv('<circle cx="28" cy="23" r="15" fill="none" stroke="var(--ink-soft)" stroke-width="2.5"/>'+T_(28,28,"0",14));
+  case "EAR":case "RDA":case "AI":case "UL":case "AMDR":{const curve='<path d="M4 40 C16 40 18 8 28 8 C38 8 40 40 52 40" fill="none" stroke="var(--act5)" stroke-width="2"/>';
+    const m={EAR:'<line x1="28" y1="6" x2="28" y2="42" stroke="var(--act5)" stroke-width="2" stroke-dasharray="3 2"/>',RDA:'<line x1="40" y1="6" x2="40" y2="42" stroke="var(--gold)" stroke-width="3"/>',AI:T_(28,30,"AI",12),UL:'<path d="M6 12 H50" stroke="var(--bad)" stroke-width="3"/>'+T_(28,34,"UL",12),AMDR:'<rect x="14" y="16" width="26" height="14" fill="var(--good)" fill-opacity=".3" stroke="var(--good)" stroke-dasharray="3 2"/>'+T_(28,40,"%",11)}[k];return sv((k==="EAR"||k==="RDA"?curve:"")+m)}
+  case "s0":return sv('<path d="M10 10 H46 V30 H24 L14 38 V30 H10 Z" fill="var(--panel-2)" stroke="var(--ink-soft)" stroke-width="2"/>'+T_(28,24,"“”",12));
+  case "s1":return sv('<ellipse cx="28" cy="26" rx="18" ry="12" fill="var(--cell)" stroke="var(--cell-edge)" stroke-width="2"/><circle cx="24" cy="24" r="5" fill="var(--vit)" fill-opacity=".4"/>');
+  case "s2":return sv([10,22,34,46].map((x,i)=>`<circle cx="${x}" cy="${38-i*7}" r="3.5" fill="var(--corr)"/>`).join("")+'<path d="M6 40 L50 12" stroke="var(--corr)" stroke-width="2"/>');
+  case "s3":return sv('<circle cx="28" cy="16" r="10" fill="var(--rand1)"/><path d="M28 6 A10 10 0 0 1 28 26 Z" fill="var(--rand2)"/><path d="M18 36 h8 M30 36 h8" stroke="var(--ink)" stroke-width="3"/>');
+  case "s4":return sv('<path d="M28 6 L46 40 H10 Z" fill="var(--gold)" fill-opacity=".45" stroke="var(--gold)" stroke-width="2"/>');
+  case "fruit":return sv('<circle cx="28" cy="26" r="13" fill="var(--fg-fruit)"/><path d="M28 13 l3 -6" stroke="var(--bean)" stroke-width="2.5"/>');
+  case "veg":return sv('<path d="M22 40 h12 v-12 h-12 z" fill="var(--fg-veg)" fill-opacity=".6"/><circle cx="20" cy="20" r="9" fill="var(--fg-veg)"/><circle cx="36" cy="20" r="9" fill="var(--fg-veg)"/><circle cx="28" cy="12" r="9" fill="var(--fg-veg)"/>');
+  case "grain":return sv('<path d="M28 42 V10" stroke="var(--fg-grain)" stroke-width="2.5"/>'+[12,20,28].map(y=>`<ellipse cx="22" cy="${y}" rx="5" ry="3" fill="var(--fg-grain)"/><ellipse cx="34" cy="${y}" rx="5" ry="3" fill="var(--fg-grain)"/>`).join(""));
+  case "protf":return sv([[18,24],[28,30],[38,24],[24,16],[34,16]].map(p=>`<ellipse cx="${p[0]}" cy="${p[1]}" rx="6" ry="4" fill="var(--fg-prot)"/>`).join(""));
+  case "dairy":return sv('<path d="M18 8 H38 L36 40 H20 Z" fill="var(--glass)" stroke="var(--glass-edge)" stroke-width="2"/><path d="M19 16 H37 L36 40 H20 Z" fill="var(--fg-dairy)" fill-opacity=".55"/>')}return ""}
+/* card: [text, bin or [bins], why] */
+const SROUNDS=[
+{name:"Nutrient to class",goal:"Put each nutrient or molecule in its nutrient class.",
+ bins:[["carb","Carbohydrate"],["lipid","Lipid"],["prot","Protein"],["vit","Vitamin"],["min","Mineral"],["water","Water"]],
+ cards:[["Glucose","carb","A simple sugar: the main fuel carbohydrates are broken into."],["Starch","carb","A long chain of glucose units stored by plants."],["Dietary fiber","carb","Plant carbohydrate our enzymes cannot digest."],["Lactose (milk sugar)","carb","A sugar made of glucose and galactose."],
+  ["Triglyceride","lipid","The main fat in food: glycerol plus three fatty acids."],["Cholesterol","lipid","A sterol, one type of lipid."],["Omega-3 fatty acid","lipid","A fatty acid, the building block of many lipids."],["Phospholipid","lipid","A lipid that forms cell membranes."],
+  ["Leucine (an amino acid)","prot","Amino acids are the building blocks of proteins."],["Amylase (an enzyme)","prot","Enzymes are proteins: chains of amino acids folded into shape."],["Collagen","prot","The main structural protein in skin, tendons and bone."],
+  ["Vitamin C","vit","A water-soluble vitamin."],["Folate","vit","A B vitamin."],["Vitamin D","vit","A fat-soluble vitamin."],["Calcium","min","A single element: a major mineral."],["Iron","min","A single element: a trace mineral."],["Sodium","min","A single element: a major mineral and electrolyte."],["H₂O","water","Water is its own nutrient class."]]},
+{name:"Energy or no energy?",goal:"Sort each item by whether it provides kilocalories, and whether it is a nutrient.",
+ bins:[["eN","Gives energy and is a nutrient"],["eX","Gives energy but is not a nutrient"],["e0","Gives no energy (0 kcal)"]],
+ cards:[["Starch (4 kcal/g)","eN","Carbohydrate gives 4 kcal per gram."],["Olive oil fat (9 kcal/g)","eN","Fat gives 9 kcal per gram."],["Egg white protein (4 kcal/g)","eN","Protein gives 4 kcal per gram."],["Table sugar","eN","Sugar is a carbohydrate: 4 kcal per gram."],
+  ["Alcohol (7 kcal/g)","eX","Alcohol gives energy, but the body has no need for it."],["Vitamin B₁₂","e0","Vitamins help release energy but provide 0 kcal."],["Vitamin C","e0","Vitamins provide no kcal."],["Iron","e0","Minerals provide no kcal."],["Calcium","e0","Minerals provide no kcal."],["Water","e0","Water is essential but has 0 kcal."],["Magnesium","e0","A mineral: 0 kcal, though it helps enzymes use energy."],["Folate","e0","A B vitamin: a helper, not a fuel."]]},
+{name:"DRI term to meaning",goal:"Match each description to the Dietary Reference Intake it describes.",
+ bins:[["EAR","EAR"],["RDA","RDA"],["AI","AI"],["UL","UL"],["AMDR","AMDR"]],
+ cards:[["Meets the needs of half of healthy people in a group","EAR","The EAR sits at the middle of the requirement curve."],["Used to judge whether a group's intake is adequate","EAR","EARs are the main tool for assessing groups."],["Meets the needs of 97 to 98% of healthy people","RDA","The RDA is set two standard deviations above the EAR."],["Equals the EAR plus two standard deviations","RDA","That is how the RDA is calculated."],["A goal for an individual's daily intake","RDA","Individuals aim for the RDA (or AI)."],
+  ["Set when there is not enough evidence for an RDA","AI","The AI is a best estimate from healthy groups."],["Fiber, potassium and water use this value","AI","These nutrients have AIs, not RDAs."],["Highest usual intake unlikely to cause harm","UL","The UL marks where risk of harm begins to rise."],["A ceiling, not a goal","UL","Above the UL, the risk of toxicity rises."],["Usually exceeded only with supplements or fortified foods","UL","Ordinary food rarely pushes intake past a UL."],
+  ["45 to 65% of kcal from carbohydrate","AMDR","AMDRs are percent-of-kcal ranges."],["A range for fat, carbohydrate and protein as % of kcal","AMDR","AMDRs apply only to the energy nutrients."]]},
+{name:"Study type to strength of evidence",goal:"Sort each kind of evidence by how strongly it can support a nutrition claim in people.",
+ bins:[["s0","Not evidence on its own"],["s1","Early clue, not in people"],["s2","Shows a link in people"],["s3","Can show cause in people"],["s4","Strongest summary"]],
+ cards:[["A testimonial from a happy customer","s0","One person's story cannot separate the food's effect from everything else."],["An influencer's personal opinion","s0","Opinion is not data."],["A product ad that quotes 'a study'","s0","Ads select what helps sales; check the study itself."],
+  ["Berry extract added to cells in a dish","s1","Cells in a dish are not a whole person."],["Mice fed a high dose of a seed powder","s1","Animal results often do not carry over to people."],
+  ["A cohort study following 80,000 nurses for 20 years","s2","Observational: shows links, not cause."],["A case-control study of people with and without a disease","s2","Observational: compares groups but cannot prove cause."],["A survey of what adults ate yesterday","s2","Surveys describe intake and links only."],
+  ["A randomized, placebo-controlled trial","s3","Random assignment plus a control can test cause and effect."],["A double-blind trial with 600 adults","s3","Blinding and randomization make cause-and-effect conclusions possible."],
+  ["A meta-analysis of 25 randomized trials","s4","Combining many good trials gives the strongest overall answer."],["A systematic review of all published trials","s4","Systematic reviews collect and judge the whole body of evidence."]]},
+{name:"Food to food group",goal:"Put each food in its food group. Beans and lentils can count in two groups.",
+ bins:[["veg","Vegetables"],["fruit","Fruits"],["grain","Grains"],["protf","Protein foods"],["dairy","Dairy and fortified soy"]],
+ cards:[["Brown rice","grain","A whole grain."],["Oatmeal","grain","A whole grain."],["Corn tortilla","grain","Made from ground corn, a grain."],["Whole wheat bread","grain","Made from whole wheat flour."],["Broccoli","veg","A dark-green vegetable."],["Carrots","veg","A red and orange vegetable."],["Sweet potato","veg","A red and orange (starchy) vegetable."],
+  ["Black beans",["veg","protf"],"Beans, peas and lentils count as vegetables or protein foods."],["Lentils",["protf","veg"],"Beans, peas and lentils count as protein foods or vegetables."],["Apple","fruit","A whole fruit."],["Strawberries","fruit","A whole fruit."],["100% orange juice","fruit","100% juice counts as fruit, though whole fruit gives more fiber."],
+  ["Chicken","protf","Poultry is a protein food."],["Almonds","protf","Nuts and seeds are protein foods."],["Tofu","protf","Soy products like tofu are protein foods."],["Eggs","protf","Eggs are protein foods."],["Plain yogurt","dairy","Yogurt is in the dairy group."],["Fortified soy milk","dairy","Fortified soy milk counts with dairy."],["Cheddar cheese","dairy","Cheese is in the dairy group."]]}];
+const SG={r:0,placed:{},mist:0,sel:null,t0:0,timer:null,hint:null,doneRounds:{}};
+function cardBins(c){return Array.isArray(c[1])?c[1]:[c[1]]}
+function sRoundsUI(){$("#sRounds").innerHTML=SROUNDS.map((r,i)=>`<button type="button" class="round" aria-pressed="${i===SG.r}" data-i="${i}">Round ${i+1}: ${r.name}${SG.doneRounds[i]?`<span class="ok" aria-label="${SG.doneRounds[i]} stars">${"★".repeat(SG.doneRounds[i])}</span>`:""}</button>`).join("");
+  $("#sRounds").querySelectorAll("button").forEach(b=>b.onclick=()=>sLoad(+b.dataset.i))}
+function sLoad(i){SG.r=i;SG.placed={};SG.mist=0;SG.sel=null;SG.hint=null;SG.t0=Date.now();const R=SROUNDS[i];SG.order=shuffle(R.cards.map((c,k)=>k));
+  $("#sN").textContent=`Round ${i+1} of ${SROUNDS.length}`;$("#sTitle").textContent=R.name;$("#sGoal").textContent=R.goal;
+  const bins=$("#sBins");bins.innerHTML="";R.bins.forEach(b=>{const d=document.createElement("div");d.className="bin";d.dataset.k=b[0];
+    d.innerHTML=`<button type="button" class="binhead" data-k="${b[0]}">${binSVG(b[0])}<span>${b[1]}</span></button><div class="binitems"></div>`;
+    d.querySelector(".binhead").onclick=()=>{if(SG.sel!=null)sDrop(SG.sel,b[0]);else sMsg("info","Pick a card first, then tap a box.")};bins.appendChild(d)});
+  const best=store.get("best-"+i);$("#sBest").textContent=best?`Best for this round: ${"★".repeat(+best)}`:"";
+  $("#sMsg").className="msg";sRoundsUI();sRender();sTimerUI();a11yKey=""}
+function sRender(){const R=SROUNDS[SG.r];const pool=$("#sPool");pool.innerHTML="";
+  SG.order.forEach(k=>{if(SG.placed[k])return;const c=R.cards[k];const b=document.createElement("button");b.type="button";b.className="scard"+(SG.hint===k?" hinted":"");b.innerHTML=(c[3]||"")+"<span>"+c[0]+"</span>";b.dataset.k=k;
+    b.setAttribute("aria-pressed",SG.sel===k);b.onclick=e=>{if(b.dataset.dragged){delete b.dataset.dragged;return}SG.sel=SG.sel===k?null:k;sRender();const nb=pool.querySelector(`[data-k="${k}"]`);if(nb)nb.focus()};
+    b.addEventListener("pointerdown",e=>sDragStart(e,b,k));pool.appendChild(b)});
+  if(!pool.children.length)pool.innerHTML='<span class="small">All cards sorted.</span>';
+  document.querySelectorAll("#sBins .bin").forEach(d=>{const items=d.querySelector(".binitems");items.innerHTML="";d.classList.toggle("hintbin",SG.hint!=null&&cardBins(R.cards[SG.hint]).indexOf(d.dataset.k)>=0);
+    R.cards.forEach((c,k)=>{if(SG.placed[k]===d.dataset.k){const s=document.createElement("div");s.className="scard placed";s.innerHTML=(c[3]||"")+"<span>✓ "+c[0]+"</span>";items.appendChild(s)}})});
+  const n=Object.keys(SG.placed).length,tot=R.cards.length;$("#sStars").textContent=n===tot?"★".repeat(sStars())+"☆".repeat(3-sStars()):"";$("#sStars").setAttribute("aria-label",n===tot?sStars()+" of 3 stars":"Stars appear when the round is done")}
+function sStars(){return SG.mist===0?3:SG.mist<=2?2:1}
+function sMsg(cls,t){const m=$("#sMsg");m.className="msg show "+cls;m.textContent=t}
+function sDrop(k,bin){const R=SROUNDS[SG.r];const c=R.cards[k];SG.sel=null;SG.hint=null;
+  if(cardBins(c).indexOf(bin)>=0){SG.placed[k]=bin;sMsg("good","✓ "+c[0]+": "+c[2])}else{SG.mist++;const nm=R.bins.find(b=>b[0]===bin)[1];sMsg("warn",`Not quite. "${c[0]}" does not go in ${nm}. Hint: ${c[2].split(":")[0].split(".")[0]}.`)}
+  sRender();a11yKey="";if(Object.keys(SG.placed).length===R.cards.length)sFinish();else{const f=$("#sPool .scard");if(f&&document.activeElement===document.body)f.focus()}}
+function sFinish(){const st=sStars();SG.doneRounds[SG.r]=Math.max(SG.doneRounds[SG.r]||0,st);const best=+(store.get("best-"+SG.r)||0);if(st>best)store.set("best-"+SG.r,st);
+  const tm=!$("#sRelaxed").checked?` Time: ${fmt((Date.now()-SG.t0)/1000)}.`:"";sMsg("good",`Round complete with ${SG.mist} ${SG.mist===1?"mistake":"mistakes"}: ${st} of 3 stars.${tm} `+(SG.r<SROUNDS.length-1?"Press Next round when you are ready.":"That was the last round. Well done."));sRoundsUI();sRender()}
+let drag=null;
+function sDragStart(e,b,k){if(e.button>0)return;const r=b.getBoundingClientRect();drag={k,b,sx:e.clientX,sy:e.clientY,dx:e.clientX-r.left,dy:e.clientY-r.top,g:null,over:null,id:e.pointerId};
+  window.addEventListener("pointermove",sDragMove);window.addEventListener("pointerup",sDragEnd);window.addEventListener("pointercancel",sDragEnd)}
+function sDragMove(e){if(!drag||e.pointerId!==drag.id)return;if(!drag.g){if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)<6)return;const g=drag.b.cloneNode(true);g.classList.add("ghost");g.removeAttribute("id");g.setAttribute("aria-hidden","true");g.tabIndex=-1;g.style.width=drag.b.offsetWidth+"px";document.body.appendChild(g);drag.g=g;drag.b.style.opacity=".35"}
+  e.preventDefault();drag.g.style.left=(e.clientX-drag.dx)+"px";drag.g.style.top=(e.clientY-drag.dy)+"px";
+  const el=document.elementFromPoint(e.clientX,e.clientY);const bin=el&&el.closest?el.closest(".bin"):null;document.querySelectorAll(".bin.over").forEach(x=>x!==bin&&x.classList.remove("over"));if(bin)bin.classList.add("over");drag.over=bin}
+function sDragEnd(e){if(!drag)return;window.removeEventListener("pointermove",sDragMove);window.removeEventListener("pointerup",sDragEnd);window.removeEventListener("pointercancel",sDragEnd);
+  const d=drag;drag=null;document.querySelectorAll(".bin.over").forEach(x=>x.classList.remove("over"));if(!d.g)return;d.g.remove();d.b.style.opacity="";d.b.dataset.dragged="1";
+  if(d.over)sDrop(d.k,d.over.dataset.k);else sRender()}
+$("#sHint").onclick=()=>{const R=SROUNDS[SG.r];const k=SG.sel!=null?SG.sel:SG.order.find(k=>!SG.placed[k]);if(k==null){sMsg("info","Everything is sorted.");return}SG.hint=k;
+  const bn=cardBins(R.cards[k]).map(b=>R.bins.find(x=>x[0]===b)[1]).join(" or ");sMsg("info",`Hint: "${R.cards[k][0]}" goes in the glowing box (${bn}).`);sRender()};
+$("#sShow").onclick=()=>{const R=SROUNDS[SG.r];R.cards.forEach((c,k)=>{if(!SG.placed[k])SG.placed[k]=cardBins(c)[0]});SG.mist=Math.max(SG.mist,3);sMsg("info","All cards placed. Read each box to see why they belong there.");sRender();sFinish()};
+$("#sShuffle").onclick=()=>sLoad(SG.r);$("#sNext").onclick=()=>sLoad((SG.r+1)%SROUNDS.length);
+function sTimerUI(){const relaxed=$("#sRelaxed").checked;$("#sTimer").hidden=relaxed;clearInterval(SG.timer);if(!relaxed){SG.timer=setInterval(()=>{if(Object.keys(SG.placed).length<SROUNDS[SG.r].cards.length)$("#sTimer").textContent=fmt((Date.now()-SG.t0)/1000)},500)}}
+$("#sRelaxed").onchange=()=>{SG.t0=Date.now();sTimerUI()};
+function sortA11y(){const R=SROUNDS[SG.r];const n=Object.keys(SG.placed).length;
+  return [null,`Round ${SG.r+1}, ${R.name}. ${n} of ${R.cards.length} cards sorted. Each box has a small drawing and a name: `+R.bins.map(b=>b[1]).join(", ")+`. Cards still to sort: `+(SG.order.filter(k=>!SG.placed[k]).map(k=>R.cards[k][0]).join(", ")||"none")+"."]}
+/* ================= PART 4: nutrition in real life ================= */
+const CER_A={servPer:10,servSize:"1 cup (40g)",kcal:150,fat:2,sat:0,trans:0,chol:0,sod:160,carb:29,fiber:5,sugars:5,added:4,prot:5,vitD:2,ca:20,fe:8.1,k:220};
+const CER_B={servPer:12,servSize:"3/4 cup (30g)",kcal:120,fat:1.5,sat:0,trans:0,chol:0,sod:150,carb:26,fiber:1,sugars:12,added:12,prot:1,vitD:2,ca:0,fe:4.5,k:40};
+const SOUP={servPer:2,servSize:"1 cup (245g)",kcal:110,fat:3,sat:1,trans:0,chol:10,sod:690,carb:15,fiber:2,sugars:4,added:0,prot:6,vitD:0,ca:40,fe:1.1,k:350};
+function phone(x,y,w,h,T,lines,o){o=o||{};rr(x,y,w,h,18);fillStroke(C.ink,C.ink,1);rr(x+8,y+24,w-16,h-48,6);ctx.fillStyle=C.paper;ctx.fill();rr(x+w/2-20,y+10,40,5,2.5);ctx.fillStyle=C["ink-soft"];ctx.fill();
+  ctx.save();ctx.beginPath();ctx.rect(x+8,y+24,w-16,h-48);ctx.clip();const sc=(T*12)%40;let yy=y+40-(o.scroll?sc:0);lines.forEach(l=>{if(l.img){rr(x+16,yy,w-32,l.img,6);ctx.fillStyle=hexA(l.col||C.berry,.35);ctx.fill();for(let i=0;i<9;i++)circ(x+30+(i%5)*((w-60)/4),yy+16+Math.floor(i/5)*24,7,l.col||C.berry);yy+=l.img+10}else{yy=wrapText(l.t,x+18,yy+8,w-36,l.lh||17,{size:l.size||13,weight:l.w||600,color:l.col||C.ink})+(l.gap||14)}});ctx.restore()}
+function priceTag(x,y,t,col){ctx.save();ctx.translate(x,y);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(10,-11);ctx.lineTo(46,-11);ctx.lineTo(46,11);ctx.lineTo(10,11);ctx.closePath();fillStroke(col||C["gold-wash"],C.gold,1.4);circ(9,0,2.5,C.panel,C.gold,1);txt(28,0,t,{size:12,weight:700,align:"center",mono:true});ctx.restore()}
+const LIFE=[
+{name:"Comparing two cereal labels",who:"Scenario 1 · the grocery store",
+ story:"Maya, a nursing student, is choosing a breakfast cereal on a tight schedule. She holds two boxes. Cereal A lists 1 cup (40 g) per serving; Cereal B lists 3/4 cup (30 g). She usually pours about 1 cup into her bowl.",
+ cap:"Two labels side by side: the fiber and added-sugars lines are highlighted, and the serving sizes differ.",
+ desc:"A shopper figure stands between two cereal boxes. Two Nutrition Facts labels are drawn side by side. Cereal A: 1 cup (40 g), 150 Calories, dietary fiber 5 g at 18% DV, added sugars 4 g at 8% DV. Cereal B: 3/4 cup (30 g), 120 Calories, dietary fiber 1 g at 4% DV, added sugars 12 g at 24% DV. The fiber rows glow first, then the added-sugars rows, then the serving-size rows, each with a pulsing outline.",
+ draw(T){const k=Math.floor(P(T,12)*3);const hi=["fiber","added","serv"][k];panelBox(10,10,780,480);levelTag(352,30,"label");
+   person(400,440,64,{skin:2,shirt:1,mood:true});food("cereal",330,350,40,{col:C.cereal1,tag:"A"});food("cereal",470,350,40,{col:C.cereal2,tag:"B"});
+   factsLabel(24,22,250,CER_A,{hi,ha:.6+.4*Math.sin(T*4)});factsLabel(526,22,250,CER_B,{hi,ha:.6+.4*Math.sin(T*4)});
+   label(400,60,"Cereal A (left) · Cereal B (right)",{size:13,weight:700});
+   const cl=[["Fiber","18% vs 4% DV"],["Added sugars","8% vs 24% DV"],["Serving size","1 cup vs 3/4 cup"]][k];label(400,186,cl[0],{size:13,weight:700,border:C.accent});label(400,214,cl[1],{size:12.5,weight:700,mono:true,border:C.accent})},
+ qs:[{q:"Which cereal is a better source of fiber, per serving?",opts:[["Cereal A: 5 g, 18% DV",1,"Yes. 18% DV is close to high (20%); Cereal B's 4% is low."],["Cereal B: 1 g, 4% DV",0,"4% DV is low by the 5/20 guide."],["They are the same",0,"Compare the %DV column: 18% vs 4%."],["You cannot tell from a label",0,"The fiber line and its %DV are right on the label."]]},
+  {q:"Maya pours 1 cup of Cereal B. How many grams of added sugars is that?",opts:[["16 g",1,"Correct. 1 cup ÷ 3/4 cup = 4/3 servings; 12 g × 4/3 = 16 g."],["12 g",0,"12 g is for a 3/4-cup serving. One cup is 4/3 servings: 16 g."],["9 g",0,"That multiplied by 3/4 instead of dividing. 1 ÷ 3/4 = 4/3 servings, so 16 g."],["4 g",0,"4 g is Cereal A's added sugars."]]},
+  {q:"What is the best way to compare the two cereals fairly?",opts:[["Use the %DV for each nutrient and adjust for the amount she actually eats",1,"Yes. %DV makes nutrients easy to compare, and scaling to her real portion keeps the comparison honest."],["Pick the one with the lower Calories per serving",0,"Serving sizes differ, and Calories alone say nothing about fiber or added sugars."],["Choose the one whose front says 'wholesome'",0,"'Wholesome' has no legal definition. Check the Nutrition Facts and ingredients."],["Compare grams of total sugars only",0,"Total sugars mixes natural and added sugars and ignores fiber and serving size."]]}]},
+{name:"A superfood headline",who:"Scenario 2 · scrolling at night",
+ story:"Daniel, 45, has high blood pressure and takes a prescribed medicine. A video in his feed says: \"This seed powder CURES high blood pressure in 7 days. Doctors hate it!\" The video links to a store that sells the powder. He messages his clinic: \"Can I stop my pills and use this instead?\"",
+ cap:"A sales video full of red flags, checked against what good evidence would look like.",
+ desc:"A phone screen on the left scrolls through a video post with a purple seed-powder image and the caption: This seed powder CURES high blood pressure in 7 days, doctors hate it, buy now. Red flag tags pop up beside it one at a time: cure claim, fast results, selling a product, no study named, us-versus-doctors language. On the right, a small evidence ladder shows what would be needed, from a testimonial at the bottom to randomized trials and reviews at the top, and a person with a speech bubble asks the care team before changing medicine.",
+ draw(T){panelBox(10,10,780,480);levelTag(22,26,"data");phone(40,40,230,400,T,[{t:"@a_video_post",size:12,w:700,col:C["ink-soft"]},{img:90,col:C.berry},{t:"This seed powder CURES high blood pressure in 7 days. Doctors hate it!",size:14,w:700},{t:"Tap to buy now: 40% off today only",size:13,col:C.bad},{t:"♥ 12.4k   ↻ 3.1k",size:12,col:C["ink-soft"]}]);
+   const F_=["“cures” a disease","results in 7 days","selling the product","no study named","us-versus-doctors"];const n=Math.floor(P(T,12)*6);F_.forEach((f,i)=>{if(i<n)label(330,70+i*44,f,{size:12.5,weight:700,border:C.bad,align:"left",bg:C["bad-wash"]})});
+   title(560,46,"What good evidence looks like");const L=[["Testimonials",C.act8],["Animal studies",mix(C.gold,C.act8,.75)],["Observational studies",mix(C.gold,C.act8,.5)],["Randomized trials",mix(C.gold,C.act8,.25)],["Reviews of many trials",C.gold]];
+   L.forEach((l,i)=>{const y=260-i*42;rr(560,y,200,34,5);ctx.fillStyle=hexA(l[1],.4);ctx.fill();ctx.strokeStyle=l[1];ctx.lineWidth=1.4;ctx.stroke();txt(660,y+17,l[0],{size:12,weight:700,align:"center"})});
+   person(600,420,32,{skin:2,shirt:0});bubble(630,330,150,58,"Ask your care team before changing any medicine.",{size:12,tx:640})},
+ qs:[{q:"Which feature of the post is the biggest red flag?",opts:[["It promises to cure a disease fast while selling the product",1,"Yes. Cure claims, quick results and a sales link together are classic signs of an unreliable claim."],["It has a lot of likes",0,"Popularity is not evidence. Many shared claims are false."],["It uses a photo of seeds",0,"The picture itself is not the issue; the unsupported cure claim is."],["It mentions blood pressure",0,"Blood pressure is a real health topic; the problem is the claim about it."]]},
+  {q:"What kind of evidence would be needed to show the powder lowers blood pressure in people?",opts:[["Randomized controlled trials in people, ideally combined in a systematic review",1,"Right. Those designs can test cause and effect in humans."],["More customer reviews",0,"Testimonials cannot separate the powder's effect from other changes."],["A study in mice",0,"Animal studies are early clues only; they often do not carry over to people."],["A survey showing powder users have lower blood pressure",0,"That is observational: a link, not proof. Users may differ in many other ways."]]},
+  {q:"How should the clinic respond to Daniel?",opts:[["Thank him for asking, advise not to stop his medicine, and offer to review the claim and his eating pattern together",1,"Yes. Respectful, evidence-based and safe: he stays on treatment and gets real support."],["Tell him the powder is dangerous and he was foolish to ask",0,"Shaming discourages questions. Stay respectful and focus on evidence and safety."],["Tell him to try it for a week and see",0,"Stopping prescribed medicine for an unproven product could be unsafe."],["Ignore the message",0,"Questions like this are a chance to help. Always respond."]]}]},
+{name:"A balanced plate on a budget",who:"Scenario 3 · the kitchen",
+ story:"Rosa cooks dinner for herself and her teenage son and wants meals that follow the plate model without spending much. Tonight she has rice, eggs, a bag of frozen mixed vegetables, a can of black beans, bananas and a jug of milk.",
+ cap:"Low-cost foods fill every section of the plate: half fruits and vegetables, a quarter grains, a quarter protein, dairy on the side.",
+ desc:"A kitchen counter holds low-cost foods with small price tags marked with one, two or three dollar signs: a bag of rice, a carton of eggs, a bag of frozen mixed vegetables, a can of black beans, bananas and a jug of milk. Each food slides onto a plate seen from above: vegetables fill the green section, a banana fills the red fruit section, rice fills the orange grains quarter, beans and egg fill the purple protein quarter, and a glass of milk fills the blue dairy cup. A tally shows all five food groups checked.",
+ draw(T){panelBox(10,10,780,480);levelTag(22,26,"plate");const t=P(T,14)*14;rr(30,360,330,14,3);ctx.fillStyle=C.table;ctx.fill();
+   const items=[["rice","Rice","$",60,"grain"],["egg","Eggs","$",120,"prot"],["broccoli","Frozen veg","$",180,"veg"],["beans","Canned beans","$",240,"prot"],["banana","Bananas","$",300,"fruit"],["milk","Milk","$$",340,"dairy"]];
+   const f={veg:0,fruit:0,grain:0,prot:0};let dairy=0;
+   items.forEach((it,i)=>{const a=smooth(seg(t,1+i*1.4,2+i*1.4));const tgt={grain:[600,130],prot:[600,290],veg:[470,230],fruit:[490,140],dairy:[720,90]}[it[4]];const x=lerp(it[3],tgt[0]+(it[0]==="beans"?30:0),a),y=lerp(330,tgt[1]+(it[0]==="egg"?-30:0),a);
+     if(a>=1){if(it[4]==="dairy")dairy=1;else f[it[4]]=1}food(it[0],x,y,a>=1?20:22);if(a<.05){priceTag(it[3]-20,380,it[2]);txt(it[3],405+(i%2)*18,it[1],{size:11.5,weight:600,align:"center"})}});
+   plateTop(560,210,150,{veg:f.veg*.6,fruit:f.fruit*.6,grain:f.grain*.6,prot:f.prot*.6},{dairy,dairyDx:20});
+   items.forEach((it,i)=>{const a=smooth(seg(t,1+i*1.4,2+i*1.4));if(a>=1){const tgt={grain:[600,130],prot:[600,290],veg:[470,230],fruit:[490,140],dairy:[720,90]}[it[4]];food(it[0],tgt[0]+(it[0]==="beans"?30:0),tgt[1]+(it[0]==="egg"?-30:0),22)}});
+   const n=["veg","fruit","grain","prot"].filter(g=>f[g]).length+dairy;txt(40,60,"Food groups on the plate: "+n+" of 5",{size:14,weight:700});["Vegetables","Fruits","Grains","Protein foods","Dairy"].forEach((g,i)=>{const on=[f.veg,f.fruit,f.grain,f.prot,dairy][i];txt(60,92+i*24,(on?"✓ ":"○ ")+g,{size:13,weight:on?700:500,color:on?C.good:C["ink-soft"]})});
+   txt(40,236,"$ = lower cost per serving",{size:12,color:C["ink-soft"]})},
+ qs:[{q:"Which choice adds vegetables at the lowest cost and keeps well?",opts:[["Frozen mixed vegetables",1,"Yes. Frozen vegetables are picked and frozen at peak ripeness, keep for months and are often low-cost."],["Fresh vegetables only, because frozen ones have no nutrients",0,"Frozen vegetables keep most of their nutrients and are often cheaper."],["Vegetable-flavoured chips",0,"Chips are mostly refined starch and oil; they do not count as a vegetable serving."],["Skip vegetables to save money",0,"Low-cost options like frozen, canned (rinsed) or in-season vegetables fit tight budgets."]]},
+  {q:"Which protein foods are usually lowest in cost per serving?",opts:[["Beans, lentils and eggs",1,"Right. They are among the lowest-cost protein foods and add fiber (beans) or many nutrients (eggs)."],["Only fresh steak",0,"Steak is usually one of the more expensive protein foods."],["Protein powders",0,"Supplements are not needed for most people and usually cost more per serving than whole foods."],["Protein bars",0,"Bars usually cost more per serving than beans or eggs."]]},
+  {q:"Rosa wants at least half her grains to be whole grains. Which swap does that cheaply?",opts:[["Use brown rice or oats for some meals instead of white rice",1,"Yes. Brown rice and oats are low-cost whole grains."],["Buy grain-free snacks",0,"That removes grains rather than making them whole."],["Add more white bread",0,"White bread is refined, not whole grain."],["Skip grains at dinner",0,"Grains supply energy and B vitamins; the goal is to make at least half whole."]]}]},
+{name:"What does %DV mean?",who:"Scenario 4 · the clinic",
+ story:"Mr. Okafor, 58, was told to watch his sodium. During a visit he shows the nurse a soup label and asks: \"It says 30% next to sodium. Does that mean the soup is 30% salt?\" He usually eats the whole can, which holds 2 servings.",
+ cap:"Explaining %DV with the label: 30% is one serving's share of the day's sodium reference amount, not the percent of the soup that is salt.",
+ desc:"In a clinic room, a nurse and an older adult patient sit at a small table. Between them, a large Nutrition Facts label for soup glows on the sodium line: 690 mg, 30% DV. A day bar for sodium, marked 2,300 mg, fills to 30% for one serving and then to 60% for the whole can of two servings. A speech bubble from the patient asks if 30% means the soup is 30% salt, and the nurse's bubble explains that one serving gives about a third of the day's sodium reference.",
+ draw(T){panelBox(10,10,780,480);levelTag(22,26,"label");const t=P(T,12)*12;
+   rr(60,340,320,12,3);ctx.fillStyle=C.table;ctx.fill();person(100,330,52,{skin:2,shirt:2,mood:true});person(340,330,52,{skin:0,shirt:0,mood:true});rr(318,248,44,10,4);ctx.fillStyle=hexA(C.act2,.7);ctx.fill();
+   bubble(40,60,200,74,"It says 30% next to sodium. Is the soup 30% salt?",{size:12.5,tx:90});bubble(240,150,190,74,"One serving gives about 30% of the day's sodium reference.",{size:12.5,tx:330,stroke:C.act2});
+   factsLabel(560,14,220,SOUP,{hi:"sod",ha:.6+.4*Math.sin(T*4)});
+   const one=smooth(seg(t,2,4)),two=smooth(seg(t,5,7));txt(40,400,"Sodium, day reference 2,300 mg:",{size:12.5,weight:600});rr(250,392,280,16,4);ctx.fillStyle=hexA(C.sunk,.9);ctx.fill();
+   rr(250,392,280*.3*one,16,4);ctx.fillStyle=C.min;ctx.fill();if(two>0){rr(250+280*.3,392,280*.3*two,16,4);ctx.fillStyle=hexA(C.min,.6);ctx.fill()}
+   txt(250+280*.3*one,424,one>.9?"1 serving: 30%":"",{size:12,weight:700,align:"center"});if(two>.9)txt(250+280*.6,442,"whole can (2 servings): 60%",{size:12,weight:700,align:"center",color:C["warn-ink"]});
+   line(250+280*.2,388,250+280*.2,412,C.warn,2);txt(250+280*.2,380,"20%",{size:11,mono:true,align:"center",color:C["warn-ink"]})},
+ qs:[{q:"What does '30% DV' for sodium mean?",opts:[["One serving gives about 30% of the day's sodium reference amount (2,300 mg)",1,"Yes. 690 mg ÷ 2,300 mg × 100 = 30%."],["The soup is 30% salt by weight",0,"%DV is not a percent of the food's weight; it compares one serving with a daily reference."],["30% of the soup's Calories come from sodium",0,"Sodium has no Calories. %DV is not a percent of Calories."],["He can only eat 30% of the can",0,"%DV describes a serving; it is not an instruction."]]},
+  {q:"He eats the whole can (2 servings). What %DV for sodium is that?",opts:[["60%",1,"Right. 2 servings × 30% = 60% of the daily reference."],["30%",0,"30% is for one serving. The can holds 2 servings."],["15%",0,"Eating more servings raises the total, not lowers it."],["100%",0,"Two servings give 60%, not 100%."]]},
+  {q:"Which is the most helpful way for the nurse to teach this?",opts:[["Use the 5/20 guide on the label and ask him to explain it back in his own words",1,"Yes. Teach-back checks understanding, and the 5/20 guide is easy to use at the store."],["Tell him never to eat canned soup again",0,"Rigid rules are hard to follow. Show how to compare labels, such as lower-sodium versions."],["Give him a long list of numbers to memorize",0,"Simple tools like the 5/20 guide work better than memorizing values."],["Tell him %DV is too complicated for patients",0,"Most people can use %DV with a short, clear explanation."]]}]}];
+const LS={i:0,ans:{}};
+function lifeUI(){const S=LIFE[LS.i];$("#lifeN").textContent=S.who;$("#lifeTitle").textContent=S.name;$("#lifeStory").textContent=S.story;$("#lifeCap").textContent=S.cap;
+  $("#lifeChips").innerHTML=LIFE.map((s,i)=>`<button type="button" class="casechip" aria-pressed="${i===LS.i}" data-i="${i}">${i+1}. ${s.name}${LS.ans[i+"-0"]&&LS.ans[i+"-1"]&&LS.ans[i+"-2"]?'<span class="ok" aria-label="all answered">✓</span>':""}</button>`).join("");
+  $("#lifeChips").querySelectorAll("button").forEach(b=>b.onclick=()=>{LS.i=+b.dataset.i;lifeUI()});
+  const box=$("#lifeQs");box.innerHTML="";S.qs.forEach((q,qi)=>{const d=document.createElement("div");d.className="qblock lifeq";d.innerHTML=`<p class="qlab" id="lq${qi}">${qi+1}. ${q.q}</p><div class="opts" role="group" aria-labelledby="lq${qi}"></div><div class="fb" role="status"></div>`;
+    const ob=d.querySelector(".opts"),fb=d.querySelector(".fb");shuffle(q.opts).forEach(o=>{const b=document.createElement("button");b.type="button";b.className="opt";b.textContent=o[0];
+      b.onclick=()=>{ob.querySelectorAll(".opt").forEach(x=>x.classList.remove("wrong"));if(o[1]){b.classList.add("right");fb.className="fb show ok";fb.textContent="✓ "+o[2];LS.ans[LS.i+"-"+qi]=1;lifeChipsOnly()}else{b.classList.add("wrong");fb.className="fb show no";fb.textContent="Not quite. "+o[2]}};ob.appendChild(b)});box.appendChild(d)});a11yKey=""}
+function lifeChipsOnly(){const i=LS.i;const b=$("#lifeChips").querySelector(`[data-i="${i}"]`);if(b&&LS.ans[i+"-0"]&&LS.ans[i+"-1"]&&LS.ans[i+"-2"]&&!b.querySelector(".ok"))b.insertAdjacentHTML("beforeend",'<span class="ok" aria-label="all answered">✓</span>')}
+function drawLife(now){use(S4);LIFE[LS.i].draw(now/1000)}
+function lifeA11y(){const S=LIFE[LS.i];return [S.name+". "+S.cap,S.desc]}
+function lifeInit(){$("#lifePrev").onclick=()=>{LS.i=(LS.i+LIFE.length-1)%LIFE.length;lifeUI()};$("#lifeNext").onclick=()=>{LS.i=(LS.i+1)%LIFE.length;lifeUI()}}
+/* ---------------- stages ---------------- */
+const S1=makeStage("cvBuild",800,560),S2=makeStage("cvCalc",800,600),S4=makeStage("cvLife",800,500);
+/* ---------------- accessibility: live labels and picture descriptions ---------------- */
+const A11Y={build:{cv:"#cvBuild",f:buildA11y},calc:{cv:"#cvCalc",f:calcA11y},sort:{cv:null,f:sortA11y},life:{cv:"#cvLife",f:lifeA11y}};
+let a11yKey="",a11yT=0;
+function a11yTick(){if((++a11yT)%20)return;const a=A11Y[curTab];const [lab,d]=a.f();const key=curTab+"|"+lab+"|"+d;if(key===a11yKey)return;a11yKey=key;
+  if(a.cv&&lab)$(a.cv).setAttribute("aria-label",lab);if(window.gkDescribe)window.gkDescribe(d);
+  const box=document.getElementById("gk-desc");if(box){const host=a.cv?$(a.cv).closest(".canvas-holder"):$("#sPool");if(host&&host.nextElementSibling!==box)host.after(box);if(a.cv)$(a.cv).setAttribute("aria-describedby","gk-desc")}}
+/* ---------------- tabs / theme / loop ---------------- */
+let curTab="build";
+const TABS=["build","calc","sort","life"];
+function showTab(k,focus){curTab=k;document.querySelectorAll(".tab").forEach(x=>{const on=x.dataset.tab===k;x.setAttribute("aria-selected",on);x.tabIndex=on?0:-1;if(on&&focus)x.focus()});
+  TABS.forEach(t=>$("#tab-"+t).hidden=t!==k);fitAll();a11yKey="";a11yT=19}
+document.querySelectorAll(".tab").forEach(t=>{t.onclick=()=>showTab(t.dataset.tab);t.onkeydown=e=>{const i=TABS.indexOf(t.dataset.tab);
+  if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();showTab(TABS[(i+(e.key==="ArrowRight"?1:TABS.length-1))%TABS.length],true)}
+  if(e.key==="Home"){e.preventDefault();showTab(TABS[0],true)}if(e.key==="End"){e.preventDefault();showTab(TABS[TABS.length-1],true)}}});
+function fitAll(){[S1,S2,S4].forEach(s=>s.fit())}
+window.addEventListener("resize",fitAll);
+$("#themeBtn").onclick=()=>{const r=document.documentElement;const dark=getComputedStyle(r).getPropertyValue("--ground").trim().toLowerCase()==="#0e1519";r.setAttribute("data-theme",dark?"light":"dark");readColors()};
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>setTimeout(readColors,30));
+let last=performance.now();
+function frame(now){const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;DT=dt;
+  try{if(curTab==="build")drawBuild(now);else if(curTab==="calc")drawCalc(now);else if(curTab==="life")drawLife(now)}catch(err){console.error(err)}
+  try{a11yTick()}catch(err){console.error(err)}
+  requestAnimationFrame(frame)}
+/* test hooks */
+window.__nb={tab:k=>showTab(k),meal:list=>bdSet(list),add:(id,n)=>bdAdd(id,n),totals:()=>bdTotals(),done:()=>[...BD.done],foods:()=>FOODS.map(f=>f[0]),
+  calcTypes:()=>CTYPES.map(c=>c[0]).filter(c=>c!=="mix"),calcSet:t=>{TR.type=t;$("#calcType").value=t;calcNew()},calcProb:()=>({ans:TR.p.ans,choices:TR.p.choices?TR.p.choices.length:0,fmt:TR.p.choices?String(TR.p.ans):fmtAns(TR.p,TR.p.ans),unit:TR.p.unit,kind:TR.p.kind}),
+  gen:t=>{const q=genOne(t);if(q.choices){return {choice:true,ans:q.ans,j1:judge(q,String(q.ans)),j2:judge(q,String((q.ans+1)%q.choices.length)),hints:q.hints.length,rows:q.rows.length}}
+    const good=fmtAns(q,q.ans);const bad=fmtAns(q,q.ans*1.5+1);return {ans:q.ans,good,j1:judge(q,good),j1u:judge(q,good+" "+q.unit),j2:judge(q,bad),j3:judge(q,"abc"),hints:q.hints.length,rows:q.rows.length,html:q.html}},
+  sortGo:i=>sLoad(i),sortN:()=>SROUNDS.length,sortShow:()=>$("#sShow").click(),sortState:()=>({placed:Object.keys(SG.placed).length,n:SROUNDS[SG.r].cards.length}),lifeGo:i=>{LS.i=i;lifeUI()},lifeN:()=>LIFE.length};
+readColors();bdInit();calcInit();calcNew();updCalcMeter();sLoad(0);lifeInit();lifeUI();fitAll();requestAnimationFrame(frame);
+
+})();
+</script>
+</body>
+</html>
